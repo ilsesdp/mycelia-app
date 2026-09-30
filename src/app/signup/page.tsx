@@ -56,7 +56,7 @@ export default function SignupPage() {
 
     setSubmitting(false);
     if (data.session) {
-      router.push("/");
+      router.push("/onboarding/path");
     } else {
       router.push(`/check-email?email=${encodeURIComponent(email)}`);
     }

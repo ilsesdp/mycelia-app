@@ -7,9 +7,9 @@ import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/client";
 
-// Ports SCREENS['1.14'] — real supabase.auth.signInWithPassword() in place
-// of the prototype's go('4.1') stub. Lands on "/" for now since the real
-// My Farm dashboard (4.1) isn't built yet.
+// Ports SCREENS['1.14'] — real supabase.auth.signInWithPassword(). A user
+// with no farm yet is sent to onboarding; a user who already has one lands
+// on "/" for now since the real My Farm dashboard (4.1) isn't built yet.
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -23,13 +23,19 @@ export default function LoginPage() {
   async function handleSubmit() {
     setSubmitting(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setSubmitting(false);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      setSubmitting(false);
       setError(error.message);
       return;
     }
-    router.push("/");
+    const { data: farm } = await supabase
+      .from("farms")
+      .select("id")
+      .eq("owner_id", data.user.id)
+      .maybeSingle();
+    setSubmitting(false);
+    router.push(farm ? "/" : "/onboarding/path");
   }
 
   return (

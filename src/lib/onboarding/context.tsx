@@ -1,0 +1,123 @@
+"use client";
+
+import { createContext, useContext, useState, type ReactNode } from "react";
+import type { Database } from "@/lib/types/database";
+
+type Category = Database["public"]["Enums"]["category_t"];
+type Unit = Database["public"]["Enums"]["unit_t"];
+type Availability = "Ready now" | "Producing" | "Planning";
+type Visibility = "Growers only" | "Everyone" | "Nobody";
+
+export type ProductDraft = {
+  name: string;
+  category: Category | "";
+  availability: Availability;
+  qty: string;
+  unit: Unit | "";
+  roughlyWhen: string;
+  photoFile: File | null;
+  photoPreview: string | null;
+};
+
+export type MarketDraft = {
+  name: string;
+  location: string;
+  day: string;
+  hours: string;
+  photoFile: File | null;
+  photoPreview: string | null;
+};
+
+export type DayHours = { open: string; close: string; closed: boolean };
+
+// The full shape of what onboarding collects across all ~10 prototype
+// screens (1.2, 1.4–1.13). 2a only uses the first few fields; the rest are
+// declared now so 2b/2c slot in without reshaping this type again.
+export type OnboardingState = {
+  // 1.2 — choose your path
+  path: "grower" | null;
+
+  // 1.4 / 1.5 — address lookup
+  farmAddress: string;
+  farmAddressVerified: boolean;
+  addressSearching: boolean;
+
+  // 1.6 — farm details
+  farmName: string;
+  farmDirections: string;
+  farmAbout: string;
+  coverPhotoFile: File | null;
+  coverPhotoPreview: string | null;
+
+  // 1.7 — categories (2b)
+  categories: Partial<Record<Category, boolean>>;
+
+  // 1.8/1.9b — products (2b)
+  products: (ProductDraft & { id: string })[];
+
+  // 1.9 — hours (2c)
+  hours: Record<string, DayHours>;
+  hoursMode: "weekday" | "24-7" | "custom" | null;
+
+  // 1.10/1.17 — markets (2c) — ids of DB markets picked, plus any drafted here
+  selectedMarketIds: string[];
+  addedMarkets: MarketDraft[];
+
+  // 1.11 — reach preferences (2c)
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  emailVisibility: Visibility;
+  phoneVisibility: Visibility;
+  messageChannel: "Text me" | "Email me" | "Both";
+};
+
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+function initialState(): OnboardingState {
+  return {
+    path: null,
+    farmAddress: "",
+    farmAddressVerified: false,
+    addressSearching: false,
+    farmName: "",
+    farmDirections: "",
+    farmAbout: "",
+    coverPhotoFile: null,
+    coverPhotoPreview: null,
+    categories: {},
+    products: [],
+    hours: Object.fromEntries(DAYS.map((d) => [d, { open: "09:00 AM", close: "05:00 PM", closed: false }])),
+    hoursMode: null,
+    selectedMarketIds: [],
+    addedMarkets: [],
+    contactName: "",
+    contactEmail: "",
+    contactPhone: "",
+    emailVisibility: "Growers only",
+    phoneVisibility: "Nobody",
+    messageChannel: "Text me",
+  };
+}
+
+type Ctx = {
+  state: OnboardingState;
+  update: (patch: Partial<OnboardingState>) => void;
+};
+
+const OnboardingContext = createContext<Ctx | null>(null);
+
+// In-memory only, same as the prototype's S object — no localStorage. A
+// refresh mid-onboarding loses progress; that's the prototype's own
+// deliberate reset story (see project_hifi_prototype.md), kept here too.
+export function OnboardingProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<OnboardingState>(initialState);
+  const update = (patch: Partial<OnboardingState>) => setState((s) => ({ ...s, ...patch }));
+  return <OnboardingContext.Provider value={{ state, update }}>{children}</OnboardingContext.Provider>;
+}
+
+export function useOnboarding() {
+  const ctx = useContext(OnboardingContext);
+  if (!ctx) throw new Error("useOnboarding must be used within OnboardingProvider");
+  return ctx;
+}

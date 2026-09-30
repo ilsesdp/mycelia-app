@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import FarmList, { type FarmListItem } from "@/components/FarmList";
 
@@ -11,6 +12,10 @@ import FarmList, { type FarmListItem } from "@/components/FarmList";
 // lift (stylized map art + pins + geolocation) and comes after this.
 export default async function HomePage() {
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { data: farms, error } = await supabase
     .from("farms")
@@ -39,7 +44,18 @@ export default async function HomePage() {
   return (
     <main className="flex flex-col min-h-screen">
       <div className="px-4 pt-4 pb-3 flex flex-col gap-3 bg-bg-canvas">
-        <h1 className="title-l text-text-primary">Mycelia</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="title-l text-text-primary">Mycelia</h1>
+          {!user && (
+            <Link
+              href="/welcome"
+              className="body-s-strong"
+              style={{ color: "var(--text-brand)", textDecoration: "none" }}
+            >
+              Log in
+            </Link>
+          )}
+        </div>
         {error && (
           <p className="body-s" style={{ color: "var(--text-danger)" }}>
             Couldn&apos;t load farms: {error.message}

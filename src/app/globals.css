@@ -1,179 +1,93 @@
 @import "tailwindcss";
 
 /*
-  Design tokens ported from the Mycelia Figma file's "Ink direction"
-  (farmers_design_tokens.md). Only a handful of exact hex values are
-  documented there — harvest-green/700, nature-green/900, neutral/50 — the
-  rest of each ramp below is generated to match the *documented anchor
-  point* (which step of the ramp each brand hex sits at) rather than
-  guessed from scratch. TODO before this ships: pull the real 82-value
-  primitive collection via Figma (get_variable_defs on the Color page) and
-  replace every ramp wholesale — these are close, not final.
+  Design tokens copied verbatim from the tested hi-fi prototype
+  (index.html :root block — "Exact tokens pulled per-screen from Figma
+  get_design_context, T1, 20/20 screens" + the T4 My Farm additions).
+  These are the values 66 screens have actually been built and QA'd
+  against, so they supersede the earlier generated-ramp placeholder that
+  was here before — that version had only 3 confirmed hex values and
+  guessed the rest.
 */
 :root {
-  /* harvest-green — anchored at 700 = #639C22 (documented, do not change) */
-  --color-harvest-green-50: #f2f8e9;
-  --color-harvest-green-100: #e1efcd;
-  --color-harvest-green-200: #c3df9c;
-  --color-harvest-green-300: #a2cd6a;
-  --color-harvest-green-400: #82bd44;
-  --color-harvest-green-500: #639c22; /* == 700 value, kept for pin/stroke use at a lighter step too */
-  --color-harvest-green-600: #578c1d;
-  --color-harvest-green-700: #639c22; /* documented exact value — STROKE_COLOR/SHAPE_FILL/EFFECT_COLOR only, never text or text-bg */
-  --color-harvest-green-800: #3f6614;
-  --color-harvest-green-900: #2a4a0d;
+  --bg-canvas: #f7f6f5;
+  --bg-raised: #ffffff;
+  --bg-subtle: #edecea;
+  --bg-brand-subtle: #edf7e0;
+  --bg-inverse: #064828;
+  --bg-overlay: rgba(6, 20, 12, 0.6);
 
-  /* nature-green — anchored at 900 = #064828 (documented, do not change) */
-  --color-nature-green-50: #e8f2ec;
-  --color-nature-green-100: #c9e0d4;
-  --color-nature-green-200: #9cc6ae;
-  --color-nature-green-300: #6ba886;
-  --color-nature-green-400: #438863;
-  --color-nature-green-500: #276b48;
-  --color-nature-green-600: #185938;
-  --color-nature-green-700: #0f512f;
-  --color-nature-green-800: #0a4a29;
-  --color-nature-green-900: #064828; /* documented exact value — interactive/primary/default */
+  --border-subtle: #dddad7;
+  --border-default: #8a7f74;
+  --border-strong: #696158;
+  --border-brand: #639c22;
 
-  /* golden-harvest — anchored at 500 (documented) */
-  --color-golden-harvest-50: #fef9ed;
-  --color-golden-harvest-100: #fcefc9;
-  --color-golden-harvest-200: #f9df94;
-  --color-golden-harvest-300: #f5c85e;
-  --color-golden-harvest-400: #f2b53f;
-  --color-golden-harvest-500: #efa726;
-  --color-golden-harvest-600: #d6890f;
-  --color-golden-harvest-700: #b06d0c;
-  --color-golden-harvest-800: #8a540a;
-  --color-golden-harvest-900: #6b4108;
+  --text-primary: #064828;
+  --text-secondary: #534d46;
+  --text-tertiary: #696158;
+  --text-brand: #385912;
+  --text-on-brand: #ffffff;
+  --text-on-brand-surface: #fcf8f0;
+  --text-disabled: #b0a8a1;
+  --text-warning: #905a09;
+  --text-danger: #a81a19;
+  --text-link: #25669d;
 
-  /* rich-earth — anchored at 700 (documented) */
-  --color-rich-earth-50: #f6efe9;
-  --color-rich-earth-100: #e9d6c7;
-  --color-rich-earth-200: #d3b096;
-  --color-rich-earth-300: #bb8968;
-  --color-rich-earth-400: #a06c47;
-  --color-rich-earth-500: #855530;
-  --color-rich-earth-600: #6e4626;
-  --color-rich-earth-700: #5a3a20; /* documented anchor step */
-  --color-rich-earth-800: #472e19;
-  --color-rich-earth-900: #362313;
+  --interactive-primary: #064828;
+  --interactive-primary-hover: #507e1b;
+  --interactive-primary-disabled: #dddad7;
 
-  /* cream-soil — anchored at 200 (documented) */
-  --color-cream-soil-50: #fdfbf7;
-  --color-cream-soil-100: #f9f2e6;
-  --color-cream-soil-200: #f0e2c8; /* documented anchor step */
-  --color-cream-soil-300: #e3cba0;
-  --color-cream-soil-400: #d3ae70;
-  --color-cream-soil-500: #c4934a;
-  --color-cream-soil-600: #a57838;
-  --color-cream-soil-700: #835f2d;
-  --color-cream-soil-800: #634822;
-  --color-cream-soil-900: #4a3519;
+  --harvest-green-100: #edf7e0;
+  --golden-500: #f2a93b;
+  --rich-earth-700: #804b32;
+  --sky-600: #2f80c4;
 
-  /* field-red — status/error + "Closed" */
-  --color-field-red-50: #fdecec;
-  --color-field-red-100: #f9cccc;
-  --color-field-red-200: #f29e9e;
-  --color-field-red-300: #e96f6f;
-  --color-field-red-400: #dd4848;
-  --color-field-red-500: #cc2e2e;
-  --color-field-red-600: #b32323;
-  --color-field-red-700: #8f1c1c;
-  --color-field-red-800: #6e1515;
-  --color-field-red-900: #4f0f0f;
+  --danger-bg: #fcf0f0;
+  --danger-border: #ed9999;
+  --info-bg: #f1f7fb;
+  --info-border: #a0c6e6;
+  --info-fg: #25669d;
 
-  /* sky — informational accents */
-  --color-sky-50: #eef7fb;
-  --color-sky-100: #d3ecf5;
-  --color-sky-200: #a3d8eb;
-  --color-sky-300: #72c2df;
-  --color-sky-400: #49abd1;
-  --color-sky-500: #2f8fb3;
-  --color-sky-600: #237192;
-  --color-sky-700: #1c5773;
-  --color-sky-800: #163f55;
-  --color-sky-900: #102c3c;
+  /* Availability chips — resolved canonical set (component_drift.md QA
+     pass): Ready = solid green, Producing/Growing = gold w/ secondary
+     text, Planning = solid rich-earth. */
+  --avail-ready-bg: var(--interactive-primary-hover);
+  --avail-ready-border: var(--border-brand);
+  --avail-ready-fg: var(--text-on-brand);
+  --avail-producing-bg: var(--golden-500);
+  --avail-producing-fg: var(--text-secondary);
+  --avail-planning-bg: var(--rich-earth-700);
+  --avail-planning-fg: #ffffff;
 
-  /* neutral — anchored at 50 = #F7F6F5 "Linen" (documented, do not change) */
-  --color-neutral-50: #f7f6f5; /* documented exact value — bg/canvas */
-  --color-neutral-100: #eeece9; /* bg/subtle, bg/sunken */
-  --color-neutral-200: #d9d5cf; /* border/subtle (documented: NOT the old gold cream-soil hairline) */
-  --color-neutral-300: #bdb7ae;
-  --color-neutral-400: #989185;
-  --color-neutral-500: #776f63;
-  --color-neutral-600: #5c554b;
-  --color-neutral-700: #453f38;
-  --color-neutral-800: #2e2a25;
-  --color-neutral-900: #1c1a16;
-
-  --color-base-white: #ffffff;
-  --color-base-black: #000000;
-
-  /* Semantic tokens — Light mode. Ink direction per farmers_design_tokens.md */
-  --bg-canvas: var(--color-neutral-50);
-  --bg-raised: var(--color-base-white);
-  --bg-subtle: var(--color-neutral-100);
-  --bg-sunken: var(--color-neutral-100);
-  --bg-brand: var(--color-nature-green-900);
-
-  --text-primary: var(--color-neutral-900);
-  --text-secondary: var(--color-neutral-600);
-  --text-tertiary: var(--color-neutral-500);
-  --text-inverse: var(--color-base-white);
-  --text-on-brand-surface: var(--color-base-white);
-
-  --interactive-primary-default: var(--color-nature-green-900);
-  --interactive-primary-hover: var(--color-harvest-green-800);
-  --interactive-primary-pressed: var(--color-harvest-green-900);
-  --interactive-accent: var(--color-golden-harvest-500);
-
-  --border-subtle: var(--color-neutral-200);
-  --border-accent: var(--color-golden-harvest-700);
-
-  /* Status — gold is the ONLY solid chip (documented rule: gold = "available now", nothing else on a product row may be solid gold) */
-  --status-ready-bg: var(--color-golden-harvest-500);
-  --status-ready-fg: var(--color-neutral-900);
-  --status-growing-bg: var(--color-harvest-green-100);
-  --status-growing-fg: var(--color-harvest-green-800);
-  --status-planning-bg: var(--color-rich-earth-100);
-  --status-planning-fg: var(--color-rich-earth-800);
-  --status-closed-bg: var(--color-field-red-100);
-  --status-closed-fg: var(--color-field-red-800);
-
-  /* Category tints — 5 families per token doc, /50 step so they sit paler than any status chip */
-  --cat-fruit-veg-bg: var(--color-field-red-50);
-  --cat-fruit-veg-fg: var(--color-field-red-700);
-  --cat-leaf-bg: var(--color-harvest-green-50);
-  --cat-leaf-fg: var(--color-harvest-green-800);
-  --cat-grain-dairy-bg: var(--color-cream-soil-50);
-  --cat-grain-dairy-fg: var(--color-cream-soil-800);
-  --cat-root-honey-bg: var(--color-golden-harvest-50);
-  --cat-root-honey-fg: var(--color-golden-harvest-800);
-  --cat-flower-craft-bg: var(--color-rich-earth-50);
-  --cat-flower-craft-fg: var(--color-rich-earth-800);
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
 }
 
 @theme inline {
   --color-bg-canvas: var(--bg-canvas);
   --color-bg-raised: var(--bg-raised);
   --color-bg-subtle: var(--bg-subtle);
-  --color-bg-sunken: var(--bg-sunken);
-  --color-bg-brand: var(--bg-brand);
+  --color-bg-brand-subtle: var(--bg-brand-subtle);
+  --color-bg-inverse: var(--bg-inverse);
+
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+  --color-border-brand: var(--border-brand);
 
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-tertiary: var(--text-tertiary);
-  --color-text-inverse: var(--text-inverse);
-  --color-text-on-brand-surface: var(--text-on-brand-surface);
+  --color-text-brand: var(--text-brand);
+  --color-text-on-brand: var(--text-on-brand);
+  --color-text-disabled: var(--text-disabled);
+  --color-text-link: var(--text-link);
 
-  --color-interactive-primary: var(--interactive-primary-default);
+  --color-interactive-primary: var(--interactive-primary);
   --color-interactive-primary-hover: var(--interactive-primary-hover);
-  --color-interactive-primary-pressed: var(--interactive-primary-pressed);
-  --color-interactive-accent: var(--interactive-accent);
-
-  --color-border-subtle: var(--border-subtle);
-  --color-border-accent: var(--border-accent);
 
   --font-display: var(--font-fraunces);
   --font-body: var(--font-inter);
@@ -182,5 +96,187 @@
 body {
   background: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-inter), -apple-system, sans-serif;
+}
+
+/* Text styles — copied 1:1 from the tested prototype's type scale */
+.title-l {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 32px;
+  letter-spacing: -0.4px;
+}
+.title-m {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 26px;
+  letter-spacing: -0.2px;
+}
+.body-s {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-secondary);
+}
+.body-s-medium {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-secondary);
+}
+.body-s-strong {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-primary);
+}
+.body-m {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-secondary);
+}
+.body-m-strong {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-primary);
+}
+.caption {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-tertiary);
+}
+.label-caps {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* Buttons — ported 1:1 from the tested prototype's .btn classes */
+.btn {
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+.btn-primary {
+  background: var(--interactive-primary);
+  color: var(--text-on-brand);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--interactive-primary-hover);
+}
+.btn-primary:disabled {
+  background: var(--interactive-primary-disabled);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+.btn-ghost {
+  background: none;
+  color: var(--text-secondary);
+  height: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-ghost:hover,
+.btn-ghost:active,
+.btn-ghost:focus {
+  background: none;
+  outline: none;
+}
+
+/* Fields */
+.field-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+.field {
+  width: 100%;
+  height: 50px;
+  padding: 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-canvas);
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text-primary);
+}
+.field::placeholder {
+  color: var(--text-tertiary);
+}
+.field:focus {
+  outline: none;
+  border-width: 1.5px;
+  border-color: var(--text-primary);
+}
+.field-error {
+  border: 2px solid var(--danger-border);
+  background: var(--danger-bg);
+}
+.hint-error {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-danger);
+  margin-top: 4px;
+}
+
+/* App bar */
+.appbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  justify-content: space-between;
+}
+.appbar .back {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-brand);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  background: none;
+  border: none;
+  text-decoration: none;
+}
+.appbar .titlebar {
+  flex: 1;
+  text-align: center;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 16px;
 }

@@ -5,11 +5,10 @@ import { useRouter } from "next/navigation";
 
 // Ports mapControls() + viewMenuOverlay() from 1.7/2.7/2.9/2.1/2.10. The
 // hamburger opens a small overlay offering Map view / List view — both are
-// now real routes (/ and /map), carrying over whatever cat/open filters are
-// active via `queryString`, same as switching views keeps the prototype's
-// single shared filter state. The filter button carries the active-filter
-// badge count; Filters itself (2.8) is the next group, so it currently just
-// surfaces that.
+// real routes (/ and /map), carrying over whatever filters are active via
+// `queryString`, same as switching views keeps the prototype's single
+// shared filter state. The filter button opens /filters (2.8) with that
+// same state, tagged with `from` so it knows which view to return to.
 export function MapControls({
   filterCount,
   view,
@@ -21,16 +20,16 @@ export function MapControls({
 }) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [note, setNote] = useState<string | null>(null);
-
-  function flash(msg: string) {
-    setNote(msg);
-    setTimeout(() => setNote(null), 1800);
-  }
 
   function goView(target: "list" | "map") {
     setMenuOpen(false);
     if (target !== view) router.push(`${target === "list" ? "/" : "/map"}${queryString}`);
+  }
+
+  function openFilters() {
+    const params = new URLSearchParams(queryString.replace(/^\?/, ""));
+    params.set("from", view);
+    router.push(`/filters?${params.toString()}`);
   }
 
   return (
@@ -54,7 +53,7 @@ export function MapControls({
           ☰
         </div>
         <div
-          onClick={() => flash("Filters are coming soon")}
+          onClick={openFilters}
           style={{
             width: 44,
             height: 44,
@@ -95,25 +94,6 @@ export function MapControls({
           )}
         </div>
       </div>
-
-      {note && (
-        <div
-          style={{
-            position: "absolute",
-            top: 52,
-            right: 0,
-            background: "var(--text-primary)",
-            color: "#fff",
-            borderRadius: 8,
-            padding: "8px 12px",
-            fontSize: 13,
-            whiteSpace: "nowrap",
-            zIndex: 72,
-          }}
-        >
-          {note}
-        </div>
-      )}
 
       {menuOpen && (
         <>

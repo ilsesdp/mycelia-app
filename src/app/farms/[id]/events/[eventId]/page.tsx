@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppBar } from "@/components/ui/AppBar";
 import { BottomNav } from "@/components/browse/BottomNav";
-import { Icon } from "@/components/farm/Icon";
+import { Icon } from "@/components/ui/Icon";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { AddToCalendarButton } from "@/components/farm/AddToCalendarButton";
 

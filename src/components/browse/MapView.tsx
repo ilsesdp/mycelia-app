@@ -7,8 +7,10 @@ import { MapLegend } from "./MapLegend";
 import { MapControls } from "./MapControls";
 import { BottomNav } from "./BottomNav";
 import { FarmPinSheet, type FarmSheetData } from "./FarmPinSheet";
+import { FiltersEmptyState } from "./FiltersEmptyState";
+import { Icon } from "@/components/ui/Icon";
 import { pinPosition } from "@/lib/mapPins";
-import { buildBrowseQuery } from "@/lib/queryString";
+import { activeFilterChips, buildBrowseQuery, type BrowseFilters } from "@/lib/filters";
 
 export type MapPinInput = Omit<MapPin, "xPct" | "yPct">;
 
@@ -19,13 +21,13 @@ export type MapPinInput = Omit<MapPin, "xPct" | "yPct">;
 // the map, same as the prototype) instead of navigating away.
 export function MapView({
   pins,
-  activeFilters,
+  filters,
   loggedIn,
   loadError,
   sheet,
 }: {
   pins: MapPinInput[];
-  activeFilters: { categories: string[]; openOnly: boolean };
+  filters: BrowseFilters;
   loggedIn: boolean;
   loadError: string | null;
   sheet: FarmSheetData | null;
@@ -40,8 +42,9 @@ export function MapView({
     return !q || p.name.toLowerCase().includes(q);
   });
 
-  const chips = [...activeFilters.categories, ...(activeFilters.openOnly ? ["Open now"] : [])];
-  const qs = buildBrowseQuery(activeFilters.categories, activeFilters.openOnly);
+  const chips = activeFilterChips(filters);
+  const filtered = chips.length > 0;
+  const qs = buildBrowseQuery(filters);
 
   function tapPin(p: MapPin) {
     if (p.kind === "market") {
@@ -55,6 +58,36 @@ export function MapView({
 
   function closeSheet() {
     router.push(`/map${qs}`);
+  }
+
+  // Ports the prototype's go('2.12') redirect: when the active filters
+  // alone leave nothing to show, this renders the same dedicated empty
+  // screen the list view falls back to, rather than an empty map.
+  if (filtered && positioned.length === 0 && !sheet) {
+    return (
+      <main className="flex flex-col min-h-screen">
+        <div className="px-4 pt-4 pb-3 flex flex-col gap-3">
+          <div
+            className="flex items-center gap-2 h-12 rounded-lg px-3"
+            style={{ border: "1px solid var(--border-default)", background: "var(--bg-canvas)" }}
+          >
+            <span style={{ color: "var(--text-tertiary)", display: "flex" }}>
+              <Icon name="search" size={18} />
+            </span>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search a farm or market…"
+              className="flex-1 min-w-0 bg-transparent outline-none body-s"
+              style={{ color: "var(--text-primary)" }}
+            />
+          </div>
+          <MapControls filterCount={chips.length} view="map" queryString={qs} />
+        </div>
+        <FiltersEmptyState chips={chips} view="map" />
+        <BottomNav active="Map" loggedIn={loggedIn} />
+      </main>
+    );
   }
 
   return (

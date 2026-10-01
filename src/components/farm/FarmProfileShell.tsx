@@ -49,7 +49,7 @@ export function FarmProfileShell({
           )}
         </div>
         <div className="px-4" style={{ position: "relative" }}>
-          <MessageAction variant="corner" farmName={farm.name} />
+          <MessageAction variant="corner" farmId={farm.id} farmName={farm.name} loggedIn={loggedIn} />
 
           <div style={{ height: 16 }} />
           <div className="title-l" style={{ color: "var(--text-primary)" }}>

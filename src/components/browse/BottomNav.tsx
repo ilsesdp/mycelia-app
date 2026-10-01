@@ -12,10 +12,9 @@ const TABS = [
 // Ports navBar3(). "Map" always goes to the real map (2.1), same as the
 // prototype's navBar3 ['Map','2.1'] — the list view (2.7/2.9) is reached via
 // the view-switch menu on the map, or stays wherever a visitor already is.
-// Messages (group 4) and My Farm (group 5) aren't built yet, so they
-// surface an inline "coming soon" note instead of a dead link. Profile does
-// route logged-out visitors to /welcome, since that's a real and useful
-// destination for that tap today.
+// Messages now routes to the real inbox. Profile routes logged-out visitors
+// to /welcome, same as before; a logged-in Profile/My Farm dashboard (group
+// 5) still isn't built, so that tap keeps the inline "coming soon" note.
 export function BottomNav({ active, loggedIn }: { active: "Map" | "Messages" | "Profile"; loggedIn: boolean }) {
   const router = useRouter();
   const [note, setNote] = useState<string | null>(null);
@@ -25,11 +24,15 @@ export function BottomNav({ active, loggedIn }: { active: "Map" | "Messages" | "
       router.push("/map");
       return;
     }
-    if (label === "Profile" && !loggedIn) {
+    if (!loggedIn) {
       router.push("/welcome");
       return;
     }
-    setNote(`${label === "Messages" ? "Messages" : "My Farm"} is coming soon`);
+    if (label === "Messages") {
+      router.push("/messages");
+      return;
+    }
+    setNote("My Farm is coming soon");
     setTimeout(() => setNote(null), 1800);
   }
 

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getFarmHeader, resolveBackHref } from "@/lib/farmProfile";
 import { FarmProfileShell } from "@/components/farm/FarmProfileShell";
-import { Icon } from "@/components/farm/Icon";
+import { Icon } from "@/components/ui/Icon";
 
 function fmtEventDate(key: string): string {
   const [y, m, d] = key.split("-").map(Number);

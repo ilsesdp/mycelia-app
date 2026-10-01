@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { resolveBackHref } from "@/lib/farmProfile";
 import { AppBar } from "@/components/ui/AppBar";
 import { BottomNav } from "@/components/browse/BottomNav";
-import { Icon } from "@/components/farm/Icon";
+import { Icon } from "@/components/ui/Icon";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 
 // Ports SCREENS['2.11'] — the market page a map pin or the Events tab's

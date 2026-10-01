@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "./Icon";
+import { Icon } from "@/components/ui/Icon";
 
 // Ports openDirections() — opens real Google Maps directions in a new tab;
 // no address on file yet shows a toast instead of a dead link.

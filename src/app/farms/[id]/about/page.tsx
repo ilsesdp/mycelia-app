@@ -50,7 +50,7 @@ export default async function FarmAboutPage({ params, searchParams }: PageProps<
         </p>
       )}
       <div style={{ height: 8 }} />
-      <MessageAction variant="button" farmName={farm.name} />
+      <MessageAction variant="button" farmId={farm.id} farmName={farm.name} loggedIn={!!user} />
     </FarmProfileShell>
   );
 }

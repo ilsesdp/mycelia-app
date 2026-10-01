@@ -11,7 +11,21 @@ const SHARED = {
   strokeLinejoin: "round" as const,
 };
 
-export type IconName = "pin" | "cam" | "directions" | "msg" | "search" | "lock" | "basket" | "clock" | "close";
+export type IconName =
+  | "pin"
+  | "cam"
+  | "directions"
+  | "msg"
+  | "search"
+  | "lock"
+  | "basket"
+  | "clock"
+  | "close"
+  | "pencil"
+  | "bell"
+  | "user"
+  | "help"
+  | "info";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const props = { ...SHARED, width: size, height: size };
@@ -74,6 +88,43 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
       return (
         <svg {...props}>
           <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      );
+    case "pencil":
+      return (
+        <svg {...props}>
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+        </svg>
+      );
+    case "bell":
+      return (
+        <svg {...props}>
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+        </svg>
+      );
+    case "user":
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="8" r="3.6" />
+          <path d="M4.5 20c1.2-4 4-6 7.5-6s6.3 2 7.5 6" />
+        </svg>
+      );
+    case "help":
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M9.2 9a2.8 2.8 0 1 1 3.9 2.6c-.9.4-1.6 1-1.6 2.1v.4" />
+          <circle cx="12" cy="17.2" r="0.9" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case "info":
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 11v5" />
+          <circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none" />
         </svg>
       );
   }

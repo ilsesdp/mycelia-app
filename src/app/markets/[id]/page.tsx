@@ -7,6 +7,7 @@ import { BottomNav } from "@/components/browse/BottomNav";
 import { Icon } from "@/components/ui/Icon";
 import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
+import { PhotoCarousel } from "@/components/ui/PhotoCarousel";
 
 // Ports SCREENS['2.11'] — the market page a map pin or the Events tab's
 // "Also find us at" row opens. "Going this Saturday" lists the real farms
@@ -25,12 +26,13 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: market }, { data: farmMarkets }] = await Promise.all([
+  const [{ data: market }, { data: farmMarkets }, { data: marketPhotos }] = await Promise.all([
     supabase.from("markets").select("id, name, location, schedule_text, lat, lng").eq("id", id).maybeSingle(),
     supabase
       .from("farm_markets")
       .select("farms ( id, name, published, farm_categories ( category ) )")
       .eq("market_id", id),
+    supabase.from("market_photos").select("id, url").eq("market_id", id).order("sort_order"),
   ]);
 
   if (!market) notFound();
@@ -42,7 +44,7 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
   return (
     <main className="flex flex-col min-h-screen" style={{ paddingBottom: 70 }}>
       <AppBar backHref={resolveBackHref(sp.from)} />
-      <div className="hero" />
+      <PhotoCarousel photos={marketPhotos ?? []} />
       <div className="px-4" style={{ flex: 1 }}>
         <div style={{ height: 16 }} />
         <div className="title-l" style={{ color: "var(--text-primary)" }}>

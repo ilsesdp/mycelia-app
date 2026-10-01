@@ -109,6 +109,13 @@ export async function publishFarm(state: OnboardingState, userId: string) {
     if (error) throw new Error(error.message);
   }
 
+  for (const [marketId, files] of Object.entries(state.marketPhotoFiles)) {
+    for (const [i, file] of files.entries()) {
+      const url = await uploadPhoto(supabase, farmId, `markets/${marketId}/${i}`, file);
+      if (url) await supabase.from("market_photos").insert({ market_id: marketId, url, sort_order: i });
+    }
+  }
+
   if (state.contactName || state.contactEmail || state.contactPhone) {
     const { error } = await supabase
       .from("profiles")

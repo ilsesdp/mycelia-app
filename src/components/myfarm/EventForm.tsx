@@ -3,22 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
-import { PhotoWell } from "@/components/ui/PhotoWell";
+import { PhotoWellMulti } from "@/components/ui/PhotoWellMulti";
 import { ConfirmSheet } from "@/components/settings/ConfirmSheet";
 import { createClient } from "@/lib/supabase/client";
 import type { EventRow } from "@/lib/myFarm";
 
-type Draft = { name: string; date: string; startsAt: string; endsAt: string; notes: string; photoPreview: string | null };
+type Draft = { name: string; date: string; startsAt: string; endsAt: string; notes: string };
+type ExistingPhoto = { id: string; url: string };
+type NewPhoto = { key: string; file: File; preview: string };
 
 function draftFromEvent(ev: EventRow): Draft {
-  return { name: ev.name, date: ev.event_date, startsAt: ev.starts_at ?? "", endsAt: ev.ends_at ?? "", notes: ev.notes ?? "", photoPreview: ev.photo_url };
+  return { name: ev.name, date: ev.event_date, startsAt: ev.starts_at ?? "", endsAt: ev.ends_at ?? "", notes: ev.notes ?? "" };
 }
-const EMPTY: Draft = { name: "", date: "", startsAt: "", endsAt: "", notes: "", photoPreview: null };
+const EMPTY: Draft = { name: "", date: "", startsAt: "", endsAt: "", notes: "" };
 
-async function uploadEventPhoto(supabase: ReturnType<typeof createClient>, farmId: string, eventId: string, file: File): Promise<string | null> {
+async function uploadEventPhoto(supabase: ReturnType<typeof createClient>, farmId: string, eventId: string, index: number, file: File): Promise<string | null> {
   const ext = file.name.split(".").pop() || "jpg";
-  const key = `${farmId}/events/${eventId}.${ext}`;
-  const { error } = await supabase.storage.from("farm-photos").upload(key, file, { upsert: true });
+  const key = `${farmId}/events/${eventId}/${index}-${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from("farm-photos").upload(key, file);
   if (error) return null;
   return supabase.storage.from("farm-photos").getPublicUrl(key).data.publicUrl;
 }
@@ -27,12 +29,21 @@ async function uploadEventPhoto(supabase: ReturnType<typeof createClient>, farmI
 // sheet over this form). The prototype's custom calendar-grid dropdown for
 // "What day is it?" is a native date input here — same real date, a plainer
 // control; worth a design pass if Ilse wants the inline calendar back.
-export function EventForm({ farmId, event, backTo }: { farmId: string; event: EventRow | null; backTo: string }) {
+//
+// The hero on the event detail page (2.13) is a carousel, so this form
+// manages a set of photos rather than one: `photos` is what's already saved
+// (edit mode), newly-picked files are queued in memory and only uploaded
+// (and only then written to event_photos) once Save is pressed, and a
+// removed existing photo is deleted from both storage bookkeeping and
+// event_photos at the same time.
+export function EventForm({ farmId, event, photos, backTo }: { farmId: string; event: EventRow | null; photos: ExistingPhoto[]; backTo: string }) {
   const supabase = createClient();
   const router = useRouter();
   const isEdit = !!event;
   const [draft, setDraft] = useState<Draft>(event ? draftFromEvent(event) : EMPTY);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [existingPhotos, setExistingPhotos] = useState<ExistingPhoto[]>(photos);
+  const [removedPhotoIds, setRemovedPhotoIds] = useState<string[]>([]);
+  const [newPhotos, setNewPhotos] = useState<NewPhoto[]>([]);
   const [saving, setSaving] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -49,8 +60,7 @@ export function EventForm({ farmId, event, backTo }: { farmId: string; event: Ev
     if (!canSave || saving) return;
     setSaving(true);
     const eventId = event?.id ?? crypto.randomUUID();
-    let photoUrl = draft.photoPreview;
-    if (photoFile) photoUrl = await uploadEventPhoto(supabase, farmId, eventId, photoFile);
+
     await supabase.from("events").upsert({
       id: eventId,
       farm_id: farmId,
@@ -59,8 +69,18 @@ export function EventForm({ farmId, event, backTo }: { farmId: string; event: Ev
       starts_at: draft.startsAt || null,
       ends_at: draft.endsAt || null,
       notes: draft.notes || null,
-      photo_url: photoUrl,
     });
+
+    if (removedPhotoIds.length) {
+      await supabase.from("event_photos").delete().in("id", removedPhotoIds);
+    }
+
+    const baseOrder = existingPhotos.length;
+    for (const [i, p] of newPhotos.entries()) {
+      const url = await uploadEventPhoto(supabase, farmId, eventId, baseOrder + i, p.file);
+      if (url) await supabase.from("event_photos").insert({ event_id: eventId, url, sort_order: baseOrder + i });
+    }
+
     setSaving(false);
     router.push(backHref);
   }
@@ -117,17 +137,26 @@ export function EventForm({ farmId, event, backTo }: { farmId: string; event: Ev
         <textarea className="field" style={{ height: 60 }} placeholder="What to expect, what to bring, where to park" value={draft.notes} onChange={(e) => patch({ notes: e.target.value })} />
 
         <div style={{ height: 20 }} />
-        <PhotoWell
-          preview={draft.photoPreview}
-          label="Add a photo of the event"
-          variant="row"
-          onPick={(file) => {
-            setPhotoFile(file);
-            patch({ photoPreview: URL.createObjectURL(file) });
-          }}
-          onRemove={() => {
-            setPhotoFile(null);
-            patch({ photoPreview: null });
+        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+          Photos
+        </div>
+        <div style={{ height: 8 }} />
+        <PhotoWellMulti
+          photos={[
+            ...existingPhotos.map((p) => ({ key: p.id, url: p.url })),
+            ...newPhotos.map((p) => ({ key: p.key, url: p.preview })),
+          ]}
+          label="Add photos of the event"
+          onAdd={(files) =>
+            setNewPhotos((ps) => [...ps, ...files.map((file) => ({ key: crypto.randomUUID(), file, preview: URL.createObjectURL(file) }))])
+          }
+          onRemove={(key) => {
+            if (existingPhotos.some((p) => p.id === key)) {
+              setExistingPhotos((ps) => ps.filter((p) => p.id !== key));
+              setRemovedPhotoIds((ids) => [...ids, key]);
+            } else {
+              setNewPhotos((ps) => ps.filter((p) => p.key !== key));
+            }
           }}
         />
 

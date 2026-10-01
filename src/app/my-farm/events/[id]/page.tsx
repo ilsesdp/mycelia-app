@@ -17,13 +17,23 @@ export default async function EditEventPage({ params, searchParams }: PageProps<
   const farmId = await getMyFarmId(supabase, user.id);
   if (!farmId) redirect("/settings");
 
-  const { data: event } = await supabase
-    .from("events")
-    .select("id, name, event_date, starts_at, ends_at, notes, photo_url")
-    .eq("id", id)
-    .eq("farm_id", farmId)
-    .maybeSingle();
+  const [{ data: event }, { data: eventPhotos }] = await Promise.all([
+    supabase
+      .from("events")
+      .select("id, name, event_date, starts_at, ends_at, notes, photo_url")
+      .eq("id", id)
+      .eq("farm_id", farmId)
+      .maybeSingle(),
+    supabase.from("event_photos").select("id, url").eq("event_id", id).order("sort_order"),
+  ]);
   if (!event) notFound();
 
-  return <EventForm farmId={farmId} event={event as EventRow} backTo={typeof sp.backTo === "string" ? sp.backTo : "events"} />;
+  return (
+    <EventForm
+      farmId={farmId}
+      event={event as EventRow}
+      photos={eventPhotos ?? []}
+      backTo={typeof sp.backTo === "string" ? sp.backTo : "events"}
+    />
+  );
 }

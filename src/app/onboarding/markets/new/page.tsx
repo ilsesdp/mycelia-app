@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
-import { PhotoWell } from "@/components/ui/PhotoWell";
+import { PhotoWellMulti } from "@/components/ui/PhotoWellMulti";
 import { ComboField } from "@/components/ui/ComboField";
 import { useOnboarding, type MarketDraft } from "@/lib/onboarding/context";
 import { createClient } from "@/lib/supabase/client";
@@ -29,8 +29,10 @@ const HOURS_OPTIONS = [
 ];
 
 function emptyDraft(): MarketDraft {
-  return { name: "", location: "", day: "", hours: "", photoFile: null, photoPreview: null };
+  return { name: "", location: "", day: "", hours: "" };
 }
+
+type NewPhoto = { key: string; file: File; preview: string };
 
 // Ports SCREENS['1.17']. The prototype pushes onto an in-memory MARKETS
 // array; this inserts a real row into public.markets (authenticated-insert
@@ -41,6 +43,7 @@ export default function NewMarketPage() {
   const { state, update } = useOnboarding();
   const supabase = createClient();
   const [draft, setDraft] = useState<MarketDraft>(emptyDraft());
+  const [photos, setPhotos] = useState<NewPhoto[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,8 +69,13 @@ export default function NewMarketPage() {
     // so the picker's server-side fetch will list it on its own next
     // render — only the selection needs tracking here. (Keeping a second,
     // locally-rendered copy alongside that fetch was what caused the new
-    // market to show up twice.)
-    update({ selectedMarketIds: [...state.selectedMarketIds, data.id] });
+    // market to show up twice.) Any photos picked here can't be uploaded
+    // yet — there's no farm id until publishFarm() creates one — so they
+    // ride along in marketPhotoFiles and get uploaded then.
+    update({
+      selectedMarketIds: [...state.selectedMarketIds, data.id],
+      marketPhotoFiles: { ...state.marketPhotoFiles, [data.id]: photos.map((p) => p.file) },
+    });
     router.push("/onboarding/markets");
   }
 
@@ -113,12 +121,15 @@ export default function NewMarketPage() {
           </div>
         </div>
         <div style={{ height: 20 }} />
-        <PhotoWell
-          preview={draft.photoPreview}
-          label="Add a photo of the market"
-          variant="row"
-          onPick={(file) => patch({ photoFile: file, photoPreview: URL.createObjectURL(file) })}
-          onRemove={() => patch({ photoFile: null, photoPreview: null })}
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+          Photos
+        </label>
+        <div style={{ height: 8 }} />
+        <PhotoWellMulti
+          photos={photos.map((p) => ({ key: p.key, url: p.preview }))}
+          label="Add photos of the market"
+          onAdd={(files) => setPhotos((ps) => [...ps, ...files.map((file) => ({ key: crypto.randomUUID(), file, preview: URL.createObjectURL(file) }))])}
+          onRemove={(key) => setPhotos((ps) => ps.filter((p) => p.key !== key))}
         />
         {error && <p className="hint-error">{error}</p>}
         <div style={{ flex: 1 }} />

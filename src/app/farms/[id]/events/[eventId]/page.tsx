@@ -5,6 +5,7 @@ import { BottomNav } from "@/components/browse/BottomNav";
 import { Icon } from "@/components/ui/Icon";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { AddToCalendarButton } from "@/components/farm/AddToCalendarButton";
+import { PhotoCarousel } from "@/components/ui/PhotoCarousel";
 
 function fmtEventDate(key: string): string {
   const [y, m, d] = key.split("-").map(Number);
@@ -34,9 +35,10 @@ export default async function EventDetailPage({ params }: PageProps<"/farms/[id]
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: farm }, { data: event }] = await Promise.all([
+  const [{ data: farm }, { data: event }, { data: eventPhotos }] = await Promise.all([
     supabase.from("farms").select("name, address").eq("id", id).eq("published", true).maybeSingle(),
     supabase.from("events").select("name, event_date, starts_at, ends_at, notes").eq("id", eventId).eq("farm_id", id).maybeSingle(),
+    supabase.from("event_photos").select("id, url").eq("event_id", eventId).order("sort_order"),
   ]);
 
   if (!farm || !event) notFound();
@@ -46,7 +48,7 @@ export default async function EventDetailPage({ params }: PageProps<"/farms/[id]
   return (
     <main className="flex flex-col min-h-screen" style={{ paddingBottom: 70 }}>
       <AppBar backHref={`/farms/${id}/events`} />
-      <div className="hero" />
+      <PhotoCarousel photos={eventPhotos ?? []} />
       <div className="px-4" style={{ flex: 1 }}>
         <div style={{ height: 16 }} />
         <div className="title-l" style={{ color: "var(--text-primary)" }}>

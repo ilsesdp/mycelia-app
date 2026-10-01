@@ -24,8 +24,6 @@ export type MarketDraft = {
   location: string;
   day: string;
   hours: string;
-  photoFile: File | null;
-  photoPreview: string | null;
 };
 
 export type DayHours = { open: string; close: string; closed: boolean };
@@ -62,6 +60,12 @@ export type OnboardingState = {
   // 1.10/1.17 — markets (2c) — ids of DB markets picked, plus any drafted here
   selectedMarketIds: string[];
   addedMarkets: MarketDraft[];
+  // Photos picked for a market created during onboarding, keyed by that
+  // market's (already-real) id — the farm row these need to be uploaded
+  // under doesn't exist until publishFarm() creates it, so the files just
+  // wait here in memory until then (same deferred-upload story as the
+  // farm's own cover/product photos).
+  marketPhotoFiles: Record<string, File[]>;
 
   // 1.11 — reach preferences (2c)
   contactName: string;
@@ -91,6 +95,7 @@ function initialState(): OnboardingState {
     hoursMode: null,
     selectedMarketIds: [],
     addedMarkets: [],
+    marketPhotoFiles: {},
     contactName: "",
     contactEmail: "",
     contactPhone: "",

@@ -15,5 +15,5 @@ export default async function AddEventPage({ searchParams }: PageProps<"/my-farm
   const farmId = await getMyFarmId(supabase, user.id);
   if (!farmId) redirect("/settings");
 
-  return <EventForm farmId={farmId} event={null} backTo={typeof sp.backTo === "string" ? sp.backTo : "events"} />;
+  return <EventForm farmId={farmId} event={null} photos={[]} backTo={typeof sp.backTo === "string" ? sp.backTo : "events"} />;
 }

@@ -688,6 +688,117 @@ body {
   color: var(--avail-planning-fg);
 }
 
+/* My Farm (owner tools, group 4) — ports status-pill-owner, owner-icon-btn,
+   avail-card, product-row/.thumb, empty-icon-ring, toast, title-s and
+   field.short from the prototype's own CSS 1:1. */
+.title-s {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: -0.2px;
+}
+.field.short {
+  height: 48px;
+}
+.status-pill-owner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  cursor: pointer;
+}
+.status-pill-owner .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--interactive-primary-hover);
+}
+.owner-icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
+.avail-card {
+  width: 150px;
+  flex-shrink: 0;
+}
+.avail-card .photo {
+  width: 150px;
+  height: 108px;
+  border-radius: 16px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+.avail-card .photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.product-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-canvas);
+  cursor: pointer;
+}
+.product-row .thumb {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border-subtle);
+  flex-shrink: 0;
+}
+.empty-icon-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+}
+.toast {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 96px;
+  background: var(--interactive-primary);
+  color: #fff;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+}
+.toast-info {
+  background: var(--sky-600) !important;
+  color: var(--text-on-brand-surface) !important;
+}
+
 /* Visibility pill (contact/privacy rows) */
 .visibility-pill {
   height: 32px;

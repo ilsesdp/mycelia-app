@@ -25,7 +25,13 @@ export type IconName =
   | "bell"
   | "user"
   | "help"
-  | "info";
+  | "info"
+  | "eye"
+  | "gear"
+  | "calendar"
+  | "facebook"
+  | "instagram"
+  | "website";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const props = { ...SHARED, width: size, height: size };
@@ -125,6 +131,49 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
           <circle cx="12" cy="12" r="9" />
           <path d="M12 11v5" />
           <circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case "eye":
+      return (
+        <svg {...props}>
+          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      );
+    case "gear":
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 3v2.4M12 18.6V21M4.6 6.3l1.7 1.4M17.7 16.3l1.7 1.4M3 12h2.4M18.6 12H21M4.6 17.7l1.7-1.4M17.7 7.7l1.7-1.4" />
+        </svg>
+      );
+    case "calendar":
+      return (
+        <svg {...props}>
+          <rect x="3.5" y="5.5" width="17" height="15" rx="2" />
+          <path d="M3.5 10h17M8 3.5v4M16 3.5v4" />
+        </svg>
+      );
+    case "facebook":
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M14 16.5v-5h2l.4-2.4H14v-1.5c0-.7.3-1.2 1.3-1.2H16.5V4c-.3 0-1.2-.1-2.1-.1-2.1 0-3.5 1.3-3.5 3.6v1.6H9v2.4h1.9v5" />
+        </svg>
+      );
+    case "instagram":
+      return (
+        <svg {...props}>
+          <rect x="4" y="4" width="16" height="16" rx="5" />
+          <circle cx="12" cy="12" r="3.4" />
+          <circle cx="16.3" cy="7.7" r="0.6" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case "website":
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3a15.3 15.3 0 0 1 0 18M12 3a15.3 15.3 0 0 0 0 18" />
         </svg>
       );
   }

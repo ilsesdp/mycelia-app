@@ -35,6 +35,12 @@ export default async function FarmAboutPage({ params, searchParams }: PageProps<
 
   return (
     <FarmProfileShell farm={farm} activeTab="About" backHref={resolveBackHref(sp.from)} loggedIn={!!user}>
+      <div className="label-caps">Your story</div>
+      <div style={{ height: 10 }} />
+      <p className="body-m" style={{ lineHeight: "20px" }}>
+        {farm.about || "This farm hasn't shared their story yet."}
+      </p>
+      <div style={{ height: 20 }} />
       <div className="label-caps">Hours</div>
       <div style={{ height: 8 }} />
       <HoursBox hours={hours ?? []} />

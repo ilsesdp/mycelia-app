@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { catBg, catFg } from "@/lib/categoryStyle";
 import { createClient } from "@/lib/supabase/client";
@@ -13,6 +14,15 @@ import { publishFarm } from "@/lib/onboarding/publish";
 type Product = ProductDraft & { id: string };
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const DAY_FULL: Record<string, string> = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday",
+};
 const ORDER: ProductDraft["availability"][] = ["Ready now", "Producing", "Planning"];
 
 function availClass(a: ProductDraft["availability"]) {
@@ -42,19 +52,7 @@ export default function PreviewPage() {
   const [tab, setTab] = useState<"Products" | "About" | "Events">("Products");
   const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [marketNames, setMarketNames] = useState<string[]>([]);
   const [msgNote, setMsgNote] = useState(false);
-
-  useEffect(() => {
-    if (!state.selectedMarketIds.length) return;
-    const supabase = createClient();
-    supabase
-      .from("markets")
-      .select("name")
-      .in("id", state.selectedMarketIds)
-      .then(({ data }) => setMarketNames((data ?? []).map((m) => m.name)));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.selectedMarketIds.join(",")]);
 
   const grouped: Partial<Record<ProductDraft["availability"], Product[]>> = {};
   for (const p of state.products) (grouped[p.availability] ||= []).push(p);
@@ -209,8 +207,10 @@ export default function PreviewPage() {
           </>
         ) : tab === "About" ? (
           <>
-            <p className="body-s" style={{ lineHeight: "20px" }}>
-              {state.farmAbout || "Add a bio on your profile to tell people about your farm."}
+            <div className="label-caps">Your story</div>
+            <div style={{ height: 10 }} />
+            <p className="body-m" style={{ lineHeight: "20px" }}>
+              {state.farmAbout || "This farm hasn't shared their story yet."}
             </p>
             <div style={{ height: 20 }} />
             <div className="label-caps">Hours</div>
@@ -220,31 +220,44 @@ export default function PreviewPage() {
                 const h = state.hours[d];
                 return (
                   <div key={d} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: i < DAYS.length - 1 ? "1px solid var(--border-subtle)" : "none" }}>
-                    <span className="body-m" style={{ color: "var(--text-primary)" }}>{d}</span>
+                    <span className="body-m" style={{ color: "var(--text-primary)" }}>{DAY_FULL[d]}</span>
                     <span className="body-m">{h.closed ? "Closed" : `${h.open} – ${h.close}`}</span>
                   </div>
                 );
               })}
             </div>
+            <div style={{ height: 16 }} />
+            <DirectionsButton address={state.farmAddress || null} />
             <div style={{ height: 24 }} />
             <div className="label-caps">Contact</div>
+            {(() => {
+              const showEmail = !!state.contactEmail && state.emailVisibility === "Everyone";
+              const showPhone = !!state.contactPhone && state.phoneVisibility === "Everyone";
+              if (!showEmail && !showPhone) {
+                return (
+                  <p className="body-s" style={{ color: "var(--text-tertiary)" }}>
+                    This farm hasn&apos;t shared contact details here.
+                  </p>
+                );
+              }
+              return (
+                <>
+                  {showEmail && <p className="body-s">{state.contactEmail}</p>}
+                  {showPhone && <p className="body-s">{state.contactPhone}</p>}
+                </>
+              );
+            })()}
             <div style={{ height: 8 }} />
-            {state.contactName && <p className="body-s">{state.contactName}</p>}
-            {state.contactEmail && <p className="body-s">{state.contactEmail}</p>}
-            {state.contactPhone && <p className="body-s">{state.contactPhone}</p>}
-            {!state.contactEmail && !state.contactPhone && <p className="caption">No contact info added yet.</p>}
-            <div style={{ height: 24 }} />
-            <div className="label-caps">Markets</div>
-            <div style={{ height: 8 }} />
-            {marketNames.length ? (
-              marketNames.map((name) => (
-                <p key={name} className="body-s">
-                  {name}
-                </p>
-              ))
-            ) : (
-              <p className="caption">No markets selected yet.</p>
-            )}
+            <button
+              className="btn btn-primary"
+              style={{ width: "100%" }}
+              onClick={() => {
+                setMsgNote(true);
+                setTimeout(() => setMsgNote(false), 2000);
+              }}
+            >
+              {msgNote ? "Can't message own farm" : `Message ${state.farmName || "this farm"}`}
+            </button>
           </>
         ) : (
           <>

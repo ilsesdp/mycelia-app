@@ -15,9 +15,9 @@ export const CATEGORY_OPTIONS: Category[] = [
   "Honey",
   "Flowers",
   "Herbs",
-  "Meat",
+  "Hand Crafts",
   "Baked goods",
-  "Fiber",
+  "Seeds",
 ];
 
 export const DISTANCE_OPTIONS = ["5 mi", "15 mi", "30 mi"] as const;

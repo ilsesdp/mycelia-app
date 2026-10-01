@@ -5,8 +5,25 @@ import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { PhotoWell } from "@/components/ui/PhotoWell";
+import { ComboField } from "@/components/ui/ComboField";
 import { useOnboarding, type MarketDraft } from "@/lib/onboarding/context";
 import { createClient } from "@/lib/supabase/client";
+
+const DAY_OPTIONS = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays", "Weekends", "Daily"];
+const HOURS_OPTIONS = [
+  "7am – 12pm",
+  "7am – 1pm",
+  "8am – 1pm",
+  "8am – 2pm",
+  "9am – 1pm",
+  "9am – 2pm",
+  "9am – 3pm",
+  "10am – 2pm",
+  "10am – 3pm",
+  "12pm – 5pm",
+  "3pm – 7pm",
+  "All day",
+];
 
 function emptyDraft(): MarketDraft {
   return { name: "", location: "", day: "", hours: "", photoFile: null, photoPreview: null };
@@ -83,13 +100,13 @@ export default function NewMarketPage() {
             <div className="caption" style={{ marginBottom: 4 }}>
               Day
             </div>
-            <input className="field" placeholder="Saturdays" value={draft.day} onChange={(e) => patch({ day: e.target.value })} />
+            <ComboField options={DAY_OPTIONS} placeholder="Saturdays" value={draft.day} onChange={(v) => patch({ day: v })} />
           </div>
           <div style={{ flex: 1 }}>
             <div className="caption" style={{ marginBottom: 4 }}>
               Hours
             </div>
-            <input className="field" placeholder="8am – 1pm" value={draft.hours} onChange={(e) => patch({ hours: e.target.value })} />
+            <ComboField options={HOURS_OPTIONS} placeholder="8am – 1pm" value={draft.hours} onChange={(v) => patch({ hours: v })} />
           </div>
         </div>
         <div style={{ height: 20 }} />

@@ -22,9 +22,9 @@ const CATEGORIES: Category[] = [
   "Honey",
   "Flowers",
   "Herbs",
-  "Meat",
+  "Hand Crafts",
   "Baked goods",
-  "Fiber",
+  "Seeds",
 ];
 
 export default function CategoriesPage() {

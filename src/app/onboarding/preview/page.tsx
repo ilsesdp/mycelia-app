@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { catBg, catFg } from "@/lib/categoryStyle";
 import { createClient } from "@/lib/supabase/client";
@@ -85,12 +86,12 @@ export default function PreviewPage() {
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/contact" title="Preview" />
       <div style={{ background: "var(--info-bg)", padding: "12px 24px", fontSize: 14, display: "flex", gap: 8, color: "var(--info-fg)" }}>
-        <span>👁</span>
+        <Icon name="eye" size={18} />
         <span>This is what everyone else will see. Nothing is public until you publish.</span>
       </div>
       <div style={{ height: 140, background: "linear-gradient(180deg,#7e9b52,#4e6b35,#3a5228)" }} />
       <div className="px-6 pt-4" style={{ paddingBottom: 100, flex: 1, position: "relative" }}>
-        <div style={{ position: "absolute", right: 24, top: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: 56 }}>
+        <div style={{ position: "absolute", right: 24, top: 20, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: 56 }}>
           <div
             onClick={() => {
               setMsgNote(true);
@@ -109,7 +110,7 @@ export default function PreviewPage() {
               color: "var(--text-secondary)",
             }}
           >
-            💬
+            <Icon name="msg" size={20} />
           </div>
           <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--text-secondary)", textAlign: "center", whiteSpace: "nowrap" }}>
             {msgNote ? "Can't message own farm" : "Message"}
@@ -120,7 +121,8 @@ export default function PreviewPage() {
         </div>
         <div style={{ height: 4 }} />
         <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--text-secondary)", fontSize: 14 }}>
-          📍 {state.farmAddress || "Add your address"}
+          <Icon name="pin" size={16} />
+          {state.farmAddress || "Add your address"}
         </div>
         <div style={{ height: 8 }} />
         {today.closed ? (

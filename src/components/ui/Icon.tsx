@@ -31,7 +31,8 @@ export type IconName =
   | "calendar"
   | "facebook"
   | "instagram"
-  | "website";
+  | "website"
+  | "sun";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const props = { ...SHARED, width: size, height: size };
@@ -174,6 +175,13 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
         <svg {...props}>
           <circle cx="12" cy="12" r="9" />
           <path d="M3 12h18M12 3a15.3 15.3 0 0 1 0 18M12 3a15.3 15.3 0 0 0 0 18" />
+        </svg>
+      );
+    case "sun":
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="12" r="4.2" />
+          <path d="M12 2.8v2.6M12 18.6v2.6M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.8 12h2.6M18.6 12h2.6M4.2 19.8 6 18M18 6l1.8-1.8" />
         </svg>
       );
   }

@@ -368,7 +368,8 @@ body {
 
 /* Quick-setup cards (hours) */
 .qs-card {
-  width: 110px;
+  flex: 1;
+  min-width: 0;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   background: var(--bg-raised);
@@ -389,6 +390,7 @@ body {
   align-items: center;
   justify-content: center;
   margin: 0 auto 8px;
+  color: var(--interactive-primary);
 }
 .qs-badge {
   position: absolute;
@@ -459,6 +461,50 @@ body {
 }
 .time-field input:focus {
   outline: none;
+}
+.time-field-combo {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.time-field-combo .time-field {
+  width: 100%;
+}
+.time-field-clear {
+  color: var(--text-tertiary);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px;
+  flex-shrink: 0;
+}
+.time-field-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 184px;
+  overflow-y: auto;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+.time-field-option {
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.time-field-option:hover {
+  background: var(--bg-subtle);
+}
+.time-field-option.selected {
+  background: var(--harvest-green-100);
+  color: var(--interactive-primary);
+  font-weight: 600;
 }
 .hour-row .to-label {
   font-size: 13px;

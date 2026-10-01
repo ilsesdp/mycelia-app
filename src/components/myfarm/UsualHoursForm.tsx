@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AppBar } from "@/components/ui/AppBar";
+import { TimeField } from "@/components/ui/TimeField";
 import { createClient } from "@/lib/supabase/client";
 import type { HourRow } from "@/lib/farmStatus";
 
@@ -79,13 +80,9 @@ export function UsualHoursForm({ farmId, initialHours }: { farmId: string; initi
                 <span className="closed-label">Closed</span>
               ) : (
                 <div className="times">
-                  <div className="time-field">
-                    <input value={h.open} onChange={(e) => setDay(day, { open: e.target.value })} />
-                  </div>
+                  <TimeField value={h.open} onChange={(v) => setDay(day, { open: v })} />
                   <span className="to-label">to</span>
-                  <div className="time-field">
-                    <input value={h.close} onChange={(e) => setDay(day, { close: e.target.value })} />
-                  </div>
+                  <TimeField value={h.close} onChange={(v) => setDay(day, { close: v })} />
                 </div>
               )}
               <div className={`toggle ${h.closed ? "" : "on"}`} onClick={() => setDay(day, { closed: !h.closed })}>

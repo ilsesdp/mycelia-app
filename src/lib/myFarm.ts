@@ -16,9 +16,9 @@ export const CATEGORIES: Category[] = [
   "Honey",
   "Flowers",
   "Herbs",
-  "Meat",
+  "Hand Crafts",
   "Baked goods",
-  "Fiber",
+  "Seeds",
 ];
 export const UNITS: Unit[] = ["lb", "oz", "kg", "bunch", "dozen", "pint", "quart", "jar", "each"];
 export const AVAILABILITY_DISPLAY: Record<Availability, "Ready now" | "Producing" | "Planning"> = {

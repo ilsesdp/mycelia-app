@@ -513,9 +513,9 @@ export type Database = {
         | "Honey"
         | "Flowers"
         | "Herbs"
-        | "Meat"
+        | "Hand Crafts"
         | "Baked goods"
-        | "Fiber"
+        | "Seeds"
       message_channel_t: "text_me" | "email_me" | "both"
       today_status_t: "open" | "closed_early" | "closed"
       unit_t:
@@ -665,9 +665,9 @@ export const Constants = {
         "Honey",
         "Flowers",
         "Herbs",
-        "Meat",
+        "Hand Crafts",
         "Baked goods",
-        "Fiber",
+        "Seeds",
       ],
       message_channel_t: ["text_me", "email_me", "both"],
       today_status_t: ["open", "closed_early", "closed"],

@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { StepHeader } from "@/components/ui/StepHeader";
+import { Icon } from "@/components/ui/Icon";
+import { TimeField } from "@/components/ui/TimeField";
 import { useOnboarding, type DayHours } from "@/lib/onboarding/context";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -43,7 +45,9 @@ export default function HoursPage() {
         <div style={{ display: "flex", gap: 8 }}>
           <button className={`qs-card ${state.hoursMode === "weekday" ? "selected" : ""}`} onClick={applyWeekday}>
             <div className="qs-badge">✓</div>
-            <div className="qs-icon-well">📅</div>
+            <div className="qs-icon-well">
+              <Icon name="calendar" size={22} />
+            </div>
             <div className="body-s-medium" style={{ color: "var(--text-primary)" }}>
               Mon–Fri, 9–5
             </div>
@@ -51,7 +55,9 @@ export default function HoursPage() {
           </button>
           <button className={`qs-card ${state.hoursMode === "24-7" ? "selected" : ""}`} onClick={apply247}>
             <div className="qs-badge">✓</div>
-            <div className="qs-icon-well">☀️</div>
+            <div className="qs-icon-well">
+              <Icon name="sun" size={22} />
+            </div>
             <div className="body-s-medium" style={{ color: "var(--text-primary)" }}>
               Open 24/7
             </div>
@@ -59,7 +65,9 @@ export default function HoursPage() {
           </button>
           <button className={`qs-card ${state.hoursMode === "custom" ? "selected" : ""}`} onClick={() => update({ hoursMode: "custom" })}>
             <div className="qs-badge">✓</div>
-            <div className="qs-icon-well">⚙️</div>
+            <div className="qs-icon-well">
+              <Icon name="gear" size={22} />
+            </div>
             <div className="body-s-medium" style={{ color: "var(--text-primary)" }}>
               Custom
             </div>
@@ -79,15 +87,9 @@ export default function HoursPage() {
                 <span className="closed-label">Closed</span>
               ) : (
                 <div className="times">
-                  <div className="time-field">
-                    <input value={h.open} onChange={(e) => setDay(day, { open: e.target.value })} />
-                    <span style={{ display: "flex", color: "var(--text-tertiary)" }}>🕐</span>
-                  </div>
+                  <TimeField value={h.open} onChange={(v) => setDay(day, { open: v })} />
                   <span className="to-label">to</span>
-                  <div className="time-field">
-                    <input value={h.close} onChange={(e) => setDay(day, { close: e.target.value })} />
-                    <span style={{ display: "flex", color: "var(--text-tertiary)" }}>🕐</span>
-                  </div>
+                  <TimeField value={h.close} onChange={(v) => setDay(day, { close: v })} />
                 </div>
               )}
               <div className={`toggle ${h.closed ? "" : "on"}`} onClick={() => setDay(day, { closed: !h.closed })}>

@@ -19,9 +19,9 @@ const CATEGORIES: Category[] = [
   "Honey",
   "Flowers",
   "Herbs",
-  "Meat",
+  "Hand Crafts",
   "Baked goods",
-  "Fiber",
+  "Seeds",
 ];
 const UNITS: Unit[] = ["lb", "oz", "kg", "bunch", "dozen", "pint", "quart", "jar", "each"];
 const AVAILABILITY: ProductDraft["availability"][] = ["Ready now", "Producing", "Planning"];
@@ -47,12 +47,18 @@ export default function NewProductPage() {
   const { state, update } = useOnboarding();
   const [draft, setDraft] = useState<ProductDraft>(emptyDraft());
 
+  // Only offer the categories the grower already picked on 1.7 — the full
+  // list only applies if nothing was picked there (shouldn't happen, since
+  // 1.7 requires at least one, but keeps this screen usable standalone).
+  const availableCategories = CATEGORIES.filter((c) => state.categories[c]);
+  const categoryChoices = availableCategories.length ? availableCategories : CATEGORIES;
+
   function patch(p: Partial<ProductDraft>) {
     setDraft((d) => ({ ...d, ...p }));
   }
 
   function save() {
-    update({ products: [...state.products, { ...draft, id: crypto.randomUUID(), category: draft.category || "Vegetables" }] });
+    update({ products: [...state.products, { ...draft, id: crypto.randomUUID(), category: draft.category || categoryChoices[0] }] });
     router.push("/onboarding/products");
   }
 
@@ -75,7 +81,7 @@ export default function NewProductPage() {
         <div style={{ height: 8 }} />
         <select className="field" value={draft.category} onChange={(e) => patch({ category: e.target.value as Category })}>
           <option value="">Choose one</option>
-          {CATEGORIES.map((c) => (
+          {categoryChoices.map((c) => (
             <option key={c}>{c}</option>
           ))}
         </select>

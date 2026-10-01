@@ -20,7 +20,7 @@ export function DirectionsButton({ address }: { address: string | null }) {
   return (
     <div style={{ position: "relative" }}>
       <button
-        className="btn btn-secondary"
+        className="btn btn-primary"
         style={{ height: 48, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
         onClick={open}
       >

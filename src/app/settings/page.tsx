@@ -5,9 +5,10 @@ import { SettingsHub } from "@/components/settings/SettingsHub";
 // Ports SCREENS['5.2'] — the Settings hub. Reachable by any logged-in
 // account (visitor or farm owner): "Your farm" only shows when this
 // account actually owns one, since Edit profile edits farm fields that
-// don't exist otherwise. The prototype's back arrow goes to My farm
-// (4.1, not built yet) — there's nowhere real to send it back to yet, so
-// this has no back arrow at all rather than a dead link.
+// don't exist otherwise. The prototype's back arrow goes to My Farm
+// (4.1), which is built now, so the AppBar in SettingsHub points there —
+// a farmless visitor who landed here via My Farm's own redirect just
+// bounces straight back, same as the prototype's own dead-end case.
 export default async function SettingsPage() {
   const supabase = await createClient();
   const {

@@ -59,81 +59,90 @@ export function FarmPinSheet({ farm }: { farm: FarmSheetData }) {
         background: "var(--bg-raised)",
         borderRadius: "20px 20px 0 0",
         boxShadow: "0 -4px 24px rgba(0,0,0,.18)",
-        padding: "12px 20px 32px",
         maxHeight: "80%",
-        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
         zIndex: 60,
       }}
     >
-      <div style={{ width: 40, height: 4, borderRadius: 999, background: "var(--border-strong)", margin: "0 auto 14px" }} />
+      {/* Static header — name, address, status, categories — never scrolls. */}
+      <div style={{ flexShrink: 0, padding: "12px 20px 0" }}>
+        <div style={{ width: 40, height: 4, borderRadius: 999, background: "var(--border-strong)", margin: "0 auto 14px" }} />
 
-      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-        <div style={{ width: 64, height: 64, borderRadius: 16, border: "1px dashed var(--border-subtle)", flexShrink: 0 }} />
-        <div style={{ flex: 1 }}>
-          <div className="title-m" style={{ color: "var(--text-primary)" }}>
-            {farm.name}
-          </div>
-          <div style={{ height: 4 }} />
-          {farm.address && (
-            <div style={{ display: "flex", gap: 4, alignItems: "center", color: "var(--text-secondary)" }}>
-              <Icon name="pin" size={14} />
-              <span className="body-s">
-                {abbreviateAddress(farm.address)}
-                <DistanceLabel lat={farm.lat} lng={farm.lng} />
-              </span>
+        <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+          <div style={{ width: 64, height: 64, borderRadius: 16, border: "1px dashed var(--border-subtle)", flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <div className="title-m" style={{ color: "var(--text-primary)" }}>
+              {farm.name}
             </div>
-          )}
-          <div style={{ height: 4 }} />
-          <div className="status-row">
-            <span className="dot" />
-            <span className="label">{farm.status.label}</span>
-            <span className="detail">&nbsp;{farm.status.note}</span>
+            <div style={{ height: 4 }} />
+            {farm.address && (
+              <div style={{ display: "flex", gap: 4, alignItems: "center", color: "var(--text-secondary)" }}>
+                <Icon name="pin" size={14} />
+                <span className="body-s">
+                  {abbreviateAddress(farm.address)}
+                  <DistanceLabel lat={farm.lat} lng={farm.lng} />
+                </span>
+              </div>
+            )}
+            <div style={{ height: 4 }} />
+            <div className="status-row">
+              <span className="dot" />
+              <span className="label">{farm.status.label}</span>
+              <span className="detail">&nbsp;{farm.status.note}</span>
+            </div>
           </div>
         </div>
+
+        <div style={{ height: 14 }} />
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {farm.categories.map((c) => (
+            <span key={c} className="cat-chip" style={{ background: catBg(c), borderColor: catFg(c), color: catFg(c) }}>
+              {c}
+            </span>
+          ))}
+        </div>
+
+        <div style={{ height: 18 }} />
+        <div style={{ borderTop: "1px solid var(--border-subtle)" }} />
       </div>
 
-      <div style={{ height: 14 }} />
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        {farm.categories.map((c) => (
-          <span key={c} className="cat-chip" style={{ background: catBg(c), borderColor: catFg(c), color: catFg(c) }}>
-            {c}
-          </span>
-        ))}
+      {/* Only "What's available" scrolls. */}
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "16px 20px 0" }}>
+        <div className="label-caps">WHAT&apos;S AVAILABLE</div>
+        <div style={{ height: 14 }} />
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span className="body-s-strong">Ready now ({farm.ready.length})</span>
+          <Link href={`/farms/${farm.id}?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
+            See all
+          </Link>
+        </div>
+        <div style={{ height: 10 }} />
+        <div style={{ display: "flex", gap: 12, overflowX: "auto" }}>
+          {farm.ready.length ? farm.ready.map((p) => productCard(p, "ready")) : <p className="caption">Nothing marked ready now yet.</p>}
+        </div>
+
+        <div style={{ height: 20 }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span className="body-s-strong">Producing ({farm.producing.length})</span>
+          <Link href={`/farms/${farm.id}?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
+            See all
+          </Link>
+        </div>
+        <div style={{ height: 10 }} />
+        <div style={{ display: "flex", gap: 12, overflowX: "auto" }}>
+          {farm.producing.length ? farm.producing.map((p) => productCard(p, "producing")) : <p className="caption">Nothing in progress yet.</p>}
+        </div>
+        <div style={{ height: 18 }} />
       </div>
 
-      <div style={{ height: 18 }} />
-      <div style={{ borderTop: "1px solid var(--border-subtle)" }} />
-      <div style={{ height: 16 }} />
-      <div className="label-caps">WHAT&apos;S AVAILABLE</div>
-      <div style={{ height: 14 }} />
-
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span className="body-s-strong">Ready now ({farm.ready.length})</span>
-        <Link href={`/farms/${farm.id}?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
-          See all
+      {/* Static footer — never scrolls. */}
+      <div style={{ flexShrink: 0, padding: "14px 20px 32px" }}>
+        <Link href={`/farms/${farm.id}?from=map`} className="btn btn-primary" style={{ height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          See the farm
         </Link>
       </div>
-      <div style={{ height: 10 }} />
-      <div style={{ display: "flex", gap: 12, overflowX: "auto" }}>
-        {farm.ready.length ? farm.ready.map((p) => productCard(p, "ready")) : <p className="caption">Nothing marked ready now yet.</p>}
-      </div>
-
-      <div style={{ height: 20 }} />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span className="body-s-strong">Producing ({farm.producing.length})</span>
-        <Link href={`/farms/${farm.id}?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
-          See all
-        </Link>
-      </div>
-      <div style={{ height: 10 }} />
-      <div style={{ display: "flex", gap: 12, overflowX: "auto" }}>
-        {farm.producing.length ? farm.producing.map((p) => productCard(p, "producing")) : <p className="caption">Nothing in progress yet.</p>}
-      </div>
-
-      <div style={{ height: 18 }} />
-      <Link href={`/farms/${farm.id}?from=map`} className="btn btn-primary" style={{ height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        See the farm
-      </Link>
     </div>
   );
 }

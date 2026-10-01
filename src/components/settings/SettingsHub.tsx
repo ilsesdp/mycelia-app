@@ -21,7 +21,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
 
   return (
     <main className="flex flex-col min-h-screen">
-      <AppBar title="Settings" />
+      <AppBar backHref="/my-farm" title="Settings" />
       <div className="px-4" style={{ paddingTop: 16, flex: 1, display: "flex", flexDirection: "column" }}>
         {hasFarm && (
           <>

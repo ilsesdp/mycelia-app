@@ -42,33 +42,39 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
     .filter((f): f is NonNullable<typeof f> => !!f && f.published);
 
   return (
-    <main className="flex flex-col min-h-screen" style={{ paddingBottom: 70 }}>
+    <main className="flex flex-col" style={{ height: "100dvh" }}>
       <AppBar backHref={resolveBackHref(sp.from)} />
-      <PhotoCarousel photos={marketPhotos ?? []} />
-      <div className="px-4" style={{ flex: 1 }}>
-        <div style={{ height: 16 }} />
-        <div className="title-l" style={{ color: "var(--text-primary)" }}>
-          {market.name}
+      <div style={{ flexShrink: 0 }}>
+        <PhotoCarousel photos={marketPhotos ?? []} />
+        <div className="px-4">
+          <div style={{ height: 16 }} />
+          <div className="title-l" style={{ color: "var(--text-primary)" }}>
+            {market.name}
+          </div>
+          <div style={{ height: 4 }} />
+          {market.location && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--text-secondary)", fontSize: 14 }}>
+              <Icon name="pin" size={16} />
+              {market.location}
+              <DistanceLabel lat={market.lat} lng={market.lng} />
+            </div>
+          )}
+          <div style={{ height: 4 }} />
+          {market.schedule_text && (
+            <div className="statuschip">
+              <span className="dot" />
+              <span className="txt">{market.schedule_text}</span>
+            </div>
+          )}
+          <div style={{ height: 16 }} />
+          <DirectionsButton address={market.location} />
+          <div style={{ height: 24 }} />
         </div>
-        <div style={{ height: 4 }} />
-        {market.location && (
-          <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--text-secondary)", fontSize: 14 }}>
-            <Icon name="pin" size={16} />
-            {market.location}
-            <DistanceLabel lat={market.lat} lng={market.lng} />
-          </div>
-        )}
-        <div style={{ height: 4 }} />
-        {market.schedule_text && (
-          <div className="statuschip" style={{ padding: "0 12px" }}>
-            <span className="body-s-strong" style={{ color: "var(--text-secondary)", fontWeight: 600 }}>
-              {market.schedule_text}
-            </span>
-          </div>
-        )}
-        <div style={{ height: 16 }} />
-        <DirectionsButton address={market.location} />
-        <div style={{ height: 24 }} />
+      </div>
+
+      {/* Only this list scrolls — the hero, header and directions button
+          above stay put, same scroll containment as the farm profile shell. */}
+      <div className="px-4" style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 98 }}>
         <div className="label-caps">Farms at this market</div>
         <div style={{ height: 8 }} />
         {farms.length === 0 ? (

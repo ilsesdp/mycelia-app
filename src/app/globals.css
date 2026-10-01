@@ -245,6 +245,13 @@ body {
 .field::placeholder {
   color: var(--text-tertiary);
 }
+/* The map/list search bar's <input> isn't a .field (it's inlined into a
+   bordered wrapper alongside a search icon), so its placeholder needs its
+   own rule to land on the same text-tertiary gray as every other field's
+   placeholder instead of the browser default. */
+.search-field-input::placeholder {
+  color: var(--text-tertiary);
+}
 .field:focus {
   outline: none;
   border-width: 1.5px;
@@ -863,14 +870,16 @@ body {
   color: var(--text-secondary);
 }
 
-/* Bottom nav (navBar3) */
+/* Bottom nav (navBar3) — same fill as the screen body (--bg-raised) so it
+   reads as part of the page, not a separate grey bar; the top border alone
+   marks where it starts. */
 .navbar3 {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   height: 70px;
-  background: var(--bg-subtle);
+  background: var(--bg-raised);
   border-top: 1px solid var(--border-subtle);
   display: flex;
   padding: 8px 0 12px;

@@ -63,7 +63,7 @@ export function EditProfileForm({
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Edit profile" />
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, paddingBottom: 24, overflowY: "auto" }}>
+      <div className="px-4" style={{ paddingTop: 16, flex: 1, paddingBottom: 24, overflowY: "auto", display: "flex", flexDirection: "column" }}>
         <div className="label-caps">Farm name</div>
         <div style={{ height: 6 }} />
         <input className="field" value={name} onChange={(e) => setName(e.target.value)} />
@@ -103,7 +103,7 @@ export function EditProfileForm({
             setCoverPreview(null);
           }}
         />
-        <div style={{ height: 24 }} />
+        <div style={{ flex: 1, minHeight: 20 }} />
 
         <button className="btn btn-primary" onClick={save} disabled={!name || saving}>
           {saving ? "Saving…" : "Save changes"}

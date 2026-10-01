@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AppBar } from "@/components/ui/AppBar";
+import { Icon } from "@/components/ui/Icon";
 import { VisibilityPill, type Visibility } from "@/components/ui/VisibilityPill";
 import { createClient } from "@/lib/supabase/client";
 import { VISIBILITY_DB, VISIBILITY_DISPLAY } from "@/lib/settings";
@@ -13,7 +14,11 @@ type VisibilityEnum = Database["public"]["Enums"]["visibility_t"];
 // shows but the schema has no per-field visibility column for: a published
 // farm's name, products, hours, events and markets are always public, and
 // anyone logged in can message any published farm — there's no real toggle
-// behind those, so showing a working-looking control would be a lie.
+// behind those, so this isn't made into a working Growers-only/Only-me
+// dropdown (that would say something untrue). It shares the same
+// `.visibility-pill` look as the real dropdown below — a real icon instead
+// of an emoji, no chevron since there's nothing to open — so it reads as
+// one consistent family of pills, just this one isn't clickable.
 function FixedRow({ label }: { label: string }) {
   return (
     <div
@@ -30,7 +35,8 @@ function FixedRow({ label }: { label: string }) {
         {label}
       </span>
       <span className="visibility-pill" style={{ cursor: "default" }}>
-        👁<span>Everyone</span>
+        <Icon name="eye" size={16} />
+        <span>Everyone</span>
       </span>
     </div>
   );

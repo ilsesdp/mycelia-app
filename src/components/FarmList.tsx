@@ -116,7 +116,7 @@ export default function FarmList({
               onFocus={() => setSuggestOpen(true)}
               onBlur={() => setTimeout(() => setSuggestOpen(false), 120)}
               placeholder="Search a farm or market…"
-              className="flex-1 min-w-0 bg-transparent outline-none body-s"
+              className="flex-1 min-w-0 bg-transparent outline-none body-s search-field-input"
               style={{ color: "var(--text-primary)" }}
             />
             {query && (

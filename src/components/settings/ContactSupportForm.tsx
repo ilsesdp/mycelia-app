@@ -100,7 +100,6 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
                       <span className="body-m" style={{ color: "var(--text-secondary)", flex: 1 }}>
                         {t}
                       </span>
-                      {sel && <span style={{ color: "var(--text-brand)" }}>&#10003;</span>}
                     </div>
                   );
                 })}

@@ -10,19 +10,21 @@ import { useOnboarding, type MarketDraft } from "@/lib/onboarding/context";
 import { createClient } from "@/lib/supabase/client";
 
 const DAY_OPTIONS = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays", "Weekends", "Daily"];
+// All one format — "8am–1pm", no spaces around the en dash — so every
+// suggestion reads the same way instead of mixing styles. "All day" was
+// dropped rather than forced into a start–end shape it doesn't have.
 const HOURS_OPTIONS = [
-  "7am – 12pm",
-  "7am – 1pm",
-  "8am – 1pm",
-  "8am – 2pm",
-  "9am – 1pm",
-  "9am – 2pm",
-  "9am – 3pm",
-  "10am – 2pm",
-  "10am – 3pm",
-  "12pm – 5pm",
-  "3pm – 7pm",
-  "All day",
+  "7am–12pm",
+  "7am–1pm",
+  "8am–1pm",
+  "8am–2pm",
+  "9am–1pm",
+  "9am–2pm",
+  "9am–3pm",
+  "10am–2pm",
+  "10am–3pm",
+  "12pm–5pm",
+  "3pm–7pm",
 ];
 
 function emptyDraft(): MarketDraft {
@@ -106,7 +108,7 @@ export default function NewMarketPage() {
             <div className="caption" style={{ marginBottom: 4 }}>
               Hours
             </div>
-            <ComboField options={HOURS_OPTIONS} placeholder="8am – 1pm" value={draft.hours} onChange={(v) => patch({ hours: v })} />
+            <ComboField options={HOURS_OPTIONS} placeholder="8am–1pm" value={draft.hours} onChange={(v) => patch({ hours: v })} />
           </div>
         </div>
         <div style={{ height: 20 }} />

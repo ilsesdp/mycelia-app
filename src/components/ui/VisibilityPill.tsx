@@ -1,23 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { Icon, type IconName } from "@/components/ui/Icon";
 
 const OPTIONS = ["Growers only", "Everyone", "Nobody"] as const;
 export type Visibility = (typeof OPTIONS)[number];
 
-const ICON: Record<Visibility, string> = { Everyone: "👁", Nobody: "✕", "Growers only": "🔒" };
+const ICON: Record<Visibility, IconName> = { Everyone: "eye", Nobody: "close", "Growers only": "lock" };
 
 // Ports visibilityPill() + the tap-to-open option menu from 1.11/5.5 — a
 // pill showing the current value, tap opens a small menu listing all three
-// options (icon + label + checkmark on the selected one), tap an option or
-// outside the menu to close.
+// options. Uses the app's icon set instead of emoji, and skips the
+// prototype's checkmark-on-selected (the highlighted row background
+// already marks the current value).
 export function VisibilityPill({ value, onChange }: { value: Visibility; onChange: (v: Visibility) => void }) {
   const [open, setOpen] = useState(false);
 
   return (
     <div style={{ position: "relative" }}>
       <span className="visibility-pill" onClick={() => setOpen((o) => !o)}>
-        {ICON[value]}
+        <Icon name={ICON[value]} size={16} />
         <span>{value}</span>
         <span>⌄</span>
       </span>
@@ -57,11 +59,12 @@ export function VisibilityPill({ value, onChange }: { value: Visibility; onChang
                     background: sel ? "var(--harvest-green-100)" : "transparent",
                   }}
                 >
-                  <span style={{ color: "var(--text-secondary)" }}>{ICON[opt]}</span>
+                  <span style={{ color: "var(--text-secondary)", display: "flex" }}>
+                    <Icon name={ICON[opt]} size={16} />
+                  </span>
                   <span className="body-m" style={{ color: "var(--text-secondary)", flex: 1 }}>
                     {opt}
                   </span>
-                  {sel && <span style={{ color: "var(--text-brand)" }}>✓</span>}
                 </div>
               );
             })}

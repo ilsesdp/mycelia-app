@@ -56,7 +56,7 @@ export default function HoursPage() {
           <button className={`qs-card ${state.hoursMode === "24-7" ? "selected" : ""}`} onClick={apply247}>
             <div className="qs-badge">✓</div>
             <div className="qs-icon-well">
-              <Icon name="sun" size={22} />
+              <Icon name="clock" size={22} />
             </div>
             <div className="body-s-medium" style={{ color: "var(--text-primary)" }}>
               Open 24/7

@@ -19,10 +19,23 @@ export function swatchColor(c: Category): string {
   return map[c] || "var(--border-default)";
 }
 
+// The prototype only ever special-cased Vegetables/Eggs here (hand-tuned
+// token pairs) and left every other category on one flat gray chip — so a
+// product's category chip didn't match its own dot color from 1.7/4.x
+// anywhere except those two. Ilse asked for the chips to match the dots
+// everywhere this pair is used (farm profile, filters, pin sheet, owner
+// dashboard, onboarding), so every other category now derives its chip
+// from the same color as its dot (swatchColor) instead of the gray
+// fallback — Vegetables/Eggs keep their existing hand-tuned pair since
+// those already matched and look right as-is.
 export function catBg(c: string): string {
-  return c === "Vegetables" ? "var(--cat-veg-bg)" : c === "Eggs" ? "var(--cat-egg-bg)" : "var(--bg-subtle)";
+  if (c === "Vegetables") return "var(--cat-veg-bg)";
+  if (c === "Eggs") return "var(--cat-egg-bg)";
+  return `color-mix(in srgb, ${swatchColor(c as Category)} 16%, white)`;
 }
 
 export function catFg(c: string): string {
-  return c === "Vegetables" ? "var(--cat-veg-fg)" : c === "Eggs" ? "var(--cat-egg-fg)" : "var(--text-secondary)";
+  if (c === "Vegetables") return "var(--cat-veg-fg)";
+  if (c === "Eggs") return "var(--cat-egg-fg)";
+  return swatchColor(c as Category);
 }

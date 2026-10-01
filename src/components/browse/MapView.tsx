@@ -45,7 +45,7 @@ export function MapView({
 
   function tapPin(p: MapPin) {
     if (p.kind === "market") {
-      router.push(`/markets/${p.id}`);
+      router.push(`/markets/${p.id}?from=map`);
       return;
     }
     const sheetParams = new URLSearchParams(qs.replace(/^\?/, ""));

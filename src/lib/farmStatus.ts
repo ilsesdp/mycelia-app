@@ -2,7 +2,7 @@ const DAY_LABEL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export type HourRow = { day_of_week: number; open_time: string | null; close_time: string | null; closed: boolean };
 
-function fmtTime(t: string): string {
+export function fmtTime(t: string): string {
   // "17:00:00" -> "5pm", "09:30:00" -> "9:30am"
   const [hStr, m] = t.split(":");
   let h = parseInt(hStr, 10);
@@ -34,4 +34,20 @@ export function farmStatus(hours: HourRow[]): { open: boolean; label: string; no
     }
   }
   return { open: false, label: "Closed", note: "" };
+}
+
+export type TodayStatus = "open" | "closed_early" | "closed" | null;
+
+// Layers the owner's manual "close early / closed today" override (My Farm
+// tools, not built yet — farms.today_status) on top of the regular weekly
+// schedule. Shared by the map (pin color) and the farm profile (status
+// chip) so the two never drift.
+export function farmTodayStatus(hours: HourRow[], todayStatus: TodayStatus) {
+  const hoursStatus = farmStatus(hours);
+  const closedEarly = todayStatus === "closed_early";
+  const overrideClosed = todayStatus === "closed" || closedEarly;
+  return {
+    ...(overrideClosed ? { ...hoursStatus, open: false } : hoursStatus),
+    closedEarly,
+  };
 }

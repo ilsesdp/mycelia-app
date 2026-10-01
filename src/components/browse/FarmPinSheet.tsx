@@ -100,7 +100,7 @@ export function FarmPinSheet({ farm }: { farm: FarmSheetData }) {
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span className="body-s-strong">Ready now ({farm.ready.length})</span>
-        <Link href={`/farms/${farm.id}`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
+        <Link href={`/farms/${farm.id}?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
           See all
         </Link>
       </div>
@@ -112,7 +112,7 @@ export function FarmPinSheet({ farm }: { farm: FarmSheetData }) {
       <div style={{ height: 20 }} />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span className="body-s-strong">Producing ({farm.producing.length})</span>
-        <Link href={`/farms/${farm.id}`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
+        <Link href={`/farms/${farm.id}?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
           See all
         </Link>
       </div>
@@ -122,7 +122,7 @@ export function FarmPinSheet({ farm }: { farm: FarmSheetData }) {
       </div>
 
       <div style={{ height: 18 }} />
-      <Link href={`/farms/${farm.id}`} className="btn btn-primary" style={{ height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Link href={`/farms/${farm.id}?from=map`} className="btn btn-primary" style={{ height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
         See the farm
       </Link>
     </div>

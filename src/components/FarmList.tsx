@@ -142,7 +142,7 @@ export default function FarmList({
           visible.map((farm) => (
             <Link
               key={farm.id}
-              href={`/farms/${farm.id}`}
+              href={`/farms/${farm.id}?from=list`}
               className="flex items-center gap-3 rounded-2xl px-4 py-3 no-underline"
               style={{ border: "1px solid var(--border-subtle)" }}
             >

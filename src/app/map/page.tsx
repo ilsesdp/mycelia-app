@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { farmStatus } from "@/lib/farmStatus";
+import { farmTodayStatus } from "@/lib/farmStatus";
 import { MapView, type MapPinInput } from "@/components/browse/MapView";
 import type { FarmSheetData } from "@/components/browse/FarmPinSheet";
 import type { Database } from "@/lib/types/database";
@@ -59,17 +59,8 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
   ]);
 
   const withStatus = (farms ?? []).map((f) => {
-    const hoursStatus = farmStatus(f.farm_hours);
-    // today_status is the owner's manual "close early / closed today"
-    // override (My Farm tools, not built yet) — when set, it takes
-    // precedence over what the regular weekly hours alone would say.
-    const closedEarly = f.today_status === "closed_early";
-    const todayOverrideClosed = f.today_status === "closed" || closedEarly;
-    return {
-      ...f,
-      status: todayOverrideClosed ? { ...hoursStatus, open: false } : hoursStatus,
-      closedEarly,
-    };
+    const { closedEarly, ...status } = farmTodayStatus(f.farm_hours, f.today_status);
+    return { ...f, status, closedEarly };
   });
 
   const visibleFarms = openOnly ? withStatus.filter((f) => f.status.open) : withStatus;

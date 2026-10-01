@@ -231,8 +231,12 @@ export default function PreviewPage() {
             <div style={{ height: 24 }} />
             <div className="label-caps">Contact</div>
             {(() => {
-              const showEmail = !!state.contactEmail && state.emailVisibility === "Everyone";
-              const showPhone = !!state.contactPhone && state.phoneVisibility === "Everyone";
+              // "Growers only" is visible to any signed-in visitor — the
+              // realistic case for who views a published farm page, same as
+              // farm_public_contact's own growers_only branch — "Only me"
+              // never shows here.
+              const showEmail = !!state.contactEmail && state.emailVisibility === "Growers only";
+              const showPhone = !!state.contactPhone && state.phoneVisibility === "Growers only";
               if (!showEmail && !showPhone) {
                 return (
                   <p className="body-s" style={{ color: "var(--text-tertiary)" }}>

@@ -13,8 +13,7 @@ const AVAILABILITY_DB: Record<string, Database["public"]["Enums"]["availability_
 };
 const VISIBILITY_DB: Record<string, Database["public"]["Enums"]["visibility_t"]> = {
   "Growers only": "growers_only",
-  Everyone: "everyone",
-  Nobody: "nobody",
+  "Only me": "nobody",
 };
 const CHANNEL_DB: Record<string, Database["public"]["Enums"]["message_channel_t"]> = {
   "Text me": "text_me",

@@ -3,15 +3,19 @@ import type { Database } from "@/lib/types/database";
 
 type Client = SupabaseClient<Database>;
 
-export const VISIBILITY_DISPLAY: Record<Database["public"]["Enums"]["visibility_t"], "Everyone" | "Growers only" | "Nobody"> = {
-  everyone: "Everyone",
+// "Everyone" has been retired as a choosable option (contact info is now
+// either shared with other growers or kept private to the owner), but the
+// visibility_t enum still has the "everyone" value for any pre-existing
+// data — mapped to its nearest remaining display option rather than widened
+// to a value the UI no longer offers.
+export const VISIBILITY_DISPLAY: Record<Database["public"]["Enums"]["visibility_t"], "Growers only" | "Only me"> = {
+  everyone: "Growers only",
   growers_only: "Growers only",
-  nobody: "Nobody",
+  nobody: "Only me",
 };
-export const VISIBILITY_DB: Record<"Everyone" | "Growers only" | "Nobody", Database["public"]["Enums"]["visibility_t"]> = {
-  Everyone: "everyone",
+export const VISIBILITY_DB: Record<"Growers only" | "Only me", Database["public"]["Enums"]["visibility_t"]> = {
   "Growers only": "growers_only",
-  Nobody: "nobody",
+  "Only me": "nobody",
 };
 
 export const CHANNEL_DISPLAY: Record<Database["public"]["Enums"]["message_channel_t"], "Text me" | "Email me" | "Both"> = {
@@ -83,7 +87,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: "Who can see my phone number?",
-    a: 'You control this from Settings → Privacy. Your phone number is hidden by default — switch it to "Growers only" or "Everyone" any time, and switch it back just as easily. The same screen controls who sees your email and the rest of your farm page.',
+    a: 'You control this from Settings → Privacy. Your phone number is hidden by default — switch it to "Growers only" any time to share it with other growers, and switch it back to "Only me" just as easily. The same screen controls who sees your email.',
   },
   {
     q: "Why is my farm not on the map?",

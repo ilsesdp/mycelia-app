@@ -3,16 +3,18 @@
 import { useState } from "react";
 import { Icon, type IconName } from "@/components/ui/Icon";
 
-const OPTIONS = ["Growers only", "Everyone", "Nobody"] as const;
+const OPTIONS = ["Growers only", "Only me"] as const;
 export type Visibility = (typeof OPTIONS)[number];
 
-const ICON: Record<Visibility, IconName> = { Everyone: "eye", Nobody: "close", "Growers only": "lock" };
+const ICON: Record<Visibility, IconName> = { "Growers only": "lock", "Only me": "close" };
 
 // Ports visibilityPill() + the tap-to-open option menu from 1.11/5.5 — a
-// pill showing the current value, tap opens a small menu listing all three
-// options. Uses the app's icon set instead of emoji, and skips the
-// prototype's checkmark-on-selected (the highlighted row background
-// already marks the current value).
+// pill showing the current value, tap opens a small menu listing the
+// options. "Everyone" has been retired as a choice: contact info is either
+// shared with other growers or kept private to the farm owner. Uses the
+// app's icon set instead of emoji, and skips the prototype's
+// checkmark-on-selected (the highlighted row background already marks the
+// current value).
 export function VisibilityPill({ value, onChange }: { value: Visibility; onChange: (v: Visibility) => void }) {
   const [open, setOpen] = useState(false);
 

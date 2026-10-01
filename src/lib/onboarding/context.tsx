@@ -6,7 +6,7 @@ import type { Database } from "@/lib/types/database";
 type Category = Database["public"]["Enums"]["category_t"];
 type Unit = Database["public"]["Enums"]["unit_t"];
 type Availability = "Ready now" | "Producing" | "Planning";
-type Visibility = "Growers only" | "Everyone" | "Nobody";
+type Visibility = "Growers only" | "Only me";
 
 export type ProductDraft = {
   name: string;
@@ -95,7 +95,7 @@ function initialState(): OnboardingState {
     contactEmail: "",
     contactPhone: "",
     emailVisibility: "Growers only",
-    phoneVisibility: "Nobody",
+    phoneVisibility: "Only me",
     messageChannel: "Text me",
   };
 }

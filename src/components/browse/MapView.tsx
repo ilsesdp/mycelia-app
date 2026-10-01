@@ -25,15 +25,18 @@ export function MapView({
   loggedIn,
   loadError,
   sheet,
+  ownFarmName,
 }: {
   pins: MapPinInput[];
   filters: BrowseFilters;
   loggedIn: boolean;
   loadError: string | null;
   sheet: FarmSheetData | null;
+  ownFarmName: string | null;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [suggestOpen, setSuggestOpen] = useState(false);
 
   const positioned = useMemo<MapPin[]>(() => pins.map((p) => ({ ...p, ...pinPosition(p.id) })), [pins]);
 
@@ -41,6 +44,13 @@ export function MapView({
     const q = query.trim().toLowerCase();
     return !q || p.name.toLowerCase().includes(q);
   });
+
+  // Autocomplete: names starting with what's typed so far — a narrower,
+  // prefix-only match than the "contains anywhere" filter the map itself
+  // uses for `visible`, since suggestions are meant to complete what's
+  // being typed, not just mention it.
+  const q = query.trim().toLowerCase();
+  const suggestions = q ? positioned.filter((p) => p.name.toLowerCase().startsWith(q)).slice(0, 6) : [];
 
   const chips = activeFilterChips(filters);
   const filtered = chips.length > 0;
@@ -92,31 +102,73 @@ export function MapView({
 
   return (
     <main className="flex flex-col min-h-screen" style={{ position: "relative", flex: 1 }}>
-      <MapArt pins={visible} onPinTap={tapPin} />
+      <MapArt pins={visible} onPinTap={tapPin} ownFarmName={ownFarmName} />
 
       <div style={{ position: "absolute", left: 16, right: 16, top: 16, zIndex: 5 }}>
         {/* searchBar() port — identical markup to the list view's */}
-        <div
-          className="flex items-center gap-2 h-12 rounded-lg px-3"
-          style={{ border: "1px solid var(--border-default)", background: "var(--bg-canvas)" }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ color: "var(--text-tertiary)" }}>
-            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
-            <path d="M21 21L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search a farm or market…"
-            className="flex-1 min-w-0 bg-transparent outline-none body-s"
-            style={{ color: "var(--text-primary)" }}
-          />
-          {query && (
-            <button onClick={() => setQuery("")} aria-label="Clear search" style={{ color: "var(--text-tertiary)" }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
+        <div style={{ position: "relative" }}>
+          <div
+            className="flex items-center gap-2 h-12 rounded-lg px-3"
+            style={{ border: "1px solid var(--border-default)", background: "var(--bg-canvas)" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ color: "var(--text-tertiary)" }}>
+              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+              <path d="M21 21L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setSuggestOpen(true)}
+              onBlur={() => setTimeout(() => setSuggestOpen(false), 120)}
+              placeholder="Search a farm or market…"
+              className="flex-1 min-w-0 bg-transparent outline-none body-s"
+              style={{ color: "var(--text-primary)" }}
+            />
+            {query && (
+              <button onClick={() => setQuery("")} aria-label="Clear search" style={{ color: "var(--text-tertiary)" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            )}
+          </div>
+          {suggestOpen && suggestions.length > 0 && (
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: "calc(100% + 6px)",
+                background: "var(--bg-raised)",
+                border: "1px solid var(--border-subtle)",
+                borderRadius: 12,
+                boxShadow: "0 4px 16px rgba(0,0,0,.18)",
+                overflow: "hidden",
+                zIndex: 6,
+              }}
+            >
+              {suggestions.map((p, i) => (
+                <div
+                  key={p.id}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setSuggestOpen(false);
+                    setQuery(p.name);
+                    tapPin(p);
+                  }}
+                  style={{
+                    padding: "10px 12px",
+                    cursor: "pointer",
+                    borderBottom: i < suggestions.length - 1 ? "1px solid var(--border-subtle)" : "none",
+                  }}
+                >
+                  <span className="body-s-strong">{p.name}</span>
+                  <span className="caption" style={{ marginLeft: 6, color: "var(--text-tertiary)" }}>
+                    {p.kind === "market" ? "Market" : "Farm"}
+                  </span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 

@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 
 // Ports SCREENS['1.14'] — real supabase.auth.signInWithPassword(). A user
 // with no farm yet is sent to onboarding; a user who already has one lands
-// on "/" for now since the real My Farm dashboard (4.1) isn't built yet.
+// on the map (2.1), same as the prototype's own post-login destination.
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -35,7 +35,7 @@ export default function LoginPage() {
       .eq("owner_id", data.user.id)
       .maybeSingle();
     setSubmitting(false);
-    router.push(farm ? "/" : "/onboarding/path");
+    router.push(farm ? "/map" : "/onboarding/path");
   }
 
   return (

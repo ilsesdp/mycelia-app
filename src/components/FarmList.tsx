@@ -60,6 +60,7 @@ export default function FarmList({
   loadError: string | null;
 }) {
   const [query, setQuery] = useState("");
+  const [suggestOpen, setSuggestOpen] = useState(false);
 
   const rows: Row[] = [
     ...farms.map((f) => {
@@ -88,6 +89,12 @@ export default function FarmList({
   const byFilters = rows.filter((r) => matchesBrowseFilters({ ...r, open: r.status.open }, filters));
   const visible = byFilters.filter((r) => matchesSearch(r.name, query));
 
+  // Autocomplete: names starting with what's typed so far, within whatever
+  // filters are already active — narrower than matchesSearch's "contains
+  // anywhere", since suggestions complete what's being typed.
+  const q = query.trim().toLowerCase();
+  const suggestions = q ? byFilters.filter((r) => r.name.toLowerCase().startsWith(q)).slice(0, 6) : [];
+
   const chips = activeFilterChips(filters);
   const filtered = chips.length > 0;
 
@@ -95,24 +102,65 @@ export default function FarmList({
     <div className="flex-1 flex flex-col" style={{ paddingBottom: 70 }}>
       <div className="px-4 pt-4 pb-3 flex flex-col gap-3">
         {/* searchBar() port */}
-        <div
-          className="flex items-center gap-2 h-12 rounded-lg px-3"
-          style={{ border: "1px solid var(--border-default)", background: "var(--bg-canvas)" }}
-        >
-          <span style={{ color: "var(--text-tertiary)", display: "flex" }}>
-            <Icon name="search" size={18} />
-          </span>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search a farm or market…"
-            className="flex-1 min-w-0 bg-transparent outline-none body-s"
-            style={{ color: "var(--text-primary)" }}
-          />
-          {query && (
-            <button onClick={() => setQuery("")} aria-label="Clear search" style={{ color: "var(--text-tertiary)" }}>
-              <Icon name="close" size={16} />
-            </button>
+        <div style={{ position: "relative" }}>
+          <div
+            className="flex items-center gap-2 h-12 rounded-lg px-3"
+            style={{ border: "1px solid var(--border-default)", background: "var(--bg-canvas)" }}
+          >
+            <span style={{ color: "var(--text-tertiary)", display: "flex" }}>
+              <Icon name="search" size={18} />
+            </span>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setSuggestOpen(true)}
+              onBlur={() => setTimeout(() => setSuggestOpen(false), 120)}
+              placeholder="Search a farm or market…"
+              className="flex-1 min-w-0 bg-transparent outline-none body-s"
+              style={{ color: "var(--text-primary)" }}
+            />
+            {query && (
+              <button onClick={() => setQuery("")} aria-label="Clear search" style={{ color: "var(--text-tertiary)" }}>
+                <Icon name="close" size={16} />
+              </button>
+            )}
+          </div>
+          {suggestOpen && suggestions.length > 0 && (
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: "calc(100% + 6px)",
+                background: "var(--bg-raised)",
+                border: "1px solid var(--border-subtle)",
+                borderRadius: 12,
+                boxShadow: "0 4px 16px rgba(0,0,0,.18)",
+                overflow: "hidden",
+                zIndex: 6,
+              }}
+            >
+              {suggestions.map((r, i) => (
+                <div
+                  key={r.id}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setSuggestOpen(false);
+                    setQuery(r.name);
+                  }}
+                  style={{
+                    padding: "10px 12px",
+                    cursor: "pointer",
+                    borderBottom: i < suggestions.length - 1 ? "1px solid var(--border-subtle)" : "none",
+                  }}
+                >
+                  <span className="body-s-strong">{r.name}</span>
+                  <span className="caption" style={{ marginLeft: 6, color: "var(--text-tertiary)" }}>
+                    {r.kind === "market" ? "Market" : "Farm"}
+                  </span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 

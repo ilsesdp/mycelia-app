@@ -18,8 +18,19 @@ export type MapPin = {
 // reproduced, by design: effort goes into the real UI on top instead) and
 // the same fixed "you are here" marker position, since it's illustrative,
 // not tied to real device coordinates — only the label text/link reacts to
-// what the browser actually reports.
-export function MapArt({ pins, onPinTap }: { pins: MapPin[]; onPinTap: (pin: MapPin) => void }) {
+// what the browser actually reports. When the signed-in visitor owns a
+// published farm, this marker IS that farm — it's where they already are,
+// not a second pin to go find — so the label shows the farm's name and a
+// link to My Farm instead of the generic geolocation label.
+export function MapArt({
+  pins,
+  onPinTap,
+  ownFarmName,
+}: {
+  pins: MapPin[];
+  onPinTap: (pin: MapPin) => void;
+  ownFarmName: string | null;
+}) {
   const { status, coords } = useGeolocation();
 
   return (
@@ -92,7 +103,7 @@ export function MapArt({ pins, onPinTap }: { pins: MapPin[]; onPinTap: (pin: Map
           filter: "drop-shadow(0 2px 3px rgba(0,0,0,.3))",
         }}
       />
-      <YouAreHereLabel status={status} coords={coords} />
+      <YouAreHereLabel status={status} coords={coords} ownFarmName={ownFarmName} />
 
       {pins.map((p) => {
         const state = pinState(p.kind, p.open, p.closedEarly);
@@ -136,10 +147,40 @@ export function MapArt({ pins, onPinTap }: { pins: MapPin[]; onPinTap: (pin: Map
 function YouAreHereLabel({
   status,
   coords,
+  ownFarmName,
 }: {
   status: ReturnType<typeof useGeolocation>["status"];
   coords: { lat: number; lng: number } | null;
+  ownFarmName: string | null;
 }) {
+  if (ownFarmName) {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: "47.3%",
+          transform: "translateX(-50%)",
+          width: 150,
+          background: "#fff",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: 8,
+          padding: "6px 8px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        <span className="body-s-strong" style={{ textAlign: "center" }}>
+          {ownFarmName}
+        </span>
+        <a style={{ fontSize: 11, color: "var(--text-link)", cursor: "pointer" }} href="/my-farm">
+          This is your farm
+        </a>
+      </div>
+    );
+  }
   if (status === "granted" && coords) {
     return (
       <div

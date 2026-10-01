@@ -1,12 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Icon, type IconName } from "@/components/ui/Icon";
 
-const TABS = [
-  ["Map", "🗺"],
-  ["Messages", "💬"],
-  ["Profile", "👤"],
-] as const;
+type TabLabel = "Map" | "Messages" | "Profile";
+const TABS: readonly [TabLabel, IconName][] = [
+  ["Map", "map"],
+  ["Messages", "msg"],
+  ["Profile", "user"],
+];
 
 // Ports navBar3(). "Map" always goes to the real map (2.1), same as the
 // prototype's navBar3 ['Map','2.1'] — the list view (2.7/2.9) is reached via
@@ -16,10 +18,10 @@ const TABS = [
 // group 4, now built) exactly like the prototype's own navBar3 ['Profile',
 // '4.1'] — My Farm itself sends a logged-in visitor with no farm on to
 // Settings, since there's nothing of theirs to manage there.
-export function BottomNav({ active, loggedIn }: { active: "Map" | "Messages" | "Profile"; loggedIn: boolean }) {
+export function BottomNav({ active, loggedIn }: { active: TabLabel; loggedIn: boolean }) {
   const router = useRouter();
 
-  function tap(label: (typeof TABS)[number][0]) {
+  function tap(label: TabLabel) {
     if (label === "Map") {
       router.push("/map");
       return;
@@ -39,7 +41,7 @@ export function BottomNav({ active, loggedIn }: { active: "Map" | "Messages" | "
     <div className="navbar3">
       {TABS.map(([label, icon]) => (
         <a key={label} className={active === label ? "active" : ""} onClick={() => tap(label)}>
-          <span style={{ fontSize: 20, lineHeight: 1 }}>{icon}</span>
+          <Icon name={icon} size={20} />
           {label}
         </a>
       ))}

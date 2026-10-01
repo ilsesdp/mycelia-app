@@ -26,6 +26,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       .select(
         `
       id,
+      owner_id,
       name,
       address,
       today_status,
@@ -51,8 +52,16 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
     };
   });
 
-  const visibleFarms = withStatus.filter((f) =>
-    matchesBrowseFilters({ kind: "farm", categories: f.categories, open: f.status.open, hasReadyProduct: f.hasReadyProduct }, filters)
+  // The signed-in visitor's own farm (if any) isn't given its own pin —
+  // it's not a place to go "find", it's where they already are, so it's
+  // represented by the "You are here" marker instead (see ownFarmName
+  // below), never both.
+  const ownFarm = user ? withStatus.find((f) => f.owner_id === user.id) : undefined;
+
+  const visibleFarms = withStatus.filter(
+    (f) =>
+      f.id !== ownFarm?.id &&
+      matchesBrowseFilters({ kind: "farm", categories: f.categories, open: f.status.open, hasReadyProduct: f.hasReadyProduct }, filters)
   );
   const visibleMarkets = (markets ?? []).filter(() =>
     matchesBrowseFilters({ kind: "market", categories: [], open: true, hasReadyProduct: false }, filters)
@@ -98,6 +107,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       loggedIn={!!user}
       loadError={farmsError?.message ?? marketsError?.message ?? null}
       sheet={sheet}
+      ownFarmName={ownFarm?.name ?? null}
     />
   );
 }

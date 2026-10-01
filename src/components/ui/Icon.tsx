@@ -32,7 +32,10 @@ export type IconName =
   | "facebook"
   | "instagram"
   | "website"
-  | "sun";
+  | "sun"
+  | "filter"
+  | "menu"
+  | "map";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const props = { ...SHARED, width: size, height: size };
@@ -182,6 +185,25 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
         <svg {...props}>
           <circle cx="12" cy="12" r="4.2" />
           <path d="M12 2.8v2.6M12 18.6v2.6M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.8 12h2.6M18.6 12h2.6M4.2 19.8 6 18M18 6l1.8-1.8" />
+        </svg>
+      );
+    case "filter":
+      return (
+        <svg {...props}>
+          <path d="M4 6h16M7 12h10M10.5 18h3" />
+        </svg>
+      );
+    case "menu":
+      return (
+        <svg {...props}>
+          <path d="M4 6.5h16M4 12h16M4 17.5h16" />
+        </svg>
+      );
+    case "map":
+      return (
+        <svg {...props}>
+          <path d="M9 4.5 4 6.3v13.2l5-1.8 6 1.8 5-1.8V5.5l-5 1.8-6-1.8Z" />
+          <path d="M9 4.5v13.2M15 7.3v13.2" />
         </svg>
       );
   }

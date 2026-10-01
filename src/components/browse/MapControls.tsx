@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Icon } from "@/components/ui/Icon";
 
 // Ports mapControls() + viewMenuOverlay() from 1.7/2.7/2.9/2.1/2.10. The
 // hamburger opens a small overlay offering Map view / List view — both are
 // real routes (/ and /map), carrying over whatever filters are active via
 // `queryString`, same as switching views keeps the prototype's single
 // shared filter state. The filter button opens /filters (2.8) with that
-// same state, tagged with `from` so it knows which view to return to.
+// same state, tagged with `from` so it knows which view to return to. Uses
+// the app's icon set throughout — no emoji, and no checkmark on the
+// selected view (the highlighted row background already marks it).
 export function MapControls({
   filterCount,
   view,
@@ -50,7 +53,7 @@ export function MapControls({
             color: "var(--text-primary)",
           }}
         >
-          ☰
+          <Icon name="menu" size={20} />
         </div>
         <div
           onClick={openFilters}
@@ -68,7 +71,7 @@ export function MapControls({
             color: "var(--text-primary)",
           }}
         >
-          ⚙
+          <Icon name="filter" size={20} />
           {filterCount > 0 && (
             <span
               style={{
@@ -129,11 +132,12 @@ export function MapControls({
                 borderBottom: view === "map" ? undefined : "1px solid var(--border-subtle)",
               }}
             >
-              <span style={{ width: 20, textAlign: "center", color: "var(--text-secondary)" }}>🗺</span>
+              <span style={{ width: 20, display: "flex", justifyContent: "center", color: "var(--text-secondary)" }}>
+                <Icon name="map" size={16} />
+              </span>
               <span className="body-m" style={{ color: "var(--text-secondary)", flex: 1 }}>
                 Map view
               </span>
-              {view === "map" && <span style={{ color: "var(--text-brand)" }}>✓</span>}
             </div>
             <div
               onClick={() => goView("list")}
@@ -147,11 +151,12 @@ export function MapControls({
                 cursor: "pointer",
               }}
             >
-              <span style={{ width: 20, textAlign: "center", color: "var(--text-secondary)" }}>☰</span>
+              <span style={{ width: 20, display: "flex", justifyContent: "center", color: "var(--text-secondary)" }}>
+                <Icon name="menu" size={16} />
+              </span>
               <span className="body-m" style={{ color: "var(--text-secondary)", flex: 1 }}>
                 List view
               </span>
-              {view === "list" && <span style={{ color: "var(--text-brand)" }}>✓</span>}
             </div>
           </div>
         </>

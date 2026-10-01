@@ -9,15 +9,13 @@ const ROWS: [string, string, string][] = [
   ["🕐", "Change your hours any time", "Closing early or shut for the day takes two taps."],
 ];
 
-// Ports SCREENS['1.13'] — lands the newly-published farm on the homepage
-// (2.1's app-level stand-in) after a beat, same as the prototype's
-// auto-advance to the Map. The owner reaches "My farm" later via a nav
-// entry, once that screen exists (T4 — not built yet).
+// Ports SCREENS['1.13'] — lands the newly-published farm on the map (2.1)
+// after a beat, same as the prototype's auto-advance.
 export default function OnboardingSuccessPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const t = setTimeout(() => router.push("/"), 1800);
+    const t = setTimeout(() => router.push("/map"), 1800);
     return () => clearTimeout(t);
   }, [router]);
 

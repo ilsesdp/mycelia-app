@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { AppBar } from "@/components/ui/AppBar";
 import { BottomNav } from "@/components/browse/BottomNav";
+import { Icon } from "@/components/ui/Icon";
+import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { MessageAction } from "./MessageAction";
 import { catBg, catFg } from "@/lib/categoryStyle";
 import type { FarmHeader } from "@/lib/farmProfile";
@@ -28,9 +30,9 @@ export function FarmProfileShell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex flex-col min-h-screen" style={{ paddingBottom: 70 }}>
+    <main className="flex flex-col" style={{ height: "100dvh" }}>
       <AppBar backHref={backHref} />
-      <div style={{ position: "relative" }}>
+      <div style={{ position: "relative", flexShrink: 0 }}>
         <div
           className="hero"
           style={
@@ -57,8 +59,10 @@ export function FarmProfileShell({
           </div>
           <div style={{ height: 4 }} />
           {farm.address && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-secondary)", fontSize: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--text-secondary)", fontSize: 14 }}>
+              <Icon name="pin" size={16} />
               {farm.address}
+              <DistanceLabel lat={farm.lat} lng={farm.lng} />
             </div>
           )}
           <div style={{ height: 4 }} />
@@ -80,15 +84,18 @@ export function FarmProfileShell({
         </div>
       </div>
 
-      <div className="farm-tabs">
+      <div className="farm-tabs" style={{ flexShrink: 0 }}>
         {TABS.map(([label, slug]) => (
           <Link key={label} href={`/farms/${farm.id}/${slug}`} className={activeTab === label ? "active" : ""}>
             {label}
           </Link>
         ))}
       </div>
-      <div style={{ height: 16 }} />
-      <div className="px-4" style={{ flex: 1 }}>
+      <div style={{ height: 16, flexShrink: 0 }} />
+      {/* Only this body scrolls — the hero, header and tabs above stay put.
+          98px bottom padding clears the fixed BottomNav (70px) with real
+          breathing room above it, not just flush against it. */}
+      <div className="px-4" style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 98 }}>
         {children}
       </div>
 

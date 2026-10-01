@@ -5,6 +5,7 @@ import { resolveBackHref } from "@/lib/farmProfile";
 import { AppBar } from "@/components/ui/AppBar";
 import { BottomNav } from "@/components/browse/BottomNav";
 import { Icon } from "@/components/ui/Icon";
+import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 
 // Ports SCREENS['2.11'] — the market page a map pin or the Events tab's
@@ -25,7 +26,7 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
   } = await supabase.auth.getUser();
 
   const [{ data: market }, { data: farmMarkets }] = await Promise.all([
-    supabase.from("markets").select("id, name, location, schedule_text").eq("id", id).maybeSingle(),
+    supabase.from("markets").select("id, name, location, schedule_text, lat, lng").eq("id", id).maybeSingle(),
     supabase
       .from("farm_markets")
       .select("farms ( id, name, published, farm_categories ( category ) )")
@@ -49,9 +50,10 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
         </div>
         <div style={{ height: 4 }} />
         {market.location && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-secondary)", fontSize: 14 }}>
-            <Icon name="pin" size={20} />
+          <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--text-secondary)", fontSize: 14 }}>
+            <Icon name="pin" size={16} />
             {market.location}
+            <DistanceLabel lat={market.lat} lng={market.lng} />
           </div>
         )}
         <div style={{ height: 4 }} />

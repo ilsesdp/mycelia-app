@@ -11,6 +11,8 @@ export type FarmHeader = {
   name: string;
   address: string | null;
   about: string | null;
+  lat: number | null;
+  lng: number | null;
   coverPhotoUrl: string | null;
   categories: Database["public"]["Enums"]["category_t"][];
   status: ReturnType<typeof farmTodayStatus>;
@@ -35,6 +37,8 @@ export async function getFarmHeader(
       name,
       address,
       about,
+      lat,
+      lng,
       cover_photo_url,
       today_status,
       farm_categories ( category ),
@@ -52,6 +56,8 @@ export async function getFarmHeader(
     name: data.name,
     address: data.address,
     about: data.about,
+    lat: data.lat,
+    lng: data.lng,
     coverPhotoUrl: data.cover_photo_url,
     categories: data.farm_categories.map((c) => c.category),
     status: farmTodayStatus(data.farm_hours, data.today_status),

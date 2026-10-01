@@ -162,7 +162,7 @@ export function FiltersView({
             <span style={{ color: "var(--text-secondary)", display: "flex" }}>
               <Icon name="basket" size={20} />
             </span>
-            <span className="body-m" style={{ color: "var(--text-primary)", flex: 1 }}>
+            <span className="body-m" style={{ color: "var(--text-secondary)", flex: 1 }}>
               Has products ready now
             </span>
           </div>
@@ -182,7 +182,7 @@ export function FiltersView({
             <span style={{ color: "var(--text-secondary)", display: "flex" }}>
               <Icon name="clock" size={20} />
             </span>
-            <span className="body-m" style={{ color: "var(--text-primary)", flex: 1 }}>
+            <span className="body-m" style={{ color: "var(--text-secondary)", flex: 1 }}>
               Open right now
             </span>
           </div>

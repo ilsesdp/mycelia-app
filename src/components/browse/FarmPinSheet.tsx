@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { Icon } from "@/components/ui/Icon";
+import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { catBg, catFg } from "@/lib/categoryStyle";
+import { abbreviateAddress } from "@/lib/geo";
 
 export type SheetProduct = { id: string; name: string; qty: string | null; photo_url: string | null };
 
@@ -7,6 +10,8 @@ export type FarmSheetData = {
   id: string;
   name: string;
   address: string | null;
+  lat: number | null;
+  lng: number | null;
   categories: string[];
   status: { open: boolean; label: string; note: string };
   ready: SheetProduct[];
@@ -70,8 +75,12 @@ export function FarmPinSheet({ farm }: { farm: FarmSheetData }) {
           </div>
           <div style={{ height: 4 }} />
           {farm.address && (
-            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-              <span className="body-s">{farm.address}</span>
+            <div style={{ display: "flex", gap: 4, alignItems: "center", color: "var(--text-secondary)" }}>
+              <Icon name="pin" size={14} />
+              <span className="body-s">
+                {abbreviateAddress(farm.address)}
+                <DistanceLabel lat={farm.lat} lng={farm.lng} />
+              </span>
             </div>
           )}
           <div style={{ height: 4 }} />

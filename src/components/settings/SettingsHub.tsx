@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { SettingsRow } from "@/components/settings/SettingsRow";
 import { ConfirmSheet } from "@/components/settings/ConfirmSheet";
+import { SavedToast } from "@/components/myfarm/SavedToast";
 import { createClient } from "@/lib/supabase/client";
 
 export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
@@ -60,6 +61,9 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
           busy={signingOut}
         />
       )}
+      <Suspense fallback={null}>
+        <SavedToast />
+      </Suspense>
     </main>
   );
 }

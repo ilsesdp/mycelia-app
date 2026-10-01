@@ -14,6 +14,24 @@ async function uploadCoverPhoto(supabase: ReturnType<typeof createClient>, farmI
   return supabase.storage.from("farm-photos").getPublicUrl(key).data.publicUrl;
 }
 
+// Re-resolves the farm's real lat/lng through the same Google Geocoding API
+// route onboarding's address search uses (see src/lib/googleGeocode.ts) —
+// so editing the address here keeps the map's real "2.1 mi" distance
+// accurate instead of leaving it pointed at wherever the farm used to be.
+async function geocode(address: string): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const res = await fetch("/api/geocode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address }),
+    });
+    const { result } = (await res.json()) as { result: { lat: number; lng: number } | null };
+    return result;
+  } catch {
+    return null;
+  }
+}
+
 export function EditProfileForm({
   farmId,
   initialName,
@@ -47,17 +65,31 @@ export function EditProfileForm({
       coverPhotoUrl = await uploadCoverPhoto(supabase, farmId, coverFile);
     }
 
+    // Only re-geocode when the address text actually changed — no point
+    // spending an API call to re-resolve coordinates that are already right.
+    const addressChanged = address.trim() !== initialAddress.trim();
+    const coords = addressChanged ? await geocode(address) : null;
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     await Promise.all([
-      supabase.from("farms").update({ name, address, about, cover_photo_url: coverPhotoUrl }).eq("id", farmId),
+      supabase
+        .from("farms")
+        .update({
+          name,
+          address,
+          about,
+          cover_photo_url: coverPhotoUrl,
+          ...(addressChanged ? { lat: coords?.lat ?? null, lng: coords?.lng ?? null } : {}),
+        })
+        .eq("id", farmId),
       user ? supabase.from("profiles").update({ contact_name: contactName }).eq("id", user.id) : Promise.resolve(),
     ]);
 
     setSaving(false);
-    router.push("/settings");
+    router.push("/settings?saved=Profile saved");
   }
 
   return (

@@ -7,31 +7,29 @@ export type PinVisualState = "open" | "closed" | "closed-early";
 // Mirrors the prototype's pinState(): a farm that's closed because its
 // owner manually shortened today's hours gets 'closed-early' (clock-badge
 // pin); a farm that's simply outside its normal weekly schedule gets plain
-// 'closed'. Markets only ever go open/closed.
+// 'closed'. Markets don't have a pin-level open/closed state at all —
+// pinImageSrc below always renders the one orange market pin regardless of
+// what this returns for a market — but this still computes a state for one
+// so pinState's signature stays uniform across both kinds.
 export function pinState(kind: PinKind, open: boolean, closedEarly: boolean): PinVisualState {
   if (kind === "farm" && !open && closedEarly) return "closed-early";
   return open ? "open" : "closed";
 }
 
-const PIN_SRC: Record<PinKind, Record<PinVisualState, string>> = {
-  farm: {
-    open: "/pins/pin-farm-open.svg",
-    closed: "/pins/pin-farm-closed.svg",
-    "closed-early": "/pins/pin-farm-closed-early.svg",
-  },
-  market: {
-    open: "/pins/pin-market-open.svg",
-    closed: "/pins/pin-market-closed.svg",
-    // Markets have no stored hours/status yet (see map/page.tsx), so this
-    // state is never actually reached today — kept only so the type stays
-    // total. No separate "closed early" market asset exists; it would
-    // fall back to plain closed if that ever changed.
-    "closed-early": "/pins/pin-market-closed.svg",
-  },
+const FARM_PIN_SRC: Record<PinVisualState, string> = {
+  open: "/pins/pin-farm-open.svg",
+  closed: "/pins/pin-farm-closed.svg",
+  "closed-early": "/pins/pin-farm-closed-early.svg",
 };
 
+// Only farms change color by status. Markets are always the one orange pin
+// — a market doesn't have a single open/closed state the way a farm does
+// (it's a schedule shown on its own page, not a pin-level signal), so this
+// never varies by state, on purpose.
+const MARKET_PIN_SRC = "/pins/pin-market-open.svg";
+
 export function pinImageSrc(kind: PinKind, state: PinVisualState): string {
-  return PIN_SRC[kind][state];
+  return kind === "farm" ? FARM_PIN_SRC[state] : MARKET_PIN_SRC;
 }
 
 // The "You are here" marker uses its own pin shape (see MapArt's comment on

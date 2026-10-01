@@ -16,6 +16,23 @@ async function uploadMarketPhoto(supabase: ReturnType<typeof createClient>, farm
   return supabase.storage.from("farm-photos").getPublicUrl(key).data.publicUrl;
 }
 
+// Same real geocoding onboarding/Edit profile use for a farm's address
+// (see src/lib/googleGeocode.ts) — gives the market page's "2.1 mi" a real
+// distance instead of nothing.
+async function geocode(address: string): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const res = await fetch("/api/geocode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address }),
+    });
+    const { result } = (await res.json()) as { result: { lat: number; lng: number } | null };
+    return result;
+  } catch {
+    return null;
+  }
+}
+
 export function AddMarketForm({ farmId }: { farmId: string }) {
   const supabase = createClient();
   const router = useRouter();
@@ -32,9 +49,16 @@ export function AddMarketForm({ farmId }: { farmId: string }) {
     setSaving(true);
     setError(null);
     const schedule_text = [day, hours].filter(Boolean).join(" ");
+    const coords = location ? await geocode(location) : null;
     const { data, error: insertError } = await supabase
       .from("markets")
-      .insert({ name, location: location || null, schedule_text: schedule_text || null })
+      .insert({
+        name,
+        location: location || null,
+        schedule_text: schedule_text || null,
+        lat: coords?.lat ?? null,
+        lng: coords?.lng ?? null,
+      })
       .select("id")
       .single();
     if (insertError || !data) {

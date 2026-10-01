@@ -39,6 +39,12 @@ export type OnboardingState = {
   farmAddress: string;
   farmAddressVerified: boolean;
   addressSearching: boolean;
+  // Real coordinates from Google's Geocoding API when the address resolves
+  // (null otherwise — no API key configured, or the address didn't match).
+  // This is what makes the map's "2.1 mi" a real computed distance instead
+  // of nothing; see geo.ts/DistanceLabel.tsx.
+  farmLat: number | null;
+  farmLng: number | null;
 
   // 1.6 — farm details
   farmName: string;
@@ -84,6 +90,8 @@ function initialState(): OnboardingState {
     farmAddress: "",
     farmAddressVerified: false,
     addressSearching: false,
+    farmLat: null,
+    farmLng: null,
     farmName: "",
     farmDirections: "",
     farmAbout: "",

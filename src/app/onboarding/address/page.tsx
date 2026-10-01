@@ -7,45 +7,44 @@ import { Button } from "@/components/ui/Button";
 import { StepHeader } from "@/components/ui/StepHeader";
 import { useOnboarding } from "@/lib/onboarding/context";
 
-// Ports SCREENS['1.4']. Still a demo lookup against a fixed address list,
-// same as the tested prototype — there's no Google Places API key
-// configured for this project yet (tracked in project_dev_handoff_audit.md
-// as a pending integration), so this isn't a downgrade from what shipped
-// before, just not yet upgraded to the real thing.
-const DEMO_ADDRESSES = [
-  "1420 Willow Creek Rd, Pecatonica, IL",
-  "118 Willow Creek Rd, Pecatonica, IL",
-  "2210 Maple Row Ln, Freeport, IL",
-  "75 Birch Lane, Rockford, IL",
-  "340 Hollow Creek Dr, Byron, IL",
-  "812 Sunrise Orchard Rd, Winnebago, IL",
-  "56 County Road 9, Stillman Valley, IL",
-];
-
-function findAddressMatch(q: string) {
-  const query = q.trim().toLowerCase();
-  if (!query) return null;
-  return DEMO_ADDRESSES.find((a) => a.toLowerCase().includes(query)) || null;
-}
-
+// Ports SCREENS['1.4']. Real lookup via Google's Geocoding API (see
+// src/lib/googleGeocode.ts and the /api/geocode route it's called through)
+// — "found" now means the address actually resolved to a real lat/lng, not
+// a match against a fixed demo list. Without GOOGLE_MAPS_API_KEY configured
+// (see googleGeocode.ts's own comment), every search comes back "not
+// found," which still leaves the grower able to continue and fill in
+// everything themselves, same as a genuinely unmapped farm would.
 export default function AddressPage() {
   const router = useRouter();
   const { state, update } = useOnboarding();
   const [searching, setSearching] = useState(false);
   const [address, setAddress] = useState(state.farmAddress);
 
-  function search() {
+  async function search() {
     if (!(address && address.trim().length > 3)) return;
     setSearching(true);
-    setTimeout(() => {
-      const match = findAddressMatch(address);
-      update({
-        farmAddress: match || address,
-        farmAddressVerified: !!match,
+    let found = false;
+    try {
+      const res = await fetch("/api/geocode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address }),
       });
-      setSearching(false);
-      router.push("/onboarding/address-result");
-    }, 900);
+      const { result } = (await res.json()) as {
+        result: { lat: number; lng: number; formattedAddress: string } | null;
+      };
+      found = !!result;
+      update({
+        farmAddress: result?.formattedAddress || address,
+        farmAddressVerified: found,
+        farmLat: result?.lat ?? null,
+        farmLng: result?.lng ?? null,
+      });
+    } catch {
+      update({ farmAddress: address, farmAddressVerified: false, farmLat: null, farmLng: null });
+    }
+    setSearching(false);
+    router.push("/onboarding/address-result");
   }
 
   if (searching) {

@@ -41,7 +41,7 @@ export function ChangePasswordForm({ email }: { email: string }) {
       setError("Couldn't update your password. Try again.");
       return;
     }
-    router.push("/settings/account");
+    router.push("/settings/account?saved=Password updated");
   }
 
   return (

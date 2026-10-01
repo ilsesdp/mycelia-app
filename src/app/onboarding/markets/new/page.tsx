@@ -32,6 +32,23 @@ function emptyDraft(): MarketDraft {
   return { name: "", location: "", day: "", hours: "" };
 }
 
+// Same real geocoding as the farm's own address (see
+// src/lib/googleGeocode.ts) — gives this market's page a real "X mi"
+// instead of nothing.
+async function geocode(address: string): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const res = await fetch("/api/geocode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address }),
+    });
+    const { result } = (await res.json()) as { result: { lat: number; lng: number } | null };
+    return result;
+  } catch {
+    return null;
+  }
+}
+
 type NewPhoto = { key: string; file: File; preview: string };
 
 // Ports SCREENS['1.17']. The prototype pushes onto an in-memory MARKETS
@@ -55,9 +72,16 @@ export default function NewMarketPage() {
     setSaving(true);
     setError(null);
     const schedule_text = [draft.day, draft.hours].filter(Boolean).join(" ");
+    const coords = draft.location ? await geocode(draft.location) : null;
     const { data, error } = await supabase
       .from("markets")
-      .insert({ name: draft.name, location: draft.location || null, schedule_text: schedule_text || null })
+      .insert({
+        name: draft.name,
+        location: draft.location || null,
+        schedule_text: schedule_text || null,
+        lat: coords?.lat ?? null,
+        lng: coords?.lng ?? null,
+      })
       .select("id")
       .single();
     setSaving(false);

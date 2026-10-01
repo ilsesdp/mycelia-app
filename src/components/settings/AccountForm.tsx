@@ -44,7 +44,7 @@ export function AccountForm({
         .eq("id", user.id);
     }
     setSaving(false);
-    router.push("/settings");
+    router.push("/settings?saved=Contact info saved");
   }
 
   async function confirmDelete() {

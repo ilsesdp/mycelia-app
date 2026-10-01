@@ -137,6 +137,7 @@ export function ThreadView({
           onKeyDown={(e) => e.key === "Enter" && send()}
           type="text"
           placeholder="Write a message"
+          className="search-field-input"
           style={{
             flex: 1,
             height: 48,

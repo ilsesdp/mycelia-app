@@ -1,68 +1,79 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import FarmList, { type FarmListItem } from "@/components/FarmList";
+import type { Database } from "@/lib/types/database";
+
+type Category = Database["public"]["Enums"]["category_t"];
+
+function toArray(v: string | string[] | undefined): string[] {
+  if (!v) return [];
+  return Array.isArray(v) ? v : [v];
+}
 
 // Server Component: queries Supabase directly with the visitor's
 // (anonymous) RLS context, so this naturally only ever returns published
 // farms — enforced by the database, not by an if-check here.
 //
-// Layout below ports screen 2.7 ("List view") from the tested hi-fi
-// prototype (index.html) — same search bar, same farmListCard() shape,
-// same token values (see globals.css). The map view (2.1) is a bigger
-// lift (stylized map art + pins + geolocation) and comes after this.
-export default async function HomePage() {
+// Ports screen 2.7 ("List view") and 2.9 ("Filters list view") from the
+// tested hi-fi prototype as one route: with no `cat`/`kind`/`open` params
+// it's 2.7 ("N farms near you"); arriving with any of them (as Filters,
+// 2.8, will once it's built) makes it 2.9 — active-filter chips + "N farms
+// match your filters". `kind`/distance-radius filtering from the
+// prototype's full filter set waits on the Filters screen and real
+// geolocation; category and open-now already map to real columns, so
+// those work today.
+export default async function HomePage({ searchParams }: PageProps<"/">) {
+  const sp = await searchParams;
+  const categories = toArray(sp.cat);
+  const openOnly = sp.open === "1";
+
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: farms, error } = await supabase
+  let query = supabase
     .from("farms")
     .select(
       `
       id,
       name,
       address,
-      today_status,
-      today_status_note,
-      farm_categories ( category )
+      farm_categories ( category ),
+      farm_hours ( day_of_week, open_time, close_time, closed )
     `
     )
     .eq("published", true)
     .order("name");
+
+  if (categories.length) {
+    // farms whose category set intersects the chosen ones
+    const { data: matchingFarmIds } = await supabase
+      .from("farm_categories")
+      .select("farm_id")
+      .in("category", categories as Category[]);
+    const ids = [...new Set((matchingFarmIds ?? []).map((r) => r.farm_id))];
+    query = query.in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
+  }
+
+  const { data: farms, error } = await query;
 
   const items: FarmListItem[] = (farms ?? []).map((f) => ({
     id: f.id,
     name: f.name,
     address: f.address,
     categories: f.farm_categories.map((c) => c.category),
-    todayStatus: f.today_status,
-    todayStatusNote: f.today_status_note,
+    hours: f.farm_hours,
   }));
 
   return (
     <main className="flex flex-col min-h-screen">
-      <div className="px-4 pt-4 pb-3 flex flex-col gap-3 bg-bg-canvas">
-        <div className="flex items-center justify-between">
-          <h1 className="title-l text-text-primary">Mycelia</h1>
-          {!user && (
-            <Link
-              href="/welcome"
-              className="body-s-strong"
-              style={{ color: "var(--text-brand)", textDecoration: "none" }}
-            >
-              Log in
-            </Link>
-          )}
-        </div>
-        {error && (
-          <p className="body-s" style={{ color: "var(--text-danger)" }}>
-            Couldn&apos;t load farms: {error.message}
-          </p>
-        )}
-      </div>
-      <FarmList farms={items} />
+      <FarmList
+        farms={items}
+        activeFilters={{ categories, openOnly }}
+        loggedIn={!!user}
+        loadError={error?.message ?? null}
+      />
     </main>
   );
 }

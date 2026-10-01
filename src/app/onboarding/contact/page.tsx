@@ -5,8 +5,8 @@ import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { StepHeader } from "@/components/ui/StepHeader";
 import { useOnboarding } from "@/lib/onboarding/context";
+import { VisibilityPill } from "@/components/ui/VisibilityPill";
 
-const VIS_OPTIONS = ["Growers only", "Everyone", "Nobody"] as const;
 const MSG_CHANNELS = ["Text me", "Email me", "Both"] as const;
 const MSG_CHANNEL_CAPTION: Record<string, string> = {
   "Text me": "We'll text you when someone gets in touch.",
@@ -14,10 +14,7 @@ const MSG_CHANNEL_CAPTION: Record<string, string> = {
   Both: "We'll text and email you when someone gets in touch.",
 };
 
-// Ports SCREENS['1.11']. The prototype's visibility control is a custom
-// tap-to-open dropdown pill; a native select carries the same choice
-// (Growers only / Everyone / Nobody) with far less code for the same
-// outcome, so that's what this uses.
+// Ports SCREENS['1.11'].
 export default function ContactPage() {
   const router = useRouter();
   const { state, update } = useOnboarding();
@@ -37,16 +34,7 @@ export default function ContactPage() {
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <label className="label-caps">Email</label>
-          <select
-            className="field"
-            style={{ width: 150, height: 34, padding: "4px 8px", fontSize: 13 }}
-            value={state.emailVisibility}
-            onChange={(e) => update({ emailVisibility: e.target.value as (typeof VIS_OPTIONS)[number] })}
-          >
-            {VIS_OPTIONS.map((v) => (
-              <option key={v}>{v}</option>
-            ))}
-          </select>
+          <VisibilityPill value={state.emailVisibility} onChange={(v) => update({ emailVisibility: v })} />
         </div>
         <div style={{ height: 4 }} />
         <input className="field" placeholder="you@example.com" value={state.contactEmail} onChange={(e) => update({ contactEmail: e.target.value })} />
@@ -54,16 +42,7 @@ export default function ContactPage() {
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <label className="label-caps">Phone</label>
-          <select
-            className="field"
-            style={{ width: 150, height: 34, padding: "4px 8px", fontSize: 13 }}
-            value={state.phoneVisibility}
-            onChange={(e) => update({ phoneVisibility: e.target.value as (typeof VIS_OPTIONS)[number] })}
-          >
-            {VIS_OPTIONS.map((v) => (
-              <option key={v}>{v}</option>
-            ))}
-          </select>
+          <VisibilityPill value={state.phoneVisibility} onChange={(v) => update({ phoneVisibility: v })} />
         </div>
         <div style={{ height: 4 }} />
         <input className="field" placeholder="(815) 555-0101" value={state.contactPhone} onChange={(e) => update({ contactPhone: e.target.value })} />
@@ -80,19 +59,6 @@ export default function ContactPage() {
         </div>
         <div style={{ height: 8 }} />
         <p className="caption">{MSG_CHANNEL_CAPTION[state.messageChannel]}</p>
-        {state.messageChannel !== "Email me" && (
-          <>
-            <div style={{ height: 10 }} />
-            <div style={{ background: "var(--bg-subtle)", border: "1px solid var(--border-subtle)", borderRadius: 12, padding: "10px 12px" }}>
-              <div className="caption" style={{ color: "var(--text-tertiary)" }}>
-                What you&apos;ll get by text
-              </div>
-              <div className="body-s" style={{ color: "var(--text-primary)" }}>
-                Mycelia: You have a new message from a grower or visitor. Reply here or log in to view and reply: mycelia.app/m/7x2k
-              </div>
-            </div>
-          </>
-        )}
         <div style={{ flex: 1 }} />
         <div className="pb-6 pt-6">
           <Button variant="primary" onClick={() => router.push("/onboarding/preview")}>

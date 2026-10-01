@@ -42,10 +42,12 @@ export default function NewMarketPage() {
       setError(error?.message ?? "Couldn't add that market.");
       return;
     }
-    update({
-      selectedMarketIds: [...state.selectedMarketIds, data.id],
-      addedMarkets: [...state.addedMarkets, draft],
-    });
+    // The insert above already put this market in the real `markets` table,
+    // so the picker's server-side fetch will list it on its own next
+    // render — only the selection needs tracking here. (Keeping a second,
+    // locally-rendered copy alongside that fetch was what caused the new
+    // market to show up twice.)
+    update({ selectedMarketIds: [...state.selectedMarketIds, data.id] });
     router.push("/onboarding/markets");
   }
 

@@ -99,12 +99,24 @@
 }
 
 body {
-  background: var(--bg-canvas);
+  /* The prototype's .screen (what fills the whole viewport, per-screen) is
+     var(--bg-raised) — white — with --bg-canvas reserved for recessed
+     surfaces inside a screen (fields, empty-state wells). This app has no
+     device-frame chrome around each screen, so body itself needs to be the
+     screen background, not the canvas one. */
+  background: var(--bg-raised);
   color: var(--text-primary);
   font-family: var(--font-inter), -apple-system, sans-serif;
 }
 
 /* Text styles — copied 1:1 from the tested prototype's type scale */
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 38px;
+  letter-spacing: -0.6px;
+}
 .title-l {
   font-family: var(--font-display);
   font-weight: 700;
@@ -523,6 +535,24 @@ body {
   background: var(--avail-planning-bg);
   border: 1px solid var(--avail-planning-bg);
   color: var(--avail-planning-fg);
+}
+
+/* Visibility pill (contact/privacy rows) */
+.visibility-pill {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
 }
 
 /* App bar */

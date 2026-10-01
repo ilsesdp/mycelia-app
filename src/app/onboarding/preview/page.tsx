@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
@@ -41,6 +41,19 @@ export default function PreviewPage() {
   const [tab, setTab] = useState<"Products" | "About" | "Events">("Products");
   const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [marketNames, setMarketNames] = useState<string[]>([]);
+  const [msgNote, setMsgNote] = useState(false);
+
+  useEffect(() => {
+    if (!state.selectedMarketIds.length) return;
+    const supabase = createClient();
+    supabase
+      .from("markets")
+      .select("name")
+      .in("id", state.selectedMarketIds)
+      .then(({ data }) => setMarketNames((data ?? []).map((m) => m.name)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.selectedMarketIds.join(",")]);
 
   const grouped: Partial<Record<ProductDraft["availability"], Product[]>> = {};
   for (const p of state.products) (grouped[p.availability] ||= []).push(p);
@@ -76,8 +89,33 @@ export default function PreviewPage() {
         <span>This is what everyone else will see. Nothing is public until you publish.</span>
       </div>
       <div style={{ height: 140, background: "linear-gradient(180deg,#7e9b52,#4e6b35,#3a5228)" }} />
-      <div className="px-6 pt-4" style={{ paddingBottom: 100, flex: 1 }}>
-        <div className="title-l" style={{ color: state.farmName ? "var(--text-primary)" : "var(--text-disabled)" }}>
+      <div className="px-6 pt-4" style={{ paddingBottom: 100, flex: 1, position: "relative" }}>
+        <div style={{ position: "absolute", right: 24, top: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: 56 }}>
+          <div
+            onClick={() => {
+              setMsgNote(true);
+              setTimeout(() => setMsgNote(false), 2000);
+            }}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 999,
+              background: "var(--bg-raised)",
+              border: "1px solid var(--border-default)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: "var(--text-secondary)",
+            }}
+          >
+            💬
+          </div>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--text-secondary)", textAlign: "center", whiteSpace: "nowrap" }}>
+            {msgNote ? "Can't message own farm" : "Message"}
+          </div>
+        </div>
+        <div className="title-l" style={{ color: state.farmName ? "var(--text-primary)" : "var(--text-disabled)", width: 280 }}>
           {state.farmName || "Add your farm name"}
         </div>
         <div style={{ height: 4 }} />
@@ -143,7 +181,16 @@ export default function PreviewPage() {
                 <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8 }}>
                   {grouped[a]!.map((p) => (
                     <div key={p.id} style={{ width: 150, flexShrink: 0 }}>
-                      <div style={{ width: 150, height: 108, borderRadius: 16, background: "var(--bg-subtle)", border: "1px solid var(--border-subtle)" }} />
+                      {p.photoPreview ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={p.photoPreview}
+                          alt=""
+                          style={{ width: 150, height: 108, borderRadius: 16, objectFit: "cover", border: "1px solid var(--border-subtle)", display: "block" }}
+                        />
+                      ) : (
+                        <div style={{ width: 150, height: 108, borderRadius: 16, background: "var(--bg-subtle)", border: "1px solid var(--border-subtle)" }} />
+                      )}
                       <div style={{ height: 8 }} />
                       <div className="body-s-strong">{p.name}</div>
                       <div className="caption">
@@ -187,8 +234,12 @@ export default function PreviewPage() {
             <div style={{ height: 24 }} />
             <div className="label-caps">Markets</div>
             <div style={{ height: 8 }} />
-            {state.selectedMarketIds.length || state.addedMarkets.length ? (
-              state.addedMarkets.map((m) => <p key={m.name} className="body-s">{m.name}</p>)
+            {marketNames.length ? (
+              marketNames.map((name) => (
+                <p key={name} className="body-s">
+                  {name}
+                </p>
+              ))
             ) : (
               <p className="caption">No markets selected yet.</p>
             )}

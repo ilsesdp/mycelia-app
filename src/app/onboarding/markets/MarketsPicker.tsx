@@ -46,25 +46,6 @@ export function MarketsPicker({ markets }: { markets: Market[] }) {
             </div>
           );
         })}
-        {state.addedMarkets.map((m) => (
-          <div
-            key={m.name}
-            style={{
-              background: "var(--harvest-green-100)",
-              border: "1px solid var(--border-brand)",
-              borderRadius: 8,
-              padding: "12px 16px",
-              marginBottom: 8,
-            }}
-          >
-            <div className="body-s-strong" style={{ color: "var(--text-primary)" }}>
-              {m.name}
-            </div>
-            <div style={{ fontSize: 13, opacity: 0.8, color: "var(--text-secondary)" }}>
-              {m.day} {m.hours}
-            </div>
-          </div>
-        ))}
         <div style={{ height: 8 }} />
         <button className="btn btn-secondary" style={{ height: 48 }} onClick={() => router.push("/onboarding/markets/new")}>
           + Add a market that isn&apos;t here

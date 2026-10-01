@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import FarmList, { type MarketListItem } from "@/components/FarmList";
 import type { FarmListItem } from "@/components/FarmList";
@@ -23,6 +24,15 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // The prototype's own entry point is 1.1 (Welcome) for every fresh,
+  // logged-out session — SCREENS['1.1'] is its literal initial `screen`
+  // state, not something reached by first browsing in as a guest. This
+  // route ported 2.7/2.9's content but not that gate, so opening the
+  // production link with no session landed straight on the farm list
+  // instead of prompting sign up/log in first. A signed-in visitor still
+  // sees this list exactly as before.
+  if (!user) redirect("/welcome");
 
   const [{ data: farms, error }, { data: markets, error: marketsError }] = await Promise.all([
     supabase

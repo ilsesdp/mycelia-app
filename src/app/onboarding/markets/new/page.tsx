@@ -10,21 +10,22 @@ import { useOnboarding, type MarketDraft } from "@/lib/onboarding/context";
 import { createClient } from "@/lib/supabase/client";
 
 const DAY_OPTIONS = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays", "Weekends", "Daily"];
-// All one format — "8am–1pm", no spaces around the en dash — so every
-// suggestion reads the same way instead of mixing styles. "All day" was
-// dropped rather than forced into a start–end shape it doesn't have.
+// One canonical shape everywhere a schedule shows — "9:00am - 1:30pm":
+// always h:mm (never a bare "9am"), a space-hyphen-space between start and
+// end, lowercase am/pm glued to the number. Matches the real markets'
+// schedule_text, normalized in the database to the same format.
 const HOURS_OPTIONS = [
-  "7am–12pm",
-  "7am–1pm",
-  "8am–1pm",
-  "8am–2pm",
-  "9am–1pm",
-  "9am–2pm",
-  "9am–3pm",
-  "10am–2pm",
-  "10am–3pm",
-  "12pm–5pm",
-  "3pm–7pm",
+  "7:00am - 12:00pm",
+  "7:00am - 1:00pm",
+  "8:00am - 1:00pm",
+  "8:00am - 2:00pm",
+  "9:00am - 1:00pm",
+  "9:00am - 2:00pm",
+  "9:00am - 3:00pm",
+  "10:00am - 2:00pm",
+  "10:00am - 3:00pm",
+  "12:00pm - 5:00pm",
+  "3:00pm - 7:00pm",
 ];
 
 function emptyDraft(): MarketDraft {
@@ -108,7 +109,7 @@ export default function NewMarketPage() {
             <div className="caption" style={{ marginBottom: 4 }}>
               Hours
             </div>
-            <ComboField options={HOURS_OPTIONS} placeholder="8am–1pm" value={draft.hours} onChange={(v) => patch({ hours: v })} />
+            <ComboField options={HOURS_OPTIONS} placeholder="9:00am - 1:30pm" value={draft.hours} onChange={(v) => patch({ hours: v })} />
           </div>
         </div>
         <div style={{ height: 20 }} />

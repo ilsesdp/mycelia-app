@@ -56,7 +56,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
 
   // The signed-in visitor's own farm (if any) isn't given its own pin —
   // it's not a place to go "find", it's where they already are, so it's
-  // represented by the "You are here" marker instead (see ownFarmName
+  // represented by the "You are here" marker instead (see ownFarm
   // below), never both.
   const ownFarm = user ? withStatus.find((f) => f.owner_id === user.id) : undefined;
 
@@ -111,7 +111,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       loggedIn={!!user}
       loadError={farmsError?.message ?? marketsError?.message ?? null}
       sheet={sheet}
-      ownFarmName={ownFarm?.name ?? null}
+      ownFarm={ownFarm ? { name: ownFarm.name, open: ownFarm.status.open, closedEarly: ownFarm.closedEarly } : null}
     />
   );
 }

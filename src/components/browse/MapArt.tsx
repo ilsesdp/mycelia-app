@@ -1,7 +1,7 @@
 "use client";
 
 import { useGeolocation } from "@/lib/useGeolocation";
-import { pinImageSrc, pinState, type PinKind } from "@/lib/mapPins";
+import { pinImageSrc, pinState, youPinImageSrc, type PinKind } from "@/lib/mapPins";
 
 export type MapPin = {
   id: string;
@@ -11,6 +11,12 @@ export type MapPin = {
   closedEarly: boolean;
   xPct: number;
   yPct: number;
+};
+
+export type OwnFarmMarker = {
+  name: string;
+  open: boolean;
+  closedEarly: boolean;
 };
 
 // Ports mapArt() + youAreHereLabel(). Same stylized illustration (gradient
@@ -25,11 +31,11 @@ export type MapPin = {
 export function MapArt({
   pins,
   onPinTap,
-  ownFarmName,
+  ownFarm,
 }: {
   pins: MapPin[];
   onPinTap: (pin: MapPin) => void;
-  ownFarmName: string | null;
+  ownFarm: OwnFarmMarker | null;
 }) {
   const { status, coords } = useGeolocation();
 
@@ -91,7 +97,7 @@ export function MapArt({
       />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/pins/pin-here.png"
+        src={ownFarm ? youPinImageSrc(pinState("farm", ownFarm.open, ownFarm.closedEarly)) : "/pins/pin-you-open.svg"}
         alt=""
         style={{
           position: "absolute",
@@ -103,7 +109,7 @@ export function MapArt({
           filter: "drop-shadow(0 2px 3px rgba(0,0,0,.3))",
         }}
       />
-      <YouAreHereLabel status={status} coords={coords} ownFarmName={ownFarmName} />
+      <YouAreHereLabel status={status} coords={coords} ownFarmName={ownFarm?.name ?? null} />
 
       {pins.map((p) => {
         const state = pinState(p.kind, p.open, p.closedEarly);

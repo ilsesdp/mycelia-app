@@ -20,8 +20,8 @@ import {
 } from "@/lib/filters";
 
 const KIND_CARDS: Array<[Kind, string, string]> = [
-  ["Farms", "Individual growers you can visit", "/pins/pin-farm-open.png"],
-  ["Markets", "Where several farms gather", "/pins/pin-market-open.png"],
+  ["Farms", "Individual growers you can visit", "/pins/pin-farm-open.svg"],
+  ["Markets", "Where several farms gather", "/pins/pin-market-open.svg"],
 ];
 
 // Ports SCREENS['2.8'] — the Filters sheet, reached from either the list or

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MapArt, type MapPin } from "./MapArt";
+import { MapArt, type MapPin, type OwnFarmMarker } from "./MapArt";
 import { MapLegend } from "./MapLegend";
 import { MapControls } from "./MapControls";
 import { BottomNav } from "./BottomNav";
@@ -25,14 +25,14 @@ export function MapView({
   loggedIn,
   loadError,
   sheet,
-  ownFarmName,
+  ownFarm,
 }: {
   pins: MapPinInput[];
   filters: BrowseFilters;
   loggedIn: boolean;
   loadError: string | null;
   sheet: FarmSheetData | null;
-  ownFarmName: string | null;
+  ownFarm: OwnFarmMarker | null;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -102,7 +102,7 @@ export function MapView({
 
   return (
     <main className="flex flex-col min-h-screen" style={{ position: "relative", flex: 1 }}>
-      <MapArt pins={visible} onPinTap={tapPin} ownFarmName={ownFarmName} />
+      <MapArt pins={visible} onPinTap={tapPin} ownFarm={ownFarm} />
 
       <div style={{ position: "absolute", left: 16, right: 16, top: 16, zIndex: 5 }}>
         {/* searchBar() port — identical markup to the list view's */}

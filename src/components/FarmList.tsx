@@ -6,6 +6,7 @@ import type { Database } from "@/lib/types/database";
 import { farmStatus, type HourRow } from "@/lib/farmStatus";
 import { MapControls } from "@/components/browse/MapControls";
 import { BottomNav } from "@/components/browse/BottomNav";
+import { buildBrowseQuery } from "@/lib/queryString";
 
 export type FarmListItem = {
   id: string;
@@ -70,7 +71,11 @@ export default function FarmList({
           )}
         </div>
 
-        <MapControls filterCount={chips.length} />
+        <MapControls
+          filterCount={chips.length}
+          view="list"
+          queryString={buildBrowseQuery(activeFilters.categories, activeFilters.openOnly)}
+        />
       </div>
 
       <div className="flex-1 px-4 pb-6 flex flex-col gap-1">

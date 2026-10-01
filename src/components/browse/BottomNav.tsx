@@ -9,18 +9,20 @@ const TABS = [
   ["Profile", "👤"],
 ] as const;
 
-// Ports navBar3(). Only "Map" (this list/map group) is a real destination
-// right now — Messages (group 4) and My Farm (group 5) aren't built yet,
-// so they surface an inline "coming soon" note instead of a dead link.
-// Profile does route logged-out visitors to /welcome, since that's a real
-// and useful destination for that tap today.
+// Ports navBar3(). "Map" always goes to the real map (2.1), same as the
+// prototype's navBar3 ['Map','2.1'] — the list view (2.7/2.9) is reached via
+// the view-switch menu on the map, or stays wherever a visitor already is.
+// Messages (group 4) and My Farm (group 5) aren't built yet, so they
+// surface an inline "coming soon" note instead of a dead link. Profile does
+// route logged-out visitors to /welcome, since that's a real and useful
+// destination for that tap today.
 export function BottomNav({ active, loggedIn }: { active: "Map" | "Messages" | "Profile"; loggedIn: boolean }) {
   const router = useRouter();
   const [note, setNote] = useState<string | null>(null);
 
   function tap(label: (typeof TABS)[number][0]) {
     if (label === "Map") {
-      router.push("/");
+      router.push("/map");
       return;
     }
     if (label === "Profile" && !loggedIn) {

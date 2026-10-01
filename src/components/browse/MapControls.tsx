@@ -3,13 +3,22 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-// Ports mapControls() + viewMenuOverlay() from 1.7/2.7/2.9. The hamburger
-// opens a small overlay offering Map view / List view — Map view (2.1)
-// isn't built yet, so picking it shows an inline note instead of a dead
-// link. The filter button carries the active-filter badge count (from the
-// URL params 2.9 arrives with); Filters itself (2.8) is the next group, so
-// it currently just surfaces that.
-export function MapControls({ filterCount }: { filterCount: number }) {
+// Ports mapControls() + viewMenuOverlay() from 1.7/2.7/2.9/2.1/2.10. The
+// hamburger opens a small overlay offering Map view / List view — both are
+// now real routes (/ and /map), carrying over whatever cat/open filters are
+// active via `queryString`, same as switching views keeps the prototype's
+// single shared filter state. The filter button carries the active-filter
+// badge count; Filters itself (2.8) is the next group, so it currently just
+// surfaces that.
+export function MapControls({
+  filterCount,
+  view,
+  queryString = "",
+}: {
+  filterCount: number;
+  view: "list" | "map";
+  queryString?: string;
+}) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [note, setNote] = useState<string | null>(null);
@@ -17,6 +26,11 @@ export function MapControls({ filterCount }: { filterCount: number }) {
   function flash(msg: string) {
     setNote(msg);
     setTimeout(() => setNote(null), 1800);
+  }
+
+  function goView(target: "list" | "map") {
+    setMenuOpen(false);
+    if (target !== view) router.push(`${target === "list" ? "/" : "/map"}${queryString}`);
   }
 
   return (
@@ -123,29 +137,41 @@ export function MapControls({ filterCount }: { filterCount: number }) {
               VIEW
             </div>
             <div
-              onClick={() => {
-                setMenuOpen(false);
-                flash("Map view is coming soon");
+              onClick={() => goView("map")}
+              style={{
+                padding: 12,
+                borderRadius: 8,
+                background: view === "map" ? "var(--harvest-green-100)" : undefined,
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                cursor: "pointer",
+                borderBottom: view === "map" ? undefined : "1px solid var(--border-subtle)",
               }}
-              style={{ padding: 12, borderRadius: 8, display: "flex", alignItems: "center", gap: 12, cursor: "pointer", borderBottom: "1px solid var(--border-subtle)" }}
             >
               <span style={{ width: 20, textAlign: "center", color: "var(--text-secondary)" }}>🗺</span>
               <span className="body-m" style={{ color: "var(--text-secondary)", flex: 1 }}>
                 Map view
               </span>
+              {view === "map" && <span style={{ color: "var(--text-brand)" }}>✓</span>}
             </div>
             <div
-              onClick={() => {
-                setMenuOpen(false);
-                router.push("/");
+              onClick={() => goView("list")}
+              style={{
+                padding: 12,
+                borderRadius: 8,
+                background: view === "list" ? "var(--harvest-green-100)" : undefined,
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                cursor: "pointer",
               }}
-              style={{ padding: 12, borderRadius: 8, background: "var(--harvest-green-100)", display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}
             >
               <span style={{ width: 20, textAlign: "center", color: "var(--text-secondary)" }}>☰</span>
               <span className="body-m" style={{ color: "var(--text-secondary)", flex: 1 }}>
                 List view
               </span>
-              <span style={{ color: "var(--text-brand)" }}>✓</span>
+              {view === "list" && <span style={{ color: "var(--text-brand)" }}>✓</span>}
             </div>
           </div>
         </>

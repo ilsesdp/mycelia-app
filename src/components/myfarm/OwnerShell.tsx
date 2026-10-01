@@ -47,13 +47,22 @@ export function OwnerShell({
           </Link>
         </div>
       )}
-      <div className="hero">
-        <div className="hero-dots">
-          <div className="d" style={{ width: 18 }} />
-          <div className="d" style={{ width: 6 }} />
-          <div className="d" style={{ width: 6 }} />
-          <div className="d" style={{ width: 6 }} />
-        </div>
+      <div
+        className="hero"
+        style={
+          farm.coverPhotoUrl
+            ? { backgroundImage: `url(${farm.coverPhotoUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+            : undefined
+        }
+      >
+        {!farm.coverPhotoUrl && (
+          <div className="hero-dots">
+            <div className="d" style={{ width: 18 }} />
+            <div className="d" style={{ width: 6 }} />
+            <div className="d" style={{ width: 6 }} />
+            <div className="d" style={{ width: 6 }} />
+          </div>
+        )}
       </div>
       <div className="px-4" style={{ flex: 1 }}>
         <div style={{ height: 16 }} />

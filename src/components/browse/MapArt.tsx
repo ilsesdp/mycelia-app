@@ -95,21 +95,61 @@ export function MapArt({
           transform: "translate(-50%,-50%)",
         }}
       />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={ownFarm ? youPinImageSrc(pinState("farm", ownFarm.open, ownFarm.closedEarly)) : "/pins/pin-you-open.svg"}
-        alt=""
-        style={{
-          position: "absolute",
-          left: "49.9%",
-          top: "40.4%",
-          width: 51,
-          height: 58,
-          transform: "translateX(-50%)",
-          filter: "drop-shadow(0 2px 3px rgba(0,0,0,.3))",
-        }}
-      />
-      <YouAreHereLabel status={status} coords={coords} ownFarmName={ownFarm?.name ?? null} />
+      {ownFarm ? (
+        // Your own farm's marker: same icon-above-name layout as every other
+        // pin (see pins.map below) instead of a separate "This is your farm"
+        // callout — it's just another pin now, one that happens to be you.
+        <div
+          style={{
+            position: "absolute",
+            left: "49.9%",
+            top: "40.4%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={youPinImageSrc(pinState("farm", ownFarm.open, ownFarm.closedEarly))}
+            alt=""
+            width={51}
+            height={58}
+            style={{ display: "block", filter: "drop-shadow(0 2px 3px rgba(0,0,0,.3))" }}
+          />
+          <div
+            style={{
+              marginTop: 4,
+              background: "#fff",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: 8,
+              padding: "4px 8px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span className="body-s-strong">{ownFarm.name}</span>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/pins/pin-you-open.svg"
+            alt=""
+            style={{
+              position: "absolute",
+              left: "49.9%",
+              top: "40.4%",
+              width: 51,
+              height: 58,
+              transform: "translateX(-50%)",
+              filter: "drop-shadow(0 2px 3px rgba(0,0,0,.3))",
+            }}
+          />
+          <YouAreHereLabel status={status} coords={coords} />
+        </>
+      )}
 
       {pins.map((p) => {
         const state = pinState(p.kind, p.open, p.closedEarly);
@@ -150,43 +190,15 @@ export function MapArt({
   );
 }
 
+// Only renders for a visitor with no published farm of their own — the
+// owned-farm case is handled inline above, as a regular pin.
 function YouAreHereLabel({
   status,
   coords,
-  ownFarmName,
 }: {
   status: ReturnType<typeof useGeolocation>["status"];
   coords: { lat: number; lng: number } | null;
-  ownFarmName: string | null;
 }) {
-  if (ownFarmName) {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "47.3%",
-          transform: "translateX(-50%)",
-          width: 150,
-          background: "#fff",
-          border: "1px solid var(--border-subtle)",
-          borderRadius: 8,
-          padding: "6px 8px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 2,
-        }}
-      >
-        <span className="body-s-strong" style={{ textAlign: "center" }}>
-          {ownFarmName}
-        </span>
-        <a style={{ fontSize: 11, color: "var(--text-link)", cursor: "pointer" }} href="/my-farm">
-          This is your farm
-        </a>
-      </div>
-    );
-  }
   if (status === "granted" && coords) {
     return (
       <div

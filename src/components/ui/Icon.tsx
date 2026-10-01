@@ -147,8 +147,8 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
     case "gear":
       return (
         <svg {...props}>
+          <path d="M22 12 18.93 14.87 19.07 19.07 14.87 18.93 12 22 9.13 18.93 4.93 19.07 5.07 14.87 2 12 5.07 9.13 4.93 4.93 9.13 5.07 12 2 14.87 5.07 19.07 4.93 18.93 9.13Z" />
           <circle cx="12" cy="12" r="3" />
-          <path d="M12 3v2.4M12 18.6V21M4.6 6.3l1.7 1.4M17.7 16.3l1.7 1.4M3 12h2.4M18.6 12H21M4.6 17.7l1.7-1.4M17.7 7.7l1.7-1.4" />
         </svg>
       );
     case "calendar":
@@ -190,7 +190,7 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
     case "filter":
       return (
         <svg {...props}>
-          <path d="M4 6h16M7 12h10M10.5 18h3" />
+          <path d="M4 6h16l-7 8v5h-2v-5L4 6Z" />
         </svg>
       );
     case "menu":

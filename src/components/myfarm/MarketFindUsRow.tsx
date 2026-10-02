@@ -4,14 +4,15 @@ import type { MarketRow } from "@/lib/myFarm";
 
 // Ports marketFindUsRow() — every market the farm is listed at, or a
 // not-listed placeholder. Each row opens the real market detail page (2.11).
-// The orange "M" pin is the same /pins/pin-market-open.svg the map and the
-// Filters sheet (Farms/Markets kind cards) use, so a market reads as the
-// same thing everywhere it shows up — not a generic basket icon.
+// The orange "M" badge is the same /icons/icon-market.svg the Filters sheet
+// (Farms/Markets kind cards) and the market detail page's farm list use, so
+// a market reads as the same thing everywhere it shows up — not a generic
+// basket icon.
 export function MarketFindUsRow({ markets }: { markets: MarketRow[] }) {
   if (!markets.length) {
     return (
       <div style={{ border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-lg)", padding: 12, display: "flex", gap: 12, alignItems: "center" }}>
-        <Image src="/pins/pin-market-open.svg" alt="" width={32} height={32} />
+        <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
         <div className="body-s" style={{ color: "var(--text-tertiary)" }}>
           Not listed at any markets yet.
         </div>
@@ -36,7 +37,7 @@ export function MarketFindUsRow({ markets }: { markets: MarketRow[] }) {
               color: "inherit",
             }}
           >
-            <Image src="/pins/pin-market-open.svg" alt="" width={32} height={32} />
+            <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
             <div style={{ flex: 1 }}>
               <div className="body-m" style={{ color: "var(--text-primary)" }}>
                 {m.name}

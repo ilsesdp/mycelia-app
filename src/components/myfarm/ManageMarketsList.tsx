@@ -89,7 +89,7 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
                   marginBottom: 8,
                 }}
               >
-                <Image src="/pins/pin-market-open.svg" alt="" width={32} height={32} />
+                <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="body-m" style={{ color: "var(--text-primary)" }}>
                     {m.name}

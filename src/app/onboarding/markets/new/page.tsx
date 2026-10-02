@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
-import { PhotoWellMulti } from "@/components/ui/PhotoWellMulti";
+import { PhotoWell } from "@/components/ui/PhotoWell";
 import { ComboField } from "@/components/ui/ComboField";
 import { useOnboarding, type MarketDraft } from "@/lib/onboarding/context";
 import { createClient } from "@/lib/supabase/client";
 
-const DAY_OPTIONS = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays", "Weekends", "Daily"];
+const DAY_OPTIONS = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays"];
 // One canonical shape everywhere a schedule shows — "9:00am - 1:30pm":
 // always h:mm (never a bare "9am"), a space-hyphen-space between start and
 // end, lowercase am/pm glued to the number. Matches the real markets'
@@ -49,7 +49,7 @@ async function geocode(address: string): Promise<{ lat: number; lng: number } | 
   }
 }
 
-type NewPhoto = { key: string; file: File; preview: string };
+type NewPhoto = { file: File; preview: string };
 
 // Ports SCREENS['1.17']. The prototype pushes onto an in-memory MARKETS
 // array; this inserts a real row into public.markets (authenticated-insert
@@ -60,7 +60,7 @@ export default function NewMarketPage() {
   const { state, update } = useOnboarding();
   const supabase = createClient();
   const [draft, setDraft] = useState<MarketDraft>(emptyDraft());
-  const [photos, setPhotos] = useState<NewPhoto[]>([]);
+  const [photo, setPhoto] = useState<NewPhoto | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,11 +94,11 @@ export default function NewMarketPage() {
     // render — only the selection needs tracking here. (Keeping a second,
     // locally-rendered copy alongside that fetch was what caused the new
     // market to show up twice.) Any photos picked here can't be uploaded
-    // yet — there's no farm id until publishFarm() creates one — so they
-    // ride along in marketPhotoFiles and get uploaded then.
+    // yet — there's no farm id until publishFarm() creates one — so it
+    // rides along in marketPhotoFiles and gets uploaded then.
     update({
       selectedMarketIds: [...state.selectedMarketIds, data.id],
-      marketPhotoFiles: { ...state.marketPhotoFiles, [data.id]: photos.map((p) => p.file) },
+      marketPhotoFiles: { ...state.marketPhotoFiles, [data.id]: photo ? [photo.file] : [] },
     });
     router.push("/onboarding/markets");
   }
@@ -120,7 +120,7 @@ export default function NewMarketPage() {
         <div style={{ height: 8 }} />
         <input
           className="field"
-          placeholder="Chicago Ave & Spring St, Freeport IL"
+          placeholder="123 Main St, Freeport, IL 61032"
           value={draft.location}
           onChange={(e) => patch({ location: e.target.value })}
         />
@@ -149,11 +149,11 @@ export default function NewMarketPage() {
           Photos
         </label>
         <div style={{ height: 8 }} />
-        <PhotoWellMulti
-          photos={photos.map((p) => ({ key: p.key, url: p.preview }))}
-          label="Add photos of the market"
-          onAdd={(files) => setPhotos((ps) => [...ps, ...files.map((file) => ({ key: crypto.randomUUID(), file, preview: URL.createObjectURL(file) }))])}
-          onRemove={(key) => setPhotos((ps) => ps.filter((p) => p.key !== key))}
+        <PhotoWell
+          preview={photo?.preview ?? null}
+          label="Add a photo of the market"
+          onPick={(file) => setPhoto({ file, preview: URL.createObjectURL(file) })}
+          onRemove={() => setPhoto(null)}
         />
         {error && <p className="hint-error">{error}</p>}
         <div style={{ flex: 1 }} />

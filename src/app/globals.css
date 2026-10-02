@@ -480,7 +480,8 @@ body {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--text-primary);
-  width: 70px;
+  flex: 1;
+  min-width: 0;
   padding: 0;
 }
 .time-field input:focus {

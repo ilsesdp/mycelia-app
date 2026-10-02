@@ -16,11 +16,17 @@ function toMinutes(t: string): number {
   return h * 60 + (m || 0);
 }
 
+// Inside this many minutes of close_time, a farm is still open but the
+// status dot/label should read as "closing soon" (amber) rather than plain
+// "Open" (green) — a cue that there's a window closing, not just a flat
+// on/off.
+const CLOSING_SOON_MINUTES = 60;
+
 // Ports the prototype's per-card status line ("Open · until 6pm" /
 // "Closed · opens Sat 8am") from real farm_hours rows instead of the
 // prototype's hardcoded per-entry strings.
-export function farmStatus(hours: HourRow[]): { open: boolean; label: string; note: string } {
-  if (!hours.length) return { open: false, label: "Closed", note: "" };
+export function farmStatus(hours: HourRow[]): { open: boolean; closingSoon: boolean; label: string; note: string } {
+  if (!hours.length) return { open: false, closingSoon: false, label: "Closed", note: "" };
   const now = new Date();
   const todayIdx = now.getDay();
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
@@ -34,10 +40,11 @@ export function farmStatus(hours: HourRow[]): { open: boolean; label: string; no
     const openMin = toMinutes(today.open_time);
     const closeMin = toMinutes(today.close_time);
     if (nowMinutes >= openMin && nowMinutes < closeMin) {
-      return { open: true, label: "Open", note: `until ${fmtTime(today.close_time)}` };
+      const closingSoon = closeMin - nowMinutes <= CLOSING_SOON_MINUTES;
+      return { open: true, closingSoon, label: "Open", note: `until ${fmtTime(today.close_time)}` };
     }
     if (nowMinutes < openMin) {
-      return { open: false, label: "Closed", note: `opens today ${fmtTime(today.open_time)}` };
+      return { open: false, closingSoon: false, label: "Closed", note: `opens today ${fmtTime(today.open_time)}` };
     }
     // Past today's close_time — fall through to find the next open day.
   }
@@ -49,10 +56,10 @@ export function farmStatus(hours: HourRow[]): { open: boolean; label: string; no
     const h = hours.find((x) => x.day_of_week === idx);
     if (h && !h.closed && h.open_time) {
       const when = i === 1 ? "tomorrow" : DAY_LABEL[idx];
-      return { open: false, label: "Closed", note: `opens ${when} ${fmtTime(h.open_time)}` };
+      return { open: false, closingSoon: false, label: "Closed", note: `opens ${when} ${fmtTime(h.open_time)}` };
     }
   }
-  return { open: false, label: "Closed", note: "" };
+  return { open: false, closingSoon: false, label: "Closed", note: "" };
 }
 
 export type TodayStatus = "open" | "closed_early" | "closed" | null;
@@ -66,7 +73,25 @@ export function farmTodayStatus(hours: HourRow[], todayStatus: TodayStatus) {
   const closedEarly = todayStatus === "closed_early";
   const overrideClosed = todayStatus === "closed" || closedEarly;
   return {
-    ...(overrideClosed ? { ...hoursStatus, open: false } : hoursStatus),
+    ...(overrideClosed ? { ...hoursStatus, open: false, closingSoon: false } : hoursStatus),
     closedEarly,
   };
 }
+
+// Single source of truth for the status dot/label color everywhere a
+// farm's open/closed state is shown (statuschip, status-row,
+// status-pill-owner) — green while open, amber once within
+// CLOSING_SOON_MINUTES of close, red once closed, so the dot always
+// matches the word next to it.
+export type StatusTone = "open" | "closing-soon" | "closed";
+
+export function statusTone(status: { open: boolean; closingSoon?: boolean }): StatusTone {
+  if (!status.open) return "closed";
+  return status.closingSoon ? "closing-soon" : "open";
+}
+
+export const STATUS_TONE_COLOR: Record<StatusTone, string> = {
+  open: "var(--interactive-primary-hover)",
+  "closing-soon": "var(--text-warning)",
+  closed: "var(--text-danger)",
+};

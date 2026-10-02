@@ -3,6 +3,7 @@ import { Icon } from "@/components/ui/Icon";
 import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { catBg, catFg } from "@/lib/categoryStyle";
 import { abbreviateAddress } from "@/lib/geo";
+import { statusTone, STATUS_TONE_COLOR } from "@/lib/farmStatus";
 
 export type SheetProduct = { id: string; name: string; qty: string | null; photo_url: string | null };
 
@@ -87,8 +88,10 @@ export function FarmPinSheet({ farm }: { farm: FarmSheetData }) {
             )}
             <div style={{ height: 4 }} />
             <div className="status-row">
-              <span className="dot" />
-              <span className="label">{farm.status.label}</span>
+              <span className="dot" style={{ background: STATUS_TONE_COLOR[statusTone(farm.status)] }} />
+              <span className="label" style={{ color: STATUS_TONE_COLOR[statusTone(farm.status)] }}>
+                {farm.status.label}
+              </span>
               <span className="detail">&nbsp;{farm.status.note}</span>
             </div>
           </div>

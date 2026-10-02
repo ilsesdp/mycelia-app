@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Database } from "@/lib/types/database";
-import { farmTodayStatus, type HourRow, type TodayStatus } from "@/lib/farmStatus";
+import { farmTodayStatus, statusTone, STATUS_TONE_COLOR, type HourRow, type TodayStatus } from "@/lib/farmStatus";
 import { MapControls } from "@/components/browse/MapControls";
 import { BottomNav } from "@/components/browse/BottomNav";
 import { FiltersEmptyState } from "@/components/browse/FiltersEmptyState";
@@ -242,11 +242,10 @@ export default function FarmList({
                   </div>
                   <div className="body-s">{row.meta}</div>
                   <div className="flex items-center gap-1 mt-0.5">
-                    <span
-                      className="w-2 h-2 rounded-full"
-                      style={{ background: row.status.open ? "var(--border-brand)" : "var(--text-tertiary)" }}
-                    />
-                    <span className="body-s-strong">{row.status.label}</span>
+                    <span className="w-2 h-2 rounded-full" style={{ background: STATUS_TONE_COLOR[statusTone(row.status)] }} />
+                    <span className="body-s-strong" style={{ color: STATUS_TONE_COLOR[statusTone(row.status)] }}>
+                      {row.status.label}
+                    </span>
                     {row.status.note && <span className="body-s-medium">&nbsp;{row.status.note}</span>}
                   </div>
                 </div>

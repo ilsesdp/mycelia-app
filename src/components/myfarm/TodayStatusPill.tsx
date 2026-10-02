@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { farmTodayStatus, type HourRow } from "@/lib/farmStatus";
+import { farmTodayStatus, statusTone, STATUS_TONE_COLOR, type HourRow } from "@/lib/farmStatus";
 import { TodayHoursSheet } from "./TodayHoursSheet";
 import type { TodayStatusEnum } from "@/lib/myFarm";
 
@@ -31,6 +31,7 @@ export function TodayStatusPill({
   const [note, setNote] = useState(todayStatusNote);
   const [toast, setToast] = useState<string | null>(null);
   const computed = farmTodayStatus(hours, status);
+  const toneColor = STATUS_TONE_COLOR[statusTone(computed)];
 
   useEffect(() => {
     if (!toast) return;
@@ -41,8 +42,8 @@ export function TodayStatusPill({
   return (
     <>
       <div className="status-pill-owner" onClick={tappable ? () => setOpen(true) : undefined}>
-        <span className="dot" />
-        <span className="body-s-strong" style={{ color: "var(--text-primary)" }}>
+        <span className="dot" style={{ background: toneColor }} />
+        <span className="body-s-strong" style={{ color: toneColor }}>
           {computed.open ? "Open" : "Closed"}
         </span>
         <span className="body-s-medium">{computed.closedEarly ? `until ${note}` : computed.note}</span>

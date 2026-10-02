@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui/Icon";
 import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { MessageAction } from "./MessageAction";
 import { catBg, catFg } from "@/lib/categoryStyle";
+import { statusTone, STATUS_TONE_COLOR } from "@/lib/farmStatus";
 import type { FarmHeader } from "@/lib/farmProfile";
 
 const TABS: Array<["Products" | "About" | "Events", string]> = [
@@ -67,9 +68,10 @@ export function FarmProfileShell({
           )}
           <div style={{ height: 4 }} />
           <div className="statuschip">
-            <span className="dot" />
-            <span className="txt">
-              {farm.status.label} <span className="dim">{farm.status.note}</span>
+            <span className="dot" style={{ background: STATUS_TONE_COLOR[statusTone(farm.status)] }} />
+            <span className="txt" style={{ color: "var(--text-secondary)" }}>
+              <span style={{ color: STATUS_TONE_COLOR[statusTone(farm.status)] }}>{farm.status.label}</span>{" "}
+              <span className="dim">{farm.status.note}</span>
             </span>
           </div>
           <div style={{ height: 10 }} />

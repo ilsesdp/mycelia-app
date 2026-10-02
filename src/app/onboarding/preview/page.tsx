@@ -8,6 +8,7 @@ import { Icon } from "@/components/ui/Icon";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { catBg, catFg } from "@/lib/categoryStyle";
+import { STATUS_TONE_COLOR } from "@/lib/farmStatus";
 import { createClient } from "@/lib/supabase/client";
 import { publishFarm } from "@/lib/onboarding/publish";
 
@@ -122,14 +123,18 @@ export default function PreviewPage() {
           <div style={{ height: 8 }} />
           {today.closed ? (
             <div className="status-row">
-              <span className="dot" />
-              <span className="label">Closed</span>
+              <span className="dot" style={{ background: STATUS_TONE_COLOR.closed }} />
+              <span className="label" style={{ color: STATUS_TONE_COLOR.closed }}>
+                Closed
+              </span>
               <span className="detail">&nbsp;today</span>
             </div>
           ) : (
             <div className="status-row">
-              <span className="dot" />
-              <span className="label">Open</span>
+              <span className="dot" style={{ background: STATUS_TONE_COLOR.open }} />
+              <span className="label" style={{ color: STATUS_TONE_COLOR.open }}>
+                Open
+              </span>
               <span className="detail">&nbsp;until {fmtShortTime(today.close) || "5pm"}</span>
             </div>
           )}

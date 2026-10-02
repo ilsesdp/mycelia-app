@@ -18,12 +18,11 @@ export function MapLegend() {
         padding: "8px 10px",
         boxShadow: "0 2px 10px rgba(0,0,0,.16)",
         display: "flex",
-        gap: 8,
-        justifyContent: "space-between",
+        gap: 14,
+        justifyContent: "center",
       }}
     >
       {item("farm", "open", "Open")}
-      {item("farm", "closed-early", "Closed early")}
       {item("farm", "closed", "Closed")}
       {item("market", "open", "Market")}
     </div>

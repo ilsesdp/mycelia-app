@@ -50,7 +50,7 @@ export default async function MyFarmAboutPage({ searchParams }: PageProps<"/my-f
       <div style={{ height: 8 }} />
       <HoursBox hours={farm.hours} />
       <div style={{ height: 16 }} />
-      <DirectionsButton address={farmRow?.address ?? null} />
+      <DirectionsButton address={farmRow?.address ?? null} disabled={preview} />
       <div style={{ height: 24 }} />
       <div className="label-caps">Contact</div>
       {showEmail && <p className="body-s">{email}</p>}

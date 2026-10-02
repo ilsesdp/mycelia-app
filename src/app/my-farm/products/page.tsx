@@ -25,11 +25,12 @@ export default async function ManageProductsPage() {
     .order("sort_order");
 
   return (
-    <main className="flex flex-col min-h-screen" style={{ position: "relative" }}>
+    <main className="flex flex-col" style={{ height: "100dvh", position: "relative" }}>
       <AppBar backHref="/my-farm" backLabel="My farm" title="Manage products" />
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, paddingBottom: 24, overflowY: "auto" }}>
+      <div className="px-4" style={{ paddingTop: 16, flex: 1, minHeight: 0, paddingBottom: 100, overflowY: "auto" }}>
         <ProductRowList products={(products ?? []) as ProductRow[]} />
-        <div style={{ height: 6 }} />
+      </div>
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff", borderTop: "1px solid var(--border-subtle)" }}>
         <Link href="/my-farm/products/new" className="btn btn-primary">
           + Add another product
         </Link>

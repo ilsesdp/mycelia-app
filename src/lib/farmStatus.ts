@@ -11,6 +11,11 @@ export function fmtTime(t: string): string {
   return m === "00" ? `${h}${mer}` : `${h}:${m}${mer}`;
 }
 
+function toMinutes(t: string): number {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + (m || 0);
+}
+
 // Ports the prototype's per-card status line ("Open · until 6pm" /
 // "Closed · opens Sat 8am") from real farm_hours rows instead of the
 // prototype's hardcoded per-entry strings.
@@ -18,13 +23,27 @@ export function farmStatus(hours: HourRow[]): { open: boolean; label: string; no
   if (!hours.length) return { open: false, label: "Closed", note: "" };
   const now = new Date();
   const todayIdx = now.getDay();
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
   const today = hours.find((h) => h.day_of_week === todayIdx);
 
-  if (today && !today.closed && today.close_time) {
-    return { open: true, label: "Open", note: `until ${fmtTime(today.close_time)}` };
+  // "Today has hours and isn't marked closed" used to be enough to say
+  // "Open until <close>" — it never actually checked the clock, so a farm
+  // stayed "Open" long after its own close_time had passed. Compare against
+  // the current time before calling it open.
+  if (today && !today.closed && today.open_time && today.close_time) {
+    const openMin = toMinutes(today.open_time);
+    const closeMin = toMinutes(today.close_time);
+    if (nowMinutes >= openMin && nowMinutes < closeMin) {
+      return { open: true, label: "Open", note: `until ${fmtTime(today.close_time)}` };
+    }
+    if (nowMinutes < openMin) {
+      return { open: false, label: "Closed", note: `opens today ${fmtTime(today.open_time)}` };
+    }
+    // Past today's close_time — fall through to find the next open day.
   }
 
-  // Closed (today marked closed, or no row for today) — find the next open day.
+  // Closed (today marked closed, no row for today, or already closed for
+  // the day) — find the next open day.
   for (let i = 1; i <= 7; i++) {
     const idx = (todayIdx + i) % 7;
     const h = hours.find((x) => x.day_of_week === idx);

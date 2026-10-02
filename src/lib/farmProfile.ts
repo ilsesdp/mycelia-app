@@ -21,8 +21,13 @@ export type FarmHeader = {
 // Ports S.lastMapView — FarmList and the map's pin sheet both link in here
 // with ?from=list / ?from=map so the back arrow returns to wherever the
 // visitor actually came from, instead of always defaulting to the map.
+// ?from=events is the same idea for the market page: the My Farm Events
+// tab's "Also find us at" row links in with it so the back arrow returns
+// there instead of to the map.
 export function resolveBackHref(from: string | string[] | undefined): string {
-  return from === "list" ? "/" : "/map";
+  if (from === "list") return "/";
+  if (from === "events") return "/my-farm/events";
+  return "/map";
 }
 
 export async function getFarmHeader(

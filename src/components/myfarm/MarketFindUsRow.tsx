@@ -25,31 +25,24 @@ export function MarketFindUsRow({ markets }: { markets: MarketRow[] }) {
         <div key={m.id}>
           {i > 0 && <div style={{ height: 8 }} />}
           <Link
-            href={`/markets/${m.id}`}
+            href={`/markets/${m.id}?from=events`}
             style={{
-              border: "1px solid var(--border-subtle)",
-              borderRadius: "var(--radius-lg)",
-              padding: 12,
               display: "flex",
-              alignItems: "center",
               gap: 12,
+              alignItems: "center",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: 16,
+              padding: "12px 16px",
               textDecoration: "none",
-              color: "inherit",
             }}
           >
+            <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
             <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
-                <div className="body-m-strong">{m.name}</div>
+              <div className="title-m" style={{ fontSize: 18, lineHeight: "24px", color: "var(--text-primary)" }}>
+                {m.name}
               </div>
-              {m.location && (
-                <div className="body-s-medium" style={{ paddingLeft: 40 }}>
-                  {m.location}
-                </div>
-              )}
-              <div className="body-s-medium" style={{ paddingLeft: 40 }}>
-                {m.schedule_text}
-              </div>
+              {m.location && <div className="body-s">{m.location}</div>}
+              <div className="body-s">{m.schedule_text}</div>
             </div>
             <span style={{ color: "var(--text-tertiary)" }}>&#8250;</span>
           </Link>

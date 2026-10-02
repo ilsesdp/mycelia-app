@@ -35,7 +35,8 @@ export type IconName =
   | "sun"
   | "filter"
   | "menu"
-  | "map";
+  | "map"
+  | "check";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const props = { ...SHARED, width: size, height: size };
@@ -204,6 +205,12 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
         <svg {...props}>
           <path d="M9 4.5 4 6.3v13.2l5-1.8 6 1.8 5-1.8V5.5l-5 1.8-6-1.8Z" />
           <path d="M9 4.5v13.2M15 7.3v13.2" />
+        </svg>
+      );
+    case "check":
+      return (
+        <svg {...props}>
+          <path d="M5 12.5 10 17.5 19 7" />
         </svg>
       );
   }

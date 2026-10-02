@@ -2,11 +2,16 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Icon, type IconName } from "@/components/ui/Icon";
 
-const ROWS: [string, string, string][] = [
-  ["📍", "You appear on the map", "Anyone searching nearby can see your farm and what's ready."],
-  ["💬", "Messages come to your inbox", "People get in touch through Mycelia — your number stays private."],
-  ["🕐", "Change your hours any time", "Closing early or shut for the day takes two taps."],
+// Icons, not emoji — raw emoji characters render inconsistently across
+// platforms/fonts (looked fine on some devices, showed as plain or
+// mismatched glyphs elsewhere, e.g. on Vercel's preview). The app's own
+// Icon set renders identically everywhere.
+const ROWS: [IconName, string, string][] = [
+  ["pin", "You appear on the map", "Anyone searching nearby can see your farm and what's ready."],
+  ["msg", "Messages come to your inbox", "People get in touch through Mycelia — your number stays private."],
+  ["clock", "Change your hours any time", "Closing early or shut for the day takes two taps."],
 ];
 
 // Ports SCREENS['1.13'] — lands the newly-published farm on the map (2.1)
@@ -32,9 +37,10 @@ export default function OnboardingSuccessPage() {
             alignItems: "center",
             justifyContent: "center",
             margin: "0 auto",
+            color: "#fff",
           }}
         >
-          <span style={{ color: "#fff", fontSize: 32 }}>✓</span>
+          <Icon name="check" size={40} />
         </div>
         <div style={{ height: 26 }} />
         <div className="display-xl" style={{ color: "var(--text-primary)", textAlign: "center" }}>
@@ -57,9 +63,10 @@ export default function OnboardingSuccessPage() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                color: "var(--interactive-primary)",
               }}
             >
-              {icon}
+              <Icon name={icon} size={18} />
             </div>
             <div>
               <div className="body-m-strong">{title}</div>

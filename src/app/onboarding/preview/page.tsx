@@ -52,7 +52,6 @@ export default function PreviewPage() {
   const [tab, setTab] = useState<"Products" | "About" | "Events">("Products");
   const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [msgNote, setMsgNote] = useState(false);
 
   const grouped: Partial<Record<ProductDraft["availability"], Product[]>> = {};
   for (const p of state.products) (grouped[p.availability] ||= []).push(p);
@@ -81,89 +80,88 @@ export default function PreviewPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="flex flex-col" style={{ height: "100dvh" }}>
       <AppBar backHref="/onboarding/contact" title="Preview" />
-      <div style={{ background: "var(--info-bg)", padding: "12px 24px", fontSize: 14, display: "flex", gap: 8, color: "var(--info-fg)" }}>
+      <div style={{ background: "var(--info-bg)", padding: "12px 24px", fontSize: 14, display: "flex", gap: 8, color: "var(--info-fg)", flexShrink: 0 }}>
         <Icon name="eye" size={18} />
         <span>This is what everyone else will see. Nothing is public until you publish.</span>
       </div>
-      <div style={{ height: 140, background: "linear-gradient(180deg,#7e9b52,#4e6b35,#3a5228)" }} />
-      <div className="px-6 pt-4" style={{ paddingBottom: 100, flex: 1, position: "relative" }}>
-        <div style={{ position: "absolute", right: 24, top: 20, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: 56 }}>
-          <div
-            onClick={() => {
-              setMsgNote(true);
-              setTimeout(() => setMsgNote(false), 2000);
-            }}
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 999,
-              background: "var(--bg-raised)",
-              border: "1px solid var(--border-default)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: "var(--text-secondary)",
-            }}
-          >
-            <Icon name="msg" size={20} />
-          </div>
-          <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--text-secondary)", textAlign: "center", whiteSpace: "nowrap" }}>
-            {msgNote ? "Can't message own farm" : "Message"}
-          </div>
-        </div>
-        <div className="title-l" style={{ color: state.farmName ? "var(--text-primary)" : "var(--text-disabled)", width: 280 }}>
-          {state.farmName || "Add your farm name"}
-        </div>
-        <div style={{ height: 4 }} />
-        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--text-secondary)", fontSize: 14 }}>
-          <Icon name="pin" size={16} />
-          {state.farmAddress || "Add your address"}
-        </div>
-        <div style={{ height: 8 }} />
-        {today.closed ? (
-          <div className="status-row">
-            <span className="dot" />
-            <span className="label">Closed</span>
-            <span className="detail">&nbsp;today</span>
-          </div>
-        ) : (
-          <div className="status-row">
-            <span className="dot" />
-            <span className="label">Open</span>
-            <span className="detail">&nbsp;until {fmtShortTime(today.close) || "5pm"}</span>
-          </div>
-        )}
-        <div style={{ height: 10 }} />
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {categories.length ? (
-            categories.map((c) => (
-              <span key={c} className="cat-chip" style={{ background: catBg(c), borderColor: catFg(c), color: catFg(c) }}>
-                {c}
-              </span>
-            ))
-          ) : (
-            <span className="caption">No categories chosen</span>
-          )}
-        </div>
-        <div style={{ height: 20 }} />
-        <div style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)" }}>
-          {(["Products", "About", "Events"] as const).map((t) => (
-            <div
-              key={t}
-              onClick={() => setTab(t)}
-              style={{ flex: 1, textAlign: "center", padding: "8px 0", cursor: "pointer", borderBottom: `2.5px solid ${tab === t ? "var(--border-brand)" : "transparent"}` }}
-            >
-              <span className={tab === t ? "body-m-strong" : "body-m"} style={tab === t ? {} : { color: "var(--text-secondary)" }}>
-                {t}
-              </span>
+      {/* Hero/header/tabs stay put — same chrome-vs-scrolling-body split as
+          the real farm page (FarmProfileShell): only the tab content below
+          scrolls, not the whole screen. */}
+      <div style={{ position: "relative", flexShrink: 0 }}>
+        <div
+          className="hero"
+          style={
+            state.coverPhotoPreview
+              ? { backgroundImage: `url(${state.coverPhotoPreview})`, backgroundSize: "cover", backgroundPosition: "center" }
+              : undefined
+          }
+        />
+        <div className="px-6" style={{ position: "relative" }}>
+          {/* Disabled on purpose — this is a preview of your own farm, not
+              a real visitor's view. The only action here is "Publish my
+              farm" below; messaging yourself never made sense anyway. */}
+          <div className="msgbtn-corner">
+            <div className="btn-round" style={{ color: "var(--text-disabled)", cursor: "not-allowed", background: "var(--bg-subtle)" }} aria-disabled="true">
+              <Icon name="msg" size={20} />
             </div>
-          ))}
+            <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--text-disabled)", textAlign: "center", whiteSpace: "nowrap" }}>
+              Message
+            </div>
+          </div>
+          <div style={{ height: 16 }} />
+          <div className="title-l" style={{ color: state.farmName ? "var(--text-primary)" : "var(--text-disabled)", width: 280 }}>
+            {state.farmName || "Add your farm name"}
+          </div>
+          <div style={{ height: 4 }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--text-secondary)", fontSize: 14 }}>
+            <Icon name="pin" size={16} />
+            {state.farmAddress || "Add your address"}
+          </div>
+          <div style={{ height: 8 }} />
+          {today.closed ? (
+            <div className="status-row">
+              <span className="dot" />
+              <span className="label">Closed</span>
+              <span className="detail">&nbsp;today</span>
+            </div>
+          ) : (
+            <div className="status-row">
+              <span className="dot" />
+              <span className="label">Open</span>
+              <span className="detail">&nbsp;until {fmtShortTime(today.close) || "5pm"}</span>
+            </div>
+          )}
+          <div style={{ height: 10 }} />
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {categories.length ? (
+              categories.map((c) => (
+                <span key={c} className="cat-chip" style={{ background: catBg(c), borderColor: catFg(c), color: catFg(c) }}>
+                  {c}
+                </span>
+              ))
+            ) : (
+              <span className="caption">No categories chosen</span>
+            )}
+          </div>
+          <div style={{ height: 20 }} />
         </div>
-        <div style={{ height: 16 }} />
-
+      </div>
+      <div className="px-6" style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", flexShrink: 0 }}>
+        {(["Products", "About", "Events"] as const).map((t) => (
+          <div
+            key={t}
+            onClick={() => setTab(t)}
+            style={{ flex: 1, textAlign: "center", padding: "8px 0", cursor: "pointer", borderBottom: `2.5px solid ${tab === t ? "var(--border-brand)" : "transparent"}` }}
+          >
+            <span className={tab === t ? "body-m-strong" : "body-m"} style={tab === t ? {} : { color: "var(--text-secondary)" }}>
+              {t}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="px-6" style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingTop: 16, paddingBottom: 100 }}>
         {tab === "Products" ? (
           <>
             <div className="label-caps">What&apos;s available</div>
@@ -227,7 +225,7 @@ export default function PreviewPage() {
               })}
             </div>
             <div style={{ height: 16 }} />
-            <DirectionsButton address={state.farmAddress || null} />
+            <DirectionsButton address={state.farmAddress || null} disabled />
             <div style={{ height: 24 }} />
             <div className="label-caps">Contact</div>
             {(() => {
@@ -252,15 +250,8 @@ export default function PreviewPage() {
               );
             })()}
             <div style={{ height: 8 }} />
-            <button
-              className="btn btn-primary"
-              style={{ width: "100%" }}
-              onClick={() => {
-                setMsgNote(true);
-                setTimeout(() => setMsgNote(false), 2000);
-              }}
-            >
-              {msgNote ? "Can't message own farm" : `Message ${state.farmName || "this farm"}`}
+            <button className="btn btn-primary" style={{ width: "100%" }} disabled>
+              Message {state.farmName || "this farm"}
             </button>
           </>
         ) : (

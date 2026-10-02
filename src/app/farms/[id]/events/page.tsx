@@ -1,9 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getFarmHeader, resolveBackHref } from "@/lib/farmProfile";
 import { FarmProfileShell } from "@/components/farm/FarmProfileShell";
-import { Icon } from "@/components/ui/Icon";
 
 function fmtEventDate(key: string): string {
   const [y, m, d] = key.split("-").map(Number);
@@ -99,26 +99,25 @@ export default async function FarmEventsPage({ params, searchParams }: PageProps
               key={m.id}
               href={`/markets/${m.id}`}
               style={{
-                border: "1px solid var(--border-subtle)",
-                borderRadius: 16,
-                padding: 12,
                 display: "flex",
                 gap: 12,
                 alignItems: "center",
+                border: "1px solid var(--border-subtle)",
+                borderRadius: 16,
+                padding: "12px 16px",
                 cursor: "pointer",
                 textDecoration: "none",
               }}
             >
-              <span style={{ color: "var(--text-secondary)" }}>
-                <Icon name="cam" size={20} />
-              </span>
+              <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
               <div style={{ flex: 1 }}>
-                <div className="body-m-strong">{m.name}</div>
-                {(m.schedule_text || m.location) && (
-                  <div className="body-s-medium">{[m.schedule_text, m.location].filter(Boolean).join(" · ")}</div>
-                )}
+                <div className="title-m" style={{ fontSize: 18, lineHeight: "24px", color: "var(--text-primary)" }}>
+                  {m.name}
+                </div>
+                {m.location && <div className="body-s">{m.location}</div>}
+                {m.schedule_text && <div className="body-s">{m.schedule_text}</div>}
               </div>
-              <span>&#8250;</span>
+              <span style={{ color: "var(--text-tertiary)" }}>&#8250;</span>
             </Link>
           ))}
         </div>

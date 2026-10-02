@@ -81,8 +81,8 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
               <div
                 style={{
                   border: "1px solid var(--border-subtle)",
-                  borderRadius: "var(--radius-lg)",
-                  padding: 12,
+                  borderRadius: 16,
+                  padding: "12px 16px",
                   display: "flex",
                   gap: 12,
                   alignItems: "center",
@@ -91,10 +91,10 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
               >
                 <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div className="body-m" style={{ color: "var(--text-primary)" }}>
+                  <div className="title-m" style={{ fontSize: 18, lineHeight: "24px", color: "var(--text-primary)" }}>
                     {m.name}
                   </div>
-                  <div className="body-s-medium">{m.schedule_text}</div>
+                  <div className="body-s">{m.schedule_text}</div>
                 </div>
                 {editing ? (
                   <span

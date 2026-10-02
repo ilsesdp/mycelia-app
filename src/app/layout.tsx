@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import { Clarity } from "@/components/analytics/Clarity";
 import "./globals.css";
 
 // Fraunces = display/heading font (Black weight is display-only, per
@@ -28,7 +29,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Clarity />
+        {children}
+      </body>
     </html>
   );
 }

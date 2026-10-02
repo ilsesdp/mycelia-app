@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
@@ -10,12 +10,15 @@ import { createClient } from "@/lib/supabase/client";
 // Ports SCREENS['1.14'] — real supabase.auth.signInWithPassword(). A user
 // with no farm yet is sent to onboarding; a user who already has one lands
 // on the map (2.1), same as the prototype's own post-login destination.
-export default function LoginPage() {
+function LoginInner() {
   const router = useRouter();
   const supabase = createClient();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    searchParams.get("error") === "confirm-failed" ? "That confirmation link didn't work — it may have expired. Try signing up again, or log in if you already confirmed." : null
+  );
   const [submitting, setSubmitting] = useState(false);
 
   const canSubmit = !!email && !!password;
@@ -99,5 +102,13 @@ export default function LoginPage() {
         </Link>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginInner />
+    </Suspense>
   );
 }

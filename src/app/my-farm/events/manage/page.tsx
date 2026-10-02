@@ -22,7 +22,7 @@ export default async function ManageEventsPage() {
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/my-farm/events" backLabel="Events" title="Manage events" />
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, overflowY: "auto", paddingBottom: 24 }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
         {list.length === 0 ? (
           <p className="body-m" style={{ textAlign: "center", color: "var(--text-tertiary)", padding: "24px 0" }}>
             No events yet.

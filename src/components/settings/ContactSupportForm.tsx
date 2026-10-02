@@ -47,7 +47,7 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Contact support" />
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, paddingBottom: 24, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
         <div className="label-caps">What&apos;s it about?</div>
         <div style={{ height: 8 }} />
         <div style={{ position: "relative" }}>
@@ -143,7 +143,7 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
           }}
         />
 
-        <div style={{ flex: 1, minHeight: 20 }} />
+        <div style={{ height: 20 }} />
         <p className="caption">We usually reply within two working days. You&apos;ll get our answer the same way you chose to be reached.</p>
         <div style={{ height: 12 }} />
         <button className="btn btn-primary" disabled={!canSend} onClick={send}>

@@ -31,7 +31,7 @@ export function FarmProfileShell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex flex-col" style={{ height: "100dvh" }}>
+    <main className="flex flex-col min-h-screen">
       <AppBar backHref={backHref} />
       <div style={{ position: "relative", flexShrink: 0 }}>
         <div
@@ -94,10 +94,10 @@ export function FarmProfileShell({
         ))}
       </div>
       <div style={{ height: 16, flexShrink: 0 }} />
-      {/* Only this body scrolls — the hero, header and tabs above stay put.
-          98px bottom padding clears the fixed BottomNav (70px) with real
-          breathing room above it, not just flush against it. */}
-      <div className="px-4" style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 98 }}>
+      {/* The whole page scrolls as one now — only BottomNav stays fixed.
+          98px bottom padding clears it (70px) with real breathing room
+          above it, not just flush against it. */}
+      <div className="px-4" style={{ paddingBottom: 98 }}>
         {children}
       </div>
 

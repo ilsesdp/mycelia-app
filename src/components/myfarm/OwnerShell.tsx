@@ -30,10 +30,9 @@ export function OwnerShell({
 }) {
   const qs = preview ? "?preview=1" : "";
   return (
-    <main className="flex flex-col" style={{ height: "100dvh" }}>
-      {/* Hero/header/tabs stay put — same chrome-vs-scrolling-body split as
-          the public farm page (FarmProfileShell) and onboarding Preview
-          (1.12): only the tab content below scrolls, not the whole screen. */}
+    <main className="flex flex-col min-h-screen">
+      {/* Hero/header/tabs flow with the page — the whole screen scrolls as
+          one, same as the public farm page (FarmProfileShell). */}
       <div style={{ flexShrink: 0 }}>
         {preview && (
           <div style={{ background: "var(--info-bg)", padding: "12px 16px", display: "flex", alignItems: "center", gap: 8 }}>
@@ -131,10 +130,9 @@ export function OwnerShell({
           </div>
         </div>
       </div>
-      {/* Only this body scrolls — vertical and horizontal — and clears the
-          fixed BottomNav (70px) with real breathing room above it, not just
-          flush against it. */}
-      <div className="px-4" style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingTop: 16, paddingBottom: 98 }}>
+      {/* Bottom padding clears the fixed BottomNav (70px) with real
+          breathing room above it, not just flush against it. */}
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 98 }}>
         {children}
       </div>
       <BottomNav active={preview ? "Map" : "Profile"} loggedIn />

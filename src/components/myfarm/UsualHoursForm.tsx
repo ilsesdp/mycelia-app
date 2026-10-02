@@ -70,7 +70,7 @@ export function UsualHoursForm({ farmId, initialHours }: { farmId: string; initi
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/my-farm" title="Usual hours" />
-      <div style={{ flex: 1, overflowY: "auto", paddingBottom: 24 }}>
+      <div>
         {DAYS.map((day) => {
           const h = hours[day];
           return (

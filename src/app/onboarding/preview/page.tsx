@@ -81,7 +81,7 @@ export default function PreviewPage() {
   }
 
   return (
-    <main className="flex flex-col" style={{ height: "100dvh" }}>
+    <main className="flex flex-col min-h-screen">
       <AppBar backHref="/onboarding/contact" title="Preview" />
       <div style={{ background: "var(--info-bg)", padding: "12px 24px", fontSize: 14, display: "flex", gap: 8, color: "var(--info-fg)", flexShrink: 0 }}>
         <Icon name="eye" size={18} />
@@ -166,7 +166,7 @@ export default function PreviewPage() {
           </div>
         ))}
       </div>
-      <div className="px-6" style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingTop: 16, paddingBottom: 100 }}>
+      <div className="px-6" style={{ paddingTop: 16, paddingBottom: 24 }}>
         {tab === "Products" ? (
           <>
             <div className="label-caps">What&apos;s available</div>
@@ -266,8 +266,7 @@ export default function PreviewPage() {
             <p className="caption">No events added yet. You can add these after you publish your farm.</p>
           </>
         )}
-      </div>
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff", borderTop: "1px solid var(--border-subtle)" }}>
+        <div style={{ height: 20 }} />
         {error && (
           <p className="hint-error" style={{ marginBottom: 8 }}>
             {error}

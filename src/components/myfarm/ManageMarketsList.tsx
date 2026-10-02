@@ -45,7 +45,7 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
   }
 
   return (
-    <main className="flex flex-col" style={{ height: "100dvh" }}>
+    <main className="flex flex-col min-h-screen">
       <AppBar
         backHref={editing ? undefined : "/my-farm/events"}
         backLabel="Events"
@@ -71,7 +71,7 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
           ) : undefined
         }
       />
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 100 }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
         {markets.length === 0 ? (
           <p className="body-m">No markets added yet.</p>
         ) : (
@@ -131,7 +131,7 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
           })
         )}
       </div>
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff" }}>
+      <div style={{ padding: "12px 24px 24px" }}>
         {editing ? (
           <button className="btn btn-danger" disabled={!selected.size || deleting} onClick={deleteSelected}>
             {deleting ? "Deleting…" : selected.size ? `Delete ${selected.size} market${selected.size > 1 ? "s" : ""}` : "Select markets to delete"}

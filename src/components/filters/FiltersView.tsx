@@ -70,7 +70,7 @@ export function FiltersView({
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar title="Filters" closeHref={closeHref} />
-      <div className="flex-1 flex flex-col px-4" style={{ paddingTop: 16, paddingBottom: 24, overflowY: "auto" }}>
+      <div className="flex flex-col px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
         <div className="label-caps">What you&apos;re looking for</div>
         <div style={{ height: 8 }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

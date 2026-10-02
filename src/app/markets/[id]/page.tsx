@@ -43,7 +43,7 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
     .filter((f): f is NonNullable<typeof f> => !!f && f.published);
 
   return (
-    <main className="flex flex-col" style={{ height: "100dvh" }}>
+    <main className="flex flex-col min-h-screen">
       <AppBar backHref={resolveBackHref(sp.from)} />
       <div style={{ flexShrink: 0 }}>
         <PhotoCarousel photos={marketPhotos ?? []} />
@@ -73,9 +73,8 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
         </div>
       </div>
 
-      {/* Only this list scrolls — the hero, header and directions button
-          above stay put, same scroll containment as the farm profile shell. */}
-      <div className="px-4" style={{ flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: 98 }}>
+      {/* The whole page scrolls as one — only BottomNav stays fixed. */}
+      <div className="px-4" style={{ paddingBottom: 98 }}>
         <div className="label-caps">Farms at this market</div>
         <div style={{ height: 8 }} />
         {farms.length === 0 ? (

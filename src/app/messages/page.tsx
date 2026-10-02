@@ -22,7 +22,7 @@ export default async function MessagesPage() {
 
   return (
     <main className="flex flex-col min-h-screen" style={{ paddingBottom: 70 }}>
-      <div className="flex-1" style={{ overflowY: "auto" }}>
+      <div>
         <div className="col px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
           <div className="display-xl" style={{ color: "var(--text-primary)" }}>
             Messages

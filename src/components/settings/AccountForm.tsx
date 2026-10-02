@@ -68,7 +68,7 @@ export function AccountForm({
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Account information" />
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, paddingBottom: 24, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
         <p className="body-m">The email you sign in with is {authEmail}. This is how people reach you.</p>
         <div style={{ height: 20 }} />
 
@@ -98,7 +98,7 @@ export function AccountForm({
           placeholder="(555) 555-0123"
         />
 
-        <div style={{ flex: 1, minHeight: 20 }} />
+        <div style={{ height: 20 }} />
         <button className="btn btn-primary" disabled={!emailOk || saving} onClick={save}>
           {saving ? "Saving…" : "Save changes"}
         </button>

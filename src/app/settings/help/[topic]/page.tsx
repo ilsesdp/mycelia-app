@@ -20,7 +20,7 @@ export default async function HelpArticlePage({ params }: PageProps<"/settings/h
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings/help" title="Help" />
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, paddingBottom: 24, overflowY: "auto" }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
         <div className="title-m" style={{ color: "var(--text-primary)" }}>
           {item.q}
         </div>

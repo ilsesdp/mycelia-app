@@ -100,7 +100,7 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
   }
 
   return (
-    <main className="flex flex-col" style={{ height: "100dvh" }}>
+    <main className="flex flex-col min-h-screen">
       <div className="appbar">
         <a className="back" onClick={handleBack}>
           <span style={{ fontSize: 18, lineHeight: 1 }}>&lsaquo;</span>My farm
@@ -108,7 +108,7 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
         <div className="titlebar">{isEdit ? "Edit a product" : "Add a product"}</div>
         <div style={{ width: 84 }} />
       </div>
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, minHeight: 0, overflowY: "auto", paddingBottom: isEdit ? 160 : 100 }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
         <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
           What is your product?
         </div>
@@ -209,9 +209,8 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
             patch({ photoPreview: null });
           }}
         />
-      </div>
 
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff" }}>
+        <div style={{ height: 28 }} />
         <button className="btn btn-primary" disabled={!draft.name || saving} onClick={save}>
           {saving ? "Saving…" : "Save product"}
         </button>

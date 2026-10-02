@@ -48,7 +48,7 @@ export function NotificationsForm({
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Notifications" />
-      <div className="px-4" style={{ paddingTop: 16, flex: 1, paddingBottom: 24, overflowY: "auto" }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
         <div className="label-caps">How we reach you</div>
         <div style={{ height: 8 }} />
         <div className="segmented">

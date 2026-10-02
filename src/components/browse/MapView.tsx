@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MapArt, type MapPin, type OwnFarmMarker } from "./MapArt";
 import { MapLegend } from "./MapLegend";
@@ -37,6 +37,48 @@ export function MapView({
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [suggestOpen, setSuggestOpen] = useState(false);
+
+  // Keeps the sheet mounted through its slide-down close animation instead
+  // of the `sheet` prop (driven by the ?pin= URL param) unmounting it the
+  // instant the URL changes. `sheetOpen` is the transform's target state;
+  // `displayedSheet` only clears once FarmPinSheet reports the slide-down
+  // transition actually finished.
+  const [displayedSheet, setDisplayedSheet] = useState<FarmSheetData | null>(sheet);
+  const [sheetOpen, setSheetOpen] = useState(!!sheet);
+
+  // Render-time state adjustment (React's documented alternative to an
+  // effect for "adjust state when a prop changes"), using state rather than
+  // a ref so it's safe to read/write during render: the moment a new sheet
+  // arrives, swap it in immediately rather than one tick later via an
+  // effect — and never on the way to null, so the previous sheet's content
+  // stays mounted and visible through its close animation.
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  const [prevSheet, setPrevSheet] = useState<FarmSheetData | null>(sheet);
+  if (sheet !== prevSheet) {
+    setPrevSheet(sheet);
+    if (sheet) setDisplayedSheet(sheet);
+  }
+
+  useEffect(() => {
+    if (!sheet) return;
+    // Two rAFs: the first lets the browser paint the off-screen starting
+    // position (new mount, or a prior close already mid-transition), the
+    // second then flips the target so the transition actually animates
+    // instead of the two style changes collapsing into one frame.
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setSheetOpen(true));
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [sheet]);
+
+  // The sheet's actual transform/opacity target: closing the moment `sheet`
+  // goes null (the URL param cleared) rather than waiting on an effect, so
+  // the slide-down/fade-out animates immediately instead of snapping shut.
+  const sheetIsOpen = !!sheet && sheetOpen;
 
   const positioned = useMemo<MapPin[]>(() => pins.map((p) => ({ ...p, ...pinPosition(p.id) })), [pins]);
 
@@ -172,7 +214,7 @@ export function MapView({
           )}
         </div>
 
-        {!sheet && (
+        {!displayedSheet && (
           <>
             <div style={{ height: 12 }} />
             <MapControls filterCount={chips.length} view="map" queryString={qs} />
@@ -186,18 +228,35 @@ export function MapView({
         </p>
       )}
 
-      {!sheet && (
+      {!displayedSheet && (
         <div style={{ position: "absolute", left: 16, right: 16, bottom: 86, zIndex: 4 }}>
           <MapLegend />
         </div>
       )}
 
-      {!sheet && <BottomNav active="Map" loggedIn={loggedIn} />}
+      {!displayedSheet && <BottomNav active="Map" loggedIn={loggedIn} />}
 
-      {sheet && (
+      {displayedSheet && (
         <>
-          <div style={{ position: "absolute", inset: 0, background: "rgba(11,14,12,.6)", zIndex: 15 }} onClick={closeSheet} />
-          <FarmPinSheet farm={sheet} />
+          <div
+            onClick={closeSheet}
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(11,14,12,.6)",
+              zIndex: 15,
+              opacity: sheetIsOpen ? 1 : 0,
+              transition: "opacity 280ms cubic-bezier(0.32, 0.72, 0, 1)",
+            }}
+          />
+          <FarmPinSheet
+            farm={displayedSheet}
+            open={sheetIsOpen}
+            onCloseTransitionEnd={() => {
+              setDisplayedSheet(null);
+              setSheetOpen(false);
+            }}
+          />
         </>
       )}
     </main>

@@ -48,10 +48,28 @@ function productCard(p: SheetProduct, kind: "ready" | "producing") {
 // profile page; that route (2.3–2.5) is the next screen group and isn't
 // built yet, so — same as the list view's farm cards today — the link is
 // real but its destination isn't live yet.
-export function FarmPinSheet({ farm }: { farm: FarmSheetData }) {
+//
+// `open` drives a slide-up/slide-down transform (true = resting position,
+// false = translated off-screen below), so the caller can mount this with
+// open=false, flip to true on the next frame for the opening animation, and
+// flip back to false before unmounting so the sheet actually slides away
+// instead of just vanishing. `onCloseTransitionEnd` fires once the
+// slide-down finishes, which is when the caller should unmount.
+export function FarmPinSheet({
+  farm,
+  open,
+  onCloseTransitionEnd,
+}: {
+  farm: FarmSheetData;
+  open: boolean;
+  onCloseTransitionEnd?: () => void;
+}) {
   return (
     <div
       onClick={(e) => e.stopPropagation()}
+      onTransitionEnd={(e) => {
+        if (e.propertyName === "transform" && !open) onCloseTransitionEnd?.();
+      }}
       style={{
         position: "absolute",
         left: 0,
@@ -64,6 +82,8 @@ export function FarmPinSheet({ farm }: { farm: FarmSheetData }) {
         display: "flex",
         flexDirection: "column",
         zIndex: 60,
+        transform: `translateY(${open ? "0" : "100%"})`,
+        transition: "transform 280ms cubic-bezier(0.32, 0.72, 0, 1)",
       }}
     >
       {/* Static header — name, address, status, categories — never scrolls. */}

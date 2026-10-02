@@ -31,23 +31,27 @@ export function MarketFindUsRow({ markets }: { markets: MarketRow[] }) {
               borderRadius: "var(--radius-lg)",
               padding: 12,
               display: "flex",
-              gap: 12,
-              alignItems: "center",
+              flexDirection: "column",
+              gap: 4,
               textDecoration: "none",
               color: "inherit",
             }}
           >
-            <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
-            <div style={{ flex: 1 }}>
-              <div className="body-m" style={{ color: "var(--text-primary)" }}>
+            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
+              <div className="body-m" style={{ flex: 1, color: "var(--text-primary)" }}>
                 {m.name}
               </div>
-              <div className="body-s-medium">
-                {m.schedule_text}
-                {m.location ? ` · ${m.location}` : ""}
-              </div>
+              <span style={{ color: "var(--text-tertiary)" }}>&#8250;</span>
             </div>
-            <span style={{ color: "var(--text-tertiary)" }}>&#8250;</span>
+            {m.location && (
+              <div className="body-s-medium" style={{ paddingLeft: 44 }}>
+                {m.location}
+              </div>
+            )}
+            <div className="body-s-medium" style={{ paddingLeft: 44 }}>
+              {m.schedule_text}
+            </div>
           </Link>
         </div>
       ))}

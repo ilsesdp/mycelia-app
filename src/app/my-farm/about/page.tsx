@@ -4,6 +4,7 @@ import { getMyFarmId, getMyFarmIdentity } from "@/lib/myFarm";
 import { OwnerShell } from "@/components/myfarm/OwnerShell";
 import { HoursBox } from "@/components/farm/HoursBox";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
+import { Icon } from "@/components/ui/Icon";
 import Link from "next/link";
 
 // Ports SCREENS['4.8'] (owner) and its public-preview render (?preview=1).
@@ -49,6 +50,13 @@ export default async function MyFarmAboutPage({ searchParams }: PageProps<"/my-f
       <div className="label-caps">Hours</div>
       <div style={{ height: 8 }} />
       <HoursBox hours={farm.hours} />
+      <div style={{ height: 12 }} />
+      {farmRow?.address && (
+        <div style={{ display: "flex", gap: 4, alignItems: "flex-start", color: "var(--text-secondary)" }}>
+          <Icon name="pin" size={16} />
+          <span className="body-s">{farmRow.address}</span>
+        </div>
+      )}
       <div style={{ height: 16 }} />
       <DirectionsButton address={farmRow?.address ?? null} disabled={preview} />
       <div style={{ height: 24 }} />

@@ -95,7 +95,12 @@ export type ProductRow = {
 };
 
 export function productRailLabel(p: Pick<ProductRow, "qty" | "unit" | "roughly_when">): string {
-  return p.qty ? `${p.qty} ${p.unit ?? ""}`.trim() : p.roughly_when || "";
+  // Was qty ?? roughly_when — an "either/or" that silently dropped the
+  // estimate whenever a quantity was also entered (the common case for
+  // Producing/Planning items), even though both were saved. Show both,
+  // joined, when both are present.
+  const amount = p.qty ? `${p.qty} ${p.unit ?? ""}`.trim() : "";
+  return [amount, p.roughly_when].filter(Boolean).join(" · ");
 }
 
 export type EventRow = {

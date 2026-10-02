@@ -166,7 +166,7 @@ export default function PreviewPage() {
           </div>
         ))}
       </div>
-      <div className="px-6" style={{ paddingTop: 16, paddingBottom: 24 }}>
+      <div className="px-6" style={{ paddingTop: 16, paddingBottom: 112 }}>
         {tab === "Products" ? (
           <>
             <div className="label-caps">What&apos;s available</div>
@@ -197,7 +197,7 @@ export default function PreviewPage() {
                       <div style={{ height: 8 }} />
                       <div className="body-s-strong">{p.name}</div>
                       <div className="caption">
-                        {p.qty} {p.unit}
+                        {[p.qty ? `${p.qty} ${p.unit}`.trim() : "", p.roughlyWhen].filter(Boolean).join(" · ")}
                       </div>
                       <div style={{ height: 4 }} />
                       <span className={`avail ${availClass(a)}`}>{a}</span>
@@ -229,6 +229,13 @@ export default function PreviewPage() {
                 );
               })}
             </div>
+            <div style={{ height: 12 }} />
+            {state.farmAddress && (
+              <div style={{ display: "flex", gap: 4, alignItems: "flex-start", color: "var(--text-secondary)" }}>
+                <Icon name="pin" size={16} />
+                <span className="body-s">{state.farmAddress}</span>
+              </div>
+            )}
             <div style={{ height: 16 }} />
             <DirectionsButton address={state.farmAddress || null} disabled />
             <div style={{ height: 24 }} />
@@ -266,7 +273,23 @@ export default function PreviewPage() {
             <p className="caption">No events added yet. You can add these after you publish your farm.</p>
           </>
         )}
-        <div style={{ height: 20 }} />
+      </div>
+      {/* Fixed at the bottom of the viewport on purpose, unlike the folded-in
+          footer bars elsewhere (see the whole-page-scroll conversion): this
+          is the one action on the page, and it needs to stay reachable no
+          matter which tab the user is reading or how far they've scrolled. */}
+      <div
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "var(--bg-raised)",
+          borderTop: "1px solid var(--border-subtle)",
+          padding: "12px 24px calc(12px + env(safe-area-inset-bottom))",
+          zIndex: 50,
+        }}
+      >
         {error && (
           <p className="hint-error" style={{ marginBottom: 8 }}>
             {error}

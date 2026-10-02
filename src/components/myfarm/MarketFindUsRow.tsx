@@ -31,27 +31,27 @@ export function MarketFindUsRow({ markets }: { markets: MarketRow[] }) {
               borderRadius: "var(--radius-lg)",
               padding: 12,
               display: "flex",
-              flexDirection: "column",
-              gap: 4,
+              alignItems: "center",
+              gap: 12,
               textDecoration: "none",
               color: "inherit",
             }}
           >
-            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
-              <div className="body-m" style={{ flex: 1, color: "var(--text-primary)" }}>
-                {m.name}
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <Image src="/icons/icon-market.svg" alt="" width={32} height={32} />
+                <div className="body-m-strong">{m.name}</div>
               </div>
-              <span style={{ color: "var(--text-tertiary)" }}>&#8250;</span>
-            </div>
-            {m.location && (
-              <div className="body-s-medium" style={{ paddingLeft: 44 }}>
-                {m.location}
+              {m.location && (
+                <div className="body-s-medium" style={{ paddingLeft: 40 }}>
+                  {m.location}
+                </div>
+              )}
+              <div className="body-s-medium" style={{ paddingLeft: 40 }}>
+                {m.schedule_text}
               </div>
-            )}
-            <div className="body-s-medium" style={{ paddingLeft: 44 }}>
-              {m.schedule_text}
             </div>
+            <span style={{ color: "var(--text-tertiary)" }}>&#8250;</span>
           </Link>
         </div>
       ))}

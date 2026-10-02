@@ -30,7 +30,7 @@ export default async function ManageProductsPage() {
       <div className="px-4" style={{ paddingTop: 16, flex: 1, minHeight: 0, paddingBottom: 100, overflowY: "auto" }}>
         <ProductRowList products={(products ?? []) as ProductRow[]} />
       </div>
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff", borderTop: "1px solid var(--border-subtle)" }}>
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff" }}>
         <Link href="/my-farm/products/new" className="btn btn-primary">
           + Add another product
         </Link>

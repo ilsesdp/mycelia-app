@@ -130,7 +130,7 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
           })
         )}
       </div>
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff", borderTop: "1px solid var(--border-subtle)" }}>
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff" }}>
         {editing ? (
           <button className="btn btn-danger" disabled={!selected.size || deleting} onClick={deleteSelected}>
             {deleting ? "Deleting…" : selected.size ? `Delete ${selected.size} market${selected.size > 1 ? "s" : ""}` : "Select markets to delete"}

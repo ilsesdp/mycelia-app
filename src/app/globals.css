@@ -809,14 +809,18 @@ body {
   margin-bottom: 8px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  background: var(--bg-canvas);
+  /* bg-canvas (#f7f6f5) read as indistinguishable from the screen's own
+     bg-raised (#fff) white — bg-subtle gives the card real contrast. */
+  background: var(--bg-subtle);
   cursor: pointer;
 }
 .product-row .thumb {
   width: 46px;
   height: 46px;
   border-radius: var(--radius-md);
-  background: var(--bg-subtle);
+  /* Row itself is now bg-subtle — keep the empty-photo placeholder on the
+     lighter bg-raised so it still reads as its own well, not one gray mass. */
+  background: var(--bg-raised);
   border: 1px dashed var(--border-subtle);
   flex-shrink: 0;
 }

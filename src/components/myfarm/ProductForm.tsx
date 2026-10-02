@@ -211,7 +211,7 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
         />
       </div>
 
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff", borderTop: "1px solid var(--border-subtle)" }}>
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 24px 20px", background: "#fff" }}>
         <button className="btn btn-primary" disabled={!draft.name || saving} onClick={save}>
           {saving ? "Saving…" : "Save product"}
         </button>

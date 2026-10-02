@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { PhotoWellMulti } from "@/components/ui/PhotoWellMulti";
+import { TimeField } from "@/components/ui/TimeField";
 import { ConfirmSheet } from "@/components/settings/ConfirmSheet";
 import { createClient } from "@/lib/supabase/client";
 import type { EventRow } from "@/lib/myFarm";
@@ -104,6 +105,19 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
 
         <div style={{ height: 20 }} />
         <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+          What are the details?
+        </div>
+        <div style={{ height: 8 }} />
+        <textarea
+          className="field"
+          style={{ height: 60 }}
+          placeholder="e.g. We'll be pressing apples all day — bring your own jugs! Kids' activities start at 10am, food truck on site, parking in the north lot."
+          value={draft.notes}
+          onChange={(e) => patch({ notes: e.target.value })}
+        />
+
+        <div style={{ height: 20 }} />
+        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
           What day is it?
         </div>
         <div style={{ height: 8 }} />
@@ -119,22 +133,15 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
             <div className="caption" style={{ marginBottom: 4 }}>
               Starts
             </div>
-            <input className="field" placeholder="9am" value={draft.startsAt} onChange={(e) => patch({ startsAt: e.target.value })} />
+            <TimeField value={draft.startsAt} onChange={(v) => patch({ startsAt: v })} placeholder="8:00am" />
           </div>
           <div style={{ flex: 1 }}>
             <div className="caption" style={{ marginBottom: 4 }}>
               Ends
             </div>
-            <input className="field" placeholder="2pm" value={draft.endsAt} onChange={(e) => patch({ endsAt: e.target.value })} />
+            <TimeField value={draft.endsAt} onChange={(v) => patch({ endsAt: v })} placeholder="2:00pm" />
           </div>
         </div>
-
-        <div style={{ height: 20 }} />
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
-          Anything people should know?
-        </div>
-        <div style={{ height: 8 }} />
-        <textarea className="field" style={{ height: 60 }} placeholder="What to expect, what to bring, where to park" value={draft.notes} onChange={(e) => patch({ notes: e.target.value })} />
 
         <div style={{ height: 20 }} />
         <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>

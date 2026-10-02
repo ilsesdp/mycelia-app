@@ -21,9 +21,21 @@ export default async function MyFarmEventsPage({ searchParams }: PageProps<"/my-
   const farmId = await getMyFarmId(supabase, user.id);
   if (!farmId) redirect("/settings");
 
+  // Same event_date >= today filter as the public farm Events tab (2.5) —
+  // without it, any past event (e.g. a leftover test event) sorts first by
+  // date and permanently blocks every real upcoming event from ever
+  // showing here as list[0], even though it's sitting right there under
+  // "Manage".
+  const today = new Date().toISOString().slice(0, 10);
+
   const [farm, { data: events }, markets] = await Promise.all([
     getMyFarmIdentity(supabase, farmId),
-    supabase.from("events").select("id, name, event_date, starts_at, ends_at, notes, photo_url").eq("farm_id", farmId).order("event_date"),
+    supabase
+      .from("events")
+      .select("id, name, event_date, starts_at, ends_at, notes, photo_url")
+      .eq("farm_id", farmId)
+      .gte("event_date", today)
+      .order("event_date"),
     getMyFarmMarkets(supabase, farmId),
   ]);
   if (!farm) redirect("/settings");

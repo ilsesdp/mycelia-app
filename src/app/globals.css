@@ -257,6 +257,23 @@ body {
   border-width: 1.5px;
   border-color: var(--text-primary);
 }
+/* A native <input type="date"> renders its digits/placeholder through
+   browser-internal pseudo-elements that don't inherit `color` the way a
+   plain text input does, so it looks lighter/grayer than every other
+   .field even though the class is the same. Force the same text-primary
+   color on each part so a date field matches the rest of the form. */
+.field[type="date"] {
+  color: var(--text-primary);
+  color-scheme: light;
+}
+.field[type="date"]::-webkit-datetime-edit,
+.field[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.field[type="date"]::-webkit-datetime-edit-text,
+.field[type="date"]::-webkit-datetime-edit-month-field,
+.field[type="date"]::-webkit-datetime-edit-day-field,
+.field[type="date"]::-webkit-datetime-edit-year-field {
+  color: var(--text-primary);
+}
 .field-error {
   border: 2px solid var(--danger-border);
   background: var(--danger-bg);

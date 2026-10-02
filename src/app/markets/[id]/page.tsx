@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { resolveBackHref } from "@/lib/farmProfile";
@@ -98,6 +99,7 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
                   textDecoration: "none",
                 }}
               >
+                <Image src="/pins/pin-farm-open.svg" alt="" width={32} height={32} />
                 <div style={{ flex: 1 }}>
                   <div className="title-m" style={{ fontSize: 18, lineHeight: "24px", color: "var(--text-primary)" }}>
                     {f.name}

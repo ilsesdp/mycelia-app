@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Icon } from "@/components/ui/Icon";
@@ -88,7 +89,7 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
                   marginBottom: 8,
                 }}
               >
-                <Icon name="basket" size={26} />
+                <Image src="/pins/pin-market-open.svg" alt="" width={32} height={32} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="body-m" style={{ color: "var(--text-primary)" }}>
                     {m.name}

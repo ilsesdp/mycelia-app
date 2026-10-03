@@ -80,9 +80,12 @@ export default function AddressPage() {
           title="Where's your farm?"
           subtitle="We'll check Google Maps for your address. If it's not there, that's fine — you can add everything yourself."
         />
-        <label className="label-caps">Farm address</label>
+        <label className="label-caps" htmlFor="onboarding-address">
+          Farm address
+        </label>
         <div style={{ height: 4 }} />
         <input
+          id="onboarding-address"
           className="field"
           placeholder="1420 Willow Creek Rd, Pecatonica, IL"
           value={address}

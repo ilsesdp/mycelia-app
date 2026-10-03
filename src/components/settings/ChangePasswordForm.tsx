@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AppBar } from "@/components/ui/AppBar";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { createClient } from "@/lib/supabase/client";
 
 // Ports SCREENS['5.10'] / pwFormValid(). The Supabase client SDK has no
@@ -48,33 +49,36 @@ export function ChangePasswordForm({ email }: { email: string }) {
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings/account" title="Password" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
-        <div className="label-caps">Current password</div>
+        <label className="label-caps" htmlFor="pw-current">
+          Current password
+        </label>
         <div style={{ height: 6 }} />
-        <input
-          className="field"
-          type="password"
+        <PasswordField
+          id="pw-current"
           placeholder="At least 8 characters"
           value={current}
           onChange={(e) => setCurrent(e.target.value)}
         />
 
         <div style={{ height: 20 }} />
-        <div className="label-caps">New password</div>
+        <label className="label-caps" htmlFor="pw-new">
+          New password
+        </label>
         <div style={{ height: 6 }} />
-        <input
-          className="field"
-          type="password"
+        <PasswordField
+          id="pw-new"
           placeholder="At least 8 characters"
           value={next}
           onChange={(e) => setNext(e.target.value)}
         />
 
         <div style={{ height: 10 }} />
-        <div className="label-caps">Confirm new password</div>
+        <label className="label-caps" htmlFor="pw-confirm">
+          Confirm new password
+        </label>
         <div style={{ height: 6 }} />
-        <input
-          className="field"
-          type="password"
+        <PasswordField
+          id="pw-confirm"
           placeholder="At least 8 characters"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}

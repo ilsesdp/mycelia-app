@@ -68,18 +68,18 @@ export default function NewProductPage() {
     <main className="min-h-screen flex flex-col">
       <AppBar backHref={backHref} title="Add a product" />
       <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="product-name">
           What is your product?
         </label>
         <div style={{ height: 8 }} />
-        <input className="field" placeholder="Heirloom tomatoes" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+        <input id="product-name" className="field" placeholder="Heirloom tomatoes" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
         <div style={{ height: 20 }} />
 
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="product-category">
           What category is it?
         </label>
         <div style={{ height: 8 }} />
-        <select className="field" value={draft.category} onChange={(e) => patch({ category: e.target.value as Category })}>
+        <select id="product-category" className="field" value={draft.category} onChange={(e) => patch({ category: e.target.value as Category })}>
           <option value="">Choose one</option>
           {categoryChoices.map((c) => (
             <option key={c}>{c}</option>
@@ -87,9 +87,9 @@ export default function NewProductPage() {
         </select>
         <div style={{ height: 20 }} />
 
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
           When is it available?
-        </label>
+        </div>
         <div style={{ height: 8 }} />
         <div className="segmented">
           {AVAILABILITY.map((a) => (
@@ -100,22 +100,22 @@ export default function NewProductPage() {
         </div>
         <div style={{ height: 20 }} />
 
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
           How much do you have?
-        </label>
+        </div>
         <div style={{ height: 8 }} />
         <div style={{ display: "flex", gap: 12 }}>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="product-qty">
               Quantity
-            </div>
-            <input className="field" placeholder="20" value={draft.qty} onChange={(e) => patch({ qty: e.target.value })} />
+            </label>
+            <input id="product-qty" className="field" placeholder="20" value={draft.qty} onChange={(e) => patch({ qty: e.target.value })} />
           </div>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="product-unit">
               Unit
-            </div>
-            <select className="field" value={draft.unit} onChange={(e) => patch({ unit: e.target.value as Unit })}>
+            </label>
+            <select id="product-unit" className="field" value={draft.unit} onChange={(e) => patch({ unit: e.target.value as Unit })}>
               <option value="">Choose one</option>
               {UNITS.map((u) => (
                 <option key={u}>{u}</option>
@@ -127,11 +127,12 @@ export default function NewProductPage() {
         {(draft.availability === "Producing" || draft.availability === "Planning") && (
           <>
             <div style={{ height: 20 }} />
-            <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+            <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="product-roughly-when">
               Roughly when
             </label>
             <div style={{ height: 8 }} />
             <input
+              id="product-roughly-when"
               className="field"
               placeholder={draft.availability === "Planning" ? "next spring" : "about 3 weeks"}
               value={draft.roughlyWhen}
@@ -142,6 +143,7 @@ export default function NewProductPage() {
 
         <div style={{ height: 20 }} />
         <PhotoWell
+          id="product-photo"
           preview={draft.photoPreview}
           label="Add a photo of the product"
           variant="row"

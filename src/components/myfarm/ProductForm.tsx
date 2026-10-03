@@ -109,18 +109,19 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
         <div style={{ width: 84 }} />
       </div>
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="my-product-name">
           What is your product?
-        </div>
+        </label>
         <div style={{ height: 8 }} />
-        <input className="field" placeholder="e.g. Heirloom tomatoes" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+        <input id="my-product-name" className="field" placeholder="e.g. Heirloom tomatoes" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
 
         <div style={{ height: 20 }} />
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="my-product-category">
           What category is it?
-        </div>
+        </label>
         <div style={{ height: 8 }} />
         <select
+          id="my-product-category"
           className="field"
           style={{ color: draft.category ? "var(--text-primary)" : "var(--text-tertiary)" }}
           value={draft.category}
@@ -154,16 +155,17 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
         <div style={{ height: 8 }} />
         <div style={{ display: "flex", gap: 12 }}>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="my-product-qty">
               Quantity
-            </div>
-            <input className="field" placeholder="0" value={draft.qty} onChange={(e) => patch({ qty: e.target.value })} />
+            </label>
+            <input id="my-product-qty" className="field" placeholder="0" value={draft.qty} onChange={(e) => patch({ qty: e.target.value })} />
           </div>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="my-product-unit">
               Unit
-            </div>
+            </label>
             <select
+              id="my-product-unit"
               className="field"
               style={{ color: draft.unit ? "var(--text-primary)" : "var(--text-tertiary)" }}
               value={draft.unit}
@@ -182,11 +184,12 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
         {(draft.availability === "Producing" || draft.availability === "Planning") && (
           <>
             <div style={{ height: 20 }} />
-            <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+            <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="my-product-roughly-when">
               Roughly when
-            </div>
+            </label>
             <div style={{ height: 8 }} />
             <input
+              id="my-product-roughly-when"
               className="field"
               placeholder={draft.availability === "Planning" ? "next spring" : "about 3 weeks"}
               value={draft.roughlyWhen}
@@ -197,6 +200,7 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
 
         <div style={{ height: 20 }} />
         <PhotoWell
+          id="my-product-photo"
           preview={draft.photoPreview}
           label="Add a photo of the product"
           variant="row"

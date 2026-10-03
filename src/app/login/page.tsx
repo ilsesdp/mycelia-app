@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { createClient } from "@/lib/supabase/client";
 
 // Ports SCREENS['1.14'] — real supabase.auth.signInWithPassword(). A user
@@ -54,9 +55,12 @@ function LoginInner() {
         </p>
         <div style={{ height: 20 }} />
 
-        <label className="label-caps">Email</label>
+        <label className="label-caps" htmlFor="login-email">
+          Email
+        </label>
         <div style={{ height: 4 }} />
         <input
+          id="login-email"
           className="field"
           placeholder="you@example.com"
           value={email}
@@ -64,11 +68,12 @@ function LoginInner() {
         />
         <div style={{ height: 16 }} />
 
-        <label className="label-caps">Password</label>
+        <label className="label-caps" htmlFor="login-password">
+          Password
+        </label>
         <div style={{ height: 4 }} />
-        <input
-          className="field"
-          type="password"
+        <PasswordField
+          id="login-password"
           placeholder="At least 8 characters"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

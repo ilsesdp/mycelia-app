@@ -37,9 +37,12 @@ export default function ForgotPasswordPage() {
           <p className="body-m">We&apos;ll email you a link. It works for one hour.</p>
         </div>
         <div>
-          <label className="label-caps">Email</label>
+          <label className="label-caps" htmlFor="forgot-email">
+            Email
+          </label>
           <div style={{ height: 4 }} />
           <input
+            id="forgot-email"
             className="field"
             style={{ height: 48 }}
             placeholder="jane@willowcreek.farm"

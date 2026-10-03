@@ -15,17 +15,29 @@ const ROWS: [IconName, string, string][] = [
 ];
 
 // Ports SCREENS['1.13'] — lands the newly-published farm on the map (2.1)
-// after a beat, same as the prototype's auto-advance.
+// after a beat, same as the prototype's auto-advance. The beat was 1800ms,
+// too short to actually read the three "what happens now" rows below —
+// stretched to 6s and made tappable/dismissable (tapping anywhere advances
+// immediately) so reading them isn't a race against a timer no one asked for.
 export default function OnboardingSuccessPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const t = setTimeout(() => router.push("/map"), 1800);
+    const t = setTimeout(() => router.push("/map"), 6000);
     return () => clearTimeout(t);
   }, [router]);
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-6">
+    <main
+      className="min-h-screen flex flex-col items-center justify-center px-6 py-6"
+      onClick={() => router.push("/map")}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") router.push("/map");
+      }}
+      style={{ cursor: "pointer" }}
+    >
       <div style={{ margin: "0 auto", maxWidth: 340, width: "100%" }}>
         <div
           style={{
@@ -74,6 +86,10 @@ export default function OnboardingSuccessPage() {
             </div>
           </div>
         ))}
+        <div style={{ height: 8 }} />
+        <p className="caption" style={{ textAlign: "center", color: "var(--text-tertiary)" }}>
+          Tap anywhere to continue
+        </p>
       </div>
     </main>
   );

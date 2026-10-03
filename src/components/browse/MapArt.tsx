@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useGeolocation } from "@/lib/useGeolocation";
 import { pinImageSrc, pinState, youPinImageSrc, type PinKind } from "@/lib/mapPins";
 
@@ -153,6 +154,22 @@ export function MapArt({
 
       {pins.map((p) => {
         const state = pinState(p.kind, p.open, p.closedEarly);
+        // Label anchoring: the pin icon always stays centered on its own
+        // (xPct, yPct) point, but the name label used to be centered under
+        // it too — on a pin near either edge (pinPosition keeps xPct within
+        // [12, 82], so this does happen) a longer name overflowed straight
+        // off the visible map with no way to pan back to it. Past those
+        // same two thresholds the label instead anchors by its near edge
+        // (grows away from the screen edge rather than away from the pin),
+        // and a maxWidth + ellipsis is a hard backstop for any name long
+        // enough to still not fit.
+        const edge = p.xPct < 20 ? "left" : p.xPct > 80 ? "right" : "center";
+        const labelStyle: CSSProperties =
+          edge === "left"
+            ? { left: 0, transform: "none" }
+            : edge === "right"
+              ? { left: 0, transform: "translateX(-100%)" }
+              : { left: 0, transform: "translateX(-50%)" };
         return (
           <div
             key={p.id}
@@ -161,23 +178,32 @@ export function MapArt({
               position: "absolute",
               left: `${p.xPct}%`,
               top: `${p.yPct}%`,
-              transform: "translate(-50%,-100%)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              width: 0,
+              height: 0,
               cursor: "pointer",
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={pinImageSrc(p.kind, state)} alt="" width={40} height={40} style={{ display: "block" }} />
+            <img
+              src={pinImageSrc(p.kind, state)}
+              alt=""
+              width={40}
+              height={40}
+              style={{ position: "absolute", left: 0, top: 0, transform: "translate(-50%,-100%)", display: "block" }}
+            />
             <div
               style={{
-                marginTop: 4,
+                position: "absolute",
+                top: 4,
+                ...labelStyle,
+                maxWidth: 160,
                 background: "#fff",
                 border: "1px solid var(--border-subtle)",
                 borderRadius: 8,
                 padding: "4px 8px",
                 whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
                 pointerEvents: "none",
               }}
             >

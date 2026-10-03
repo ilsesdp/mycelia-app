@@ -109,9 +109,12 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
         </div>
 
         <div style={{ height: 20 }} />
-        <div className="label-caps">Tell us what happened</div>
+        <label className="label-caps" htmlFor="support-message">
+          Tell us what happened
+        </label>
         <div style={{ height: 8 }} />
         <textarea
+          id="support-message"
           className="field"
           style={{ height: 120 }}
           placeholder="The more you can tell us, the faster we can help."
@@ -128,9 +131,12 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
         />
 
         <div style={{ height: 16 }} />
-        <label className="label-caps">Add a photo</label>
+        <label className="label-caps" htmlFor="support-photo">
+          Add a photo
+        </label>
         <div style={{ height: 4 }} />
         <PhotoWell
+          id="support-photo"
           preview={photo}
           label="Add a photo"
           onPick={(file) => {

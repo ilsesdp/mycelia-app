@@ -20,11 +20,13 @@ export function PhotoWellMulti({
   label,
   onAdd,
   onRemove,
+  id,
 }: {
   photos: PhotoWellMultiItem[];
   label: string;
   onAdd: (files: File[]) => void;
   onRemove: (key: string) => void;
+  id?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -92,6 +94,7 @@ export function PhotoWellMulti({
           {photos.length ? "Add more" : label}
         </span>
         <input
+          id={id}
           ref={inputRef}
           type="file"
           accept="image/*"

@@ -76,9 +76,12 @@ export function AccountForm({
         <p className="body-m">The email you sign in with is {authEmail}. This is how people reach you.</p>
         <div style={{ height: 20 }} />
 
-        <div className="label-caps">Email</div>
+        <label className="label-caps" htmlFor="account-email">
+          Email
+        </label>
         <div style={{ height: 6 }} />
         <input
+          id="account-email"
           type="email"
           className="field"
           value={email}
@@ -92,9 +95,12 @@ export function AccountForm({
         )}
 
         <div style={{ height: 18 }} />
-        <div className="label-caps">Phone</div>
+        <label className="label-caps" htmlFor="account-phone">
+          Phone
+        </label>
         <div style={{ height: 6 }} />
         <input
+          id="account-phone"
           type="tel"
           className="field"
           value={phone}

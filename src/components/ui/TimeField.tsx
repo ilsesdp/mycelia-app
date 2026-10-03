@@ -19,6 +19,16 @@ const OPTIONS = buildOptions();
 // the time-of-day option list. The list is hourly, not every 15 minutes —
 // still free text underneath, so an odd time like "8:30am" is still
 // typeable, just not offered as a suggestion.
-export function TimeField({ value, onChange, placeholder = "9:00am" }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
-  return <ComboField value={value} onChange={onChange} options={OPTIONS} placeholder={placeholder} />;
+export function TimeField({
+  value,
+  onChange,
+  placeholder = "9:00am",
+  id,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  id?: string;
+}) {
+  return <ComboField id={id} value={value} onChange={onChange} options={OPTIONS} placeholder={placeholder} />;
 }

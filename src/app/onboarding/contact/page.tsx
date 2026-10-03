@@ -25,30 +25,36 @@ export default function ContactPage() {
       <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
         <StepHeader step={7} title="How should people reach you?" />
 
-        <label className="label-caps">Who to ask for (optional)</label>
+        <label className="label-caps" htmlFor="contact-name">
+          Who to ask for (optional)
+        </label>
         <div style={{ height: 4 }} />
-        <input className="field" placeholder="Jane" value={state.contactName} onChange={(e) => update({ contactName: e.target.value })} />
+        <input id="contact-name" className="field" placeholder="Jane" value={state.contactName} onChange={(e) => update({ contactName: e.target.value })} />
         <div style={{ height: 8 }} />
         <p className="caption">Shown next to your farm name, so people know who they&apos;re asking for.</p>
         <div style={{ height: 16 }} />
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <label className="label-caps">Email</label>
+          <label className="label-caps" htmlFor="contact-email">
+            Email
+          </label>
           <VisibilityPill value={state.emailVisibility} onChange={(v) => update({ emailVisibility: v })} />
         </div>
         <div style={{ height: 4 }} />
-        <input className="field" placeholder="you@example.com" value={state.contactEmail} onChange={(e) => update({ contactEmail: e.target.value })} />
+        <input id="contact-email" className="field" placeholder="you@example.com" value={state.contactEmail} onChange={(e) => update({ contactEmail: e.target.value })} />
         <div style={{ height: 16 }} />
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <label className="label-caps">Phone</label>
+          <label className="label-caps" htmlFor="contact-phone">
+            Phone
+          </label>
           <VisibilityPill value={state.phoneVisibility} onChange={(v) => update({ phoneVisibility: v })} />
         </div>
         <div style={{ height: 4 }} />
-        <input className="field" placeholder="(815) 555-0101" value={state.contactPhone} onChange={(e) => update({ contactPhone: e.target.value })} />
+        <input id="contact-phone" className="field" placeholder="(815) 555-0101" value={state.contactPhone} onChange={(e) => update({ contactPhone: e.target.value })} />
         <div style={{ height: 20 }} />
 
-        <label className="label-caps">When someone messages you</label>
+        <div className="label-caps">When someone messages you</div>
         <div style={{ height: 8 }} />
         <div className="segmented">
           {MSG_CHANNELS.map((v) => (

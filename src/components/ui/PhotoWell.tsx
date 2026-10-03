@@ -13,12 +13,14 @@ export function PhotoWell({
   variant = "button",
   onPick,
   onRemove,
+  id,
 }: {
   preview: string | null;
   label: string;
   variant?: "button" | "row";
   onPick: (file: File) => void;
   onRemove: () => void;
+  id?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const height = variant === "row" ? 120 : 96;
@@ -74,6 +76,7 @@ export function PhotoWell({
           </button>
         </div>
         <input
+          id={id}
           ref={inputRef}
           type="file"
           accept="image/*"
@@ -86,6 +89,7 @@ export function PhotoWell({
 
   const shared = (
     <input
+      id={id}
       ref={inputRef}
       type="file"
       accept="image/*"

@@ -91,18 +91,18 @@ export function AddMarketForm({ farmId }: { farmId: string }) {
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/my-farm/markets" title="Add a market" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="my-market-name">
           What is the market called?
-        </div>
+        </label>
         <div style={{ height: 8 }} />
-        <input className="field" placeholder="Stephenson County Market" value={name} onChange={(e) => setName(e.target.value)} />
+        <input id="my-market-name" className="field" placeholder="Stephenson County Market" value={name} onChange={(e) => setName(e.target.value)} />
 
         <div style={{ height: 20 }} />
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="my-market-location">
           Where is it?
-        </div>
+        </label>
         <div style={{ height: 8 }} />
-        <input className="field" placeholder="Chicago Ave & Spring St, Freeport IL" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <input id="my-market-location" className="field" placeholder="Chicago Ave & Spring St, Freeport IL" value={location} onChange={(e) => setLocation(e.target.value)} />
 
         <div style={{ height: 20 }} />
         <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
@@ -111,25 +111,26 @@ export function AddMarketForm({ farmId }: { farmId: string }) {
         <div style={{ height: 8 }} />
         <div style={{ display: "flex", gap: 12 }}>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="my-market-day">
               Day
-            </div>
-            <ComboField options={DAY_OPTIONS} placeholder="Saturdays" value={day} onChange={setDay} />
+            </label>
+            <ComboField id="my-market-day" options={DAY_OPTIONS} placeholder="Saturdays" value={day} onChange={setDay} />
           </div>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="my-market-hours">
               Hours
-            </div>
-            <ComboField options={HOURS_OPTIONS} placeholder="9:00am - 1:30pm" value={hours} onChange={setHours} />
+            </label>
+            <ComboField id="my-market-hours" options={HOURS_OPTIONS} placeholder="9:00am - 1:30pm" value={hours} onChange={setHours} />
           </div>
         </div>
 
         <div style={{ height: 20 }} />
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="my-market-photos">
           Photos
-        </div>
+        </label>
         <div style={{ height: 8 }} />
         <PhotoWellMulti
+          id="my-market-photos"
           photos={photos.map((p) => ({ key: p.key, url: p.preview }))}
           label="Add photos of the market"
           onAdd={(files) => setPhotos((ps) => [...ps, ...files.map((file) => ({ key: crypto.randomUUID(), file, preview: URL.createObjectURL(file) }))])}

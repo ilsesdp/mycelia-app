@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { createClient } from "@/lib/supabase/client";
 
 // Ports SCREENS['1.3'] (signupScreen) — real Supabase signUp instead of
@@ -78,9 +79,12 @@ export default function SignupPage() {
         </p>
         <div style={{ height: 20 }} />
 
-        <label className="label-caps">Your name</label>
+        <label className="label-caps" htmlFor="signup-name">
+          Your name
+        </label>
         <div style={{ height: 4 }} />
         <input
+          id="signup-name"
           className="field"
           placeholder="Jane Miller"
           value={name}
@@ -88,9 +92,12 @@ export default function SignupPage() {
         />
         <div style={{ height: 16 }} />
 
-        <label className="label-caps">Email</label>
+        <label className="label-caps" htmlFor="signup-email">
+          Email
+        </label>
         <div style={{ height: 4 }} />
         <input
+          id="signup-email"
           className={`field ${emailError ? "field-error" : ""}`}
           placeholder="you@example.com"
           value={email}
@@ -106,11 +113,12 @@ export default function SignupPage() {
         )}
         <div style={{ height: 16 }} />
 
-        <label className="label-caps">Password</label>
+        <label className="label-caps" htmlFor="signup-password">
+          Password
+        </label>
         <div style={{ height: 4 }} />
-        <input
-          className="field"
-          type="password"
+        <PasswordField
+          id="signup-password"
           placeholder="At least 8 characters"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

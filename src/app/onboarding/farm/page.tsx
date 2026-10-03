@@ -25,9 +25,12 @@ export default function FarmDetailsPage() {
       <div className="px-6 pt-4 pb-8">
         <StepHeader step={2} title="Your farm" />
 
-        <label className="label-caps">Farm name</label>
+        <label className="label-caps" htmlFor="farm-name">
+          Farm name
+        </label>
         <div style={{ height: 4 }} />
         <input
+          id="farm-name"
           className="field"
           placeholder="Willow Creek Farm"
           value={state.farmName}
@@ -35,9 +38,12 @@ export default function FarmDetailsPage() {
         />
         <div style={{ height: 16 }} />
 
-        <label className="label-caps">Address</label>
+        <label className="label-caps" htmlFor="farm-address">
+          Address
+        </label>
         <div style={{ height: 4 }} />
         <input
+          id="farm-address"
           className="field"
           placeholder="1420 Willow Creek Rd, Pecatonica, IL"
           value={state.farmAddress}
@@ -45,9 +51,12 @@ export default function FarmDetailsPage() {
         />
         <div style={{ height: 12 }} />
 
-        <label className="label-caps">Directions</label>
+        <label className="label-caps" htmlFor="farm-directions">
+          Directions
+        </label>
         <div style={{ height: 4 }} />
         <textarea
+          id="farm-directions"
           className="field"
           style={{ height: 60, resize: "none" }}
           placeholder="Where to park, any other signal to let people know how to get there"
@@ -56,9 +65,12 @@ export default function FarmDetailsPage() {
         />
         <div style={{ height: 12 }} />
 
-        <label className="label-caps">About the farm</label>
+        <label className="label-caps" htmlFor="farm-about">
+          About the farm
+        </label>
         <div style={{ height: 12 }} />
         <textarea
+          id="farm-about"
           className="field"
           style={{ height: 60, resize: "none" }}
           placeholder="About your farm"
@@ -67,9 +79,12 @@ export default function FarmDetailsPage() {
         />
         <div style={{ height: 12 }} />
 
-        <label className="label-caps">Cover photo</label>
+        <label className="label-caps" htmlFor="farm-cover-photo">
+          Cover photo
+        </label>
         <div style={{ height: 4 }} />
         <PhotoWell
+          id="farm-cover-photo"
           preview={state.coverPhotoPreview}
           label="Add a cover photo"
           onPick={pickCover}

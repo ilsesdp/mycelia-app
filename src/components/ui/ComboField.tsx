@@ -13,11 +13,13 @@ export function ComboField({
   onChange,
   options,
   placeholder,
+  id,
 }: {
   value: string;
   onChange: (v: string) => void;
   options: string[];
   placeholder?: string;
+  id?: string;
 }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -45,6 +47,7 @@ export function ComboField({
     <div className="time-field-combo" ref={wrapRef}>
       <div className="time-field">
         <input
+          id={id}
           value={value}
           placeholder={placeholder}
           onFocus={() => setOpen(true)}

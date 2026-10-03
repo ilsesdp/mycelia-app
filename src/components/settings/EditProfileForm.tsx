@@ -100,19 +100,26 @@ export function EditProfileForm({
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Edit profile" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
-        <div className="label-caps">Farm name</div>
+        <label className="label-caps" htmlFor="profile-name">
+          Farm name
+        </label>
         <div style={{ height: 6 }} />
-        <input className="field" value={name} onChange={(e) => setName(e.target.value)} />
+        <input id="profile-name" className="field" value={name} onChange={(e) => setName(e.target.value)} />
         <div style={{ height: 18 }} />
 
-        <div className="label-caps">Address</div>
+        <label className="label-caps" htmlFor="profile-address">
+          Address
+        </label>
         <div style={{ height: 6 }} />
-        <input className="field" value={address} onChange={(e) => setAddress(e.target.value)} />
+        <input id="profile-address" className="field" value={address} onChange={(e) => setAddress(e.target.value)} />
         <div style={{ height: 18 }} />
 
-        <div className="label-caps">About the farm</div>
+        <label className="label-caps" htmlFor="profile-about">
+          About the farm
+        </label>
         <div style={{ height: 6 }} />
         <textarea
+          id="profile-about"
           className="field"
           style={{ height: 88, resize: "vertical", paddingTop: 10 }}
           placeholder="A sentence or two about your farm"
@@ -121,9 +128,12 @@ export function EditProfileForm({
         />
         <div style={{ height: 18 }} />
 
-        <div className="label-caps">Directions</div>
+        <label className="label-caps" htmlFor="profile-directions">
+          Directions
+        </label>
         <div style={{ height: 6 }} />
         <textarea
+          id="profile-directions"
           className="field"
           style={{ height: 88, resize: "vertical", paddingTop: 10 }}
           placeholder="Help people find you — e.g. gravel driveway on the left, past the red barn"
@@ -132,14 +142,19 @@ export function EditProfileForm({
         />
         <div style={{ height: 18 }} />
 
-        <div className="label-caps">Who to ask for</div>
+        <label className="label-caps" htmlFor="profile-contact-name">
+          Who to ask for
+        </label>
         <div style={{ height: 6 }} />
-        <input className="field" value={contactName} onChange={(e) => setContactName(e.target.value)} />
+        <input id="profile-contact-name" className="field" value={contactName} onChange={(e) => setContactName(e.target.value)} />
         <div style={{ height: 18 }} />
 
-        <div className="label-caps">Cover photo</div>
+        <label className="label-caps" htmlFor="profile-cover-photo">
+          Cover photo
+        </label>
         <div style={{ height: 6 }} />
         <PhotoWell
+          id="profile-cover-photo"
           preview={coverPreview}
           label="Add a cover photo"
           onPick={(file) => {

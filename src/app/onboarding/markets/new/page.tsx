@@ -94,18 +94,19 @@ export default function NewMarketPage() {
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/markets" backLabel="Markets" title="Add a market" />
       <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="market-name">
           What is the market called?
         </label>
         <div style={{ height: 8 }} />
-        <input className="field" placeholder="Stephenson County Market" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+        <input id="market-name" className="field" placeholder="Stephenson County Market" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
         <div style={{ height: 20 }} />
 
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="market-location">
           Where is it?
         </label>
         <div style={{ height: 8 }} />
         <input
+          id="market-location"
           className="field"
           placeholder="123 Main St, Freeport, IL 61032"
           value={draft.location}
@@ -113,30 +114,31 @@ export default function NewMarketPage() {
         />
         <div style={{ height: 20 }} />
 
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
           When is it open?
-        </label>
+        </div>
         <div style={{ height: 8 }} />
         <div style={{ display: "flex", gap: 12 }}>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="market-day">
               Day
-            </div>
-            <ComboField options={DAY_OPTIONS} placeholder="Saturdays" value={draft.day} onChange={(v) => patch({ day: v })} />
+            </label>
+            <ComboField id="market-day" options={DAY_OPTIONS} placeholder="Saturdays" value={draft.day} onChange={(v) => patch({ day: v })} />
           </div>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="market-hours">
               Hours
-            </div>
-            <ComboField options={HOURS_OPTIONS} placeholder="9:00am - 1:30pm" value={draft.hours} onChange={(v) => patch({ hours: v })} />
+            </label>
+            <ComboField id="market-hours" options={HOURS_OPTIONS} placeholder="9:00am - 1:30pm" value={draft.hours} onChange={(v) => patch({ hours: v })} />
           </div>
         </div>
         <div style={{ height: 20 }} />
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="market-photo">
           Photos
         </label>
         <div style={{ height: 8 }} />
         <PhotoWell
+          id="market-photo"
           preview={photo?.preview ?? null}
           label="Add a photo of the market"
           onPick={(file) => setPhoto({ file, preview: URL.createObjectURL(file) })}

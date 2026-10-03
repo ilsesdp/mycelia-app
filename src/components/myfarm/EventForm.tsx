@@ -108,18 +108,19 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
     <main className="flex flex-col min-h-screen">
       <AppBar backHref={backHref} backLabel="Events" title={isEdit ? "Edit an event" : "Add an event"} />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="event-name">
           What is the event?
-        </div>
+        </label>
         <div style={{ height: 8 }} />
-        <input className="field" placeholder="e.g. Apple Pressing Day" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+        <input id="event-name" className="field" placeholder="e.g. Apple Pressing Day" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
 
         <div style={{ height: 20 }} />
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="event-notes">
           What are the details?
-        </div>
+        </label>
         <div style={{ height: 8 }} />
         <textarea
+          id="event-notes"
           className="field"
           style={{ height: 60 }}
           placeholder="e.g. We'll be pressing apples all day — bring your own jugs! Kids' activities start at 10am, food truck on site, parking in the north lot."
@@ -128,12 +129,13 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
         />
 
         <div style={{ height: 20 }} />
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="event-date">
           What day is it?
-        </div>
+        </label>
         <div style={{ height: 8 }} />
         <div style={{ position: "relative" }}>
           <input
+            id="event-date"
             className="field"
             type="date"
             style={{ paddingRight: 40 }}
@@ -162,25 +164,26 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
         <div style={{ height: 8 }} />
         <div style={{ display: "flex", gap: 12 }}>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="event-starts-at">
               Starts
-            </div>
-            <TimeField value={draft.startsAt} onChange={(v) => patch({ startsAt: v })} placeholder="8:00am" />
+            </label>
+            <TimeField id="event-starts-at" value={draft.startsAt} onChange={(v) => patch({ startsAt: v })} placeholder="8:00am" />
           </div>
           <div style={{ flex: 1 }}>
-            <div className="caption" style={{ marginBottom: 4 }}>
+            <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="event-ends-at">
               Ends
-            </div>
-            <TimeField value={draft.endsAt} onChange={(v) => patch({ endsAt: v })} placeholder="2:00pm" />
+            </label>
+            <TimeField id="event-ends-at" value={draft.endsAt} onChange={(v) => patch({ endsAt: v })} placeholder="2:00pm" />
           </div>
         </div>
 
         <div style={{ height: 20 }} />
-        <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>
+        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="event-photos">
           Photos
-        </div>
+        </label>
         <div style={{ height: 8 }} />
         <PhotoWellMulti
+          id="event-photos"
           photos={[
             ...existingPhotos.map((p) => ({ key: p.id, url: p.url })),
             ...newPhotos.map((p) => ({ key: p.key, url: p.preview })),

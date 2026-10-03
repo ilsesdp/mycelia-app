@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { farmTodayStatus, type HourRow } from "@/lib/farmStatus";
+import { farmTodayStatus, fmtTime, type HourRow } from "@/lib/farmStatus";
 import type { Database } from "@/lib/types/database";
 
 type Client = SupabaseClient<Database>;
@@ -118,8 +118,12 @@ export function fmtEventDate(iso: string): string {
   return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 }
 
+// Was joining the raw DB time strings verbatim ("01:00:00 – 13:00:00"),
+// not the friendly h(:mm)am/pm format the Hours box uses everywhere else
+// (fmtTime, farmStatus.ts) — events are the one place time was still
+// showing in 24-hour database form.
 export function fmtEventTimeRange(startsAt: string | null, endsAt: string | null): string {
-  return [startsAt, endsAt].filter(Boolean).join(" – ");
+  return [startsAt, endsAt].filter((t): t is string => !!t).map(fmtTime).join(" – ");
 }
 
 export type MarketRow = { id: string; name: string; location: string | null; schedule_text: string | null };

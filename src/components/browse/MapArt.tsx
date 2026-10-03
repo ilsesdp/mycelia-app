@@ -189,7 +189,21 @@ export function MapArt({
               alt=""
               width={40}
               height={40}
-              style={{ position: "absolute", left: 0, top: 0, transform: "translate(-50%,-100%)", display: "block" }}
+              style={{
+                position: "absolute",
+                left: 0,
+                top: 0,
+                width: 40,
+                height: 40,
+                // Tailwind's preflight sets `img { max-width: 100% }`, which
+                // for an absolutely-positioned image resolves against its
+                // containing block — here the 0×0 pin anchor div below, so
+                // without this override the pin collapsed to 0×0 and
+                // silently vanished (the label alone stayed visible).
+                maxWidth: "none",
+                transform: "translate(-50%,-100%)",
+                display: "block",
+              }}
             />
             <div
               style={{

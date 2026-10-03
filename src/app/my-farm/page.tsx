@@ -36,7 +36,7 @@ export default async function MyFarmPage({ searchParams }: PageProps<"/my-farm">
       {!preview && list.length === 0 ? (
         <EmptyProducts />
       ) : (
-        <AvailRail products={list} tappable={!preview} showManage={!preview} />
+        <AvailRail products={list} showManage={!preview} />
       )}
       {!preview && (
         <Suspense fallback={null}>

@@ -238,7 +238,12 @@ export function MapView({
       )}
 
       {!displayedSheet && (
-        <div style={{ position: "absolute", left: 16, right: 16, bottom: 86, zIndex: 4 }}>
+        // calc(...) rather than a flat 86px: on a phone with a home-
+        // indicator safe area, the fixed BottomNav effectively needs that
+        // extra inset below its own 70px, so the legend's clearance has to
+        // grow by the same amount or it sits right at — or under — the
+        // nav's edge on exactly those devices.
+        <div style={{ position: "absolute", left: 16, right: 16, bottom: "calc(86px + env(safe-area-inset-bottom))", zIndex: 4 }}>
           <MapLegend />
         </div>
       )}

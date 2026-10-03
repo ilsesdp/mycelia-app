@@ -68,7 +68,11 @@ export function AccountForm({
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Account information" />
-      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
+      {/* Bottom padding clears the fixed button stack below (three buttons
+          + their gaps + safe-area inset) with real breathing room, not just
+          flush against it — same pattern as the onboarding preview's
+          sticky Publish button. */}
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 216, display: "flex", flexDirection: "column" }}>
         <p className="body-m">The email you sign in with is {authEmail}. This is how people reach you.</p>
         <div style={{ height: 20 }} />
 
@@ -97,8 +101,26 @@ export function AccountForm({
           onChange={(e) => setPhone(e.target.value)}
           placeholder="(555) 555-0123"
         />
+      </div>
 
-        <div style={{ height: 20 }} />
+      {/* Fixed at the bottom of the viewport, same as the onboarding
+          preview's "Publish my farm" button — these are the actions for
+          this whole screen, so they stay reachable no matter how far
+          you've scrolled the fields above. */}
+      <div
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "var(--bg-raised)",
+          borderTop: "1px solid var(--border-subtle)",
+          padding: "12px 16px calc(12px + env(safe-area-inset-bottom))",
+          display: "flex",
+          flexDirection: "column",
+          zIndex: 50,
+        }}
+      >
         <button className="btn btn-primary" disabled={!emailOk || saving} onClick={save}>
           {saving ? "Saving…" : "Save changes"}
         </button>

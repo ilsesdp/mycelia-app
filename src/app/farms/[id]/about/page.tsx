@@ -5,7 +5,6 @@ import { FarmProfileShell } from "@/components/farm/FarmProfileShell";
 import { HoursBox } from "@/components/farm/HoursBox";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { MessageAction } from "@/components/farm/MessageAction";
-import { Icon } from "@/components/ui/Icon";
 
 // Ports SCREENS['2.4'] — the farm profile's About tab. Contact info comes
 // from farm_public_contact, the view that already nulls out email/phone per
@@ -45,12 +44,15 @@ export default async function FarmAboutPage({ params, searchParams }: PageProps<
       <div className="label-caps">Hours</div>
       <div style={{ height: 8 }} />
       <HoursBox hours={hours ?? []} />
-      <div style={{ height: 12 }} />
       {farm.directions && (
-        <div style={{ display: "flex", gap: 4, alignItems: "flex-start", color: "var(--text-secondary)" }}>
-          <Icon name="pin" size={16} />
-          <span className="body-s">{farm.directions}</span>
-        </div>
+        <>
+          <div style={{ height: 20 }} />
+          <div className="label-caps">Directions</div>
+          <div style={{ height: 10 }} />
+          <p className="body-m" style={{ lineHeight: "20px" }}>
+            {farm.directions}
+          </p>
+        </>
       )}
       <div style={{ height: 16 }} />
       <DirectionsButton address={farm.address} />

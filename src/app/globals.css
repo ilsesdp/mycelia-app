@@ -904,7 +904,9 @@ body {
   background: var(--bg-raised);
   border-top: 1px solid var(--border-subtle);
   display: flex;
-  padding: 8px 0 12px;
+  /* calc(...) so the home-indicator safe area on notched phones adds to
+     the tap-target padding instead of eating into it. */
+  padding: 8px 0 calc(12px + env(safe-area-inset-bottom));
   z-index: 50;
 }
 .navbar3 a {

@@ -265,6 +265,13 @@ body {
 .field[type="date"] {
   color: var(--text-primary);
   color-scheme: light;
+  /* Without this, Safari/Chrome render their own native control chrome
+     around a date input (not just the digits) — taller and wider than a
+     styled .field, which is why this one looked oversized next to the
+     other fields on the form. appearance:none strips that so .field's own
+     height/padding/border are what actually render. */
+  -webkit-appearance: none;
+  appearance: none;
 }
 .field[type="date"]::-webkit-datetime-edit,
 .field[type="date"]::-webkit-datetime-edit-fields-wrapper,
@@ -273,6 +280,19 @@ body {
 .field[type="date"]::-webkit-datetime-edit-day-field,
 .field[type="date"]::-webkit-datetime-edit-year-field {
   color: var(--text-primary);
+}
+/* The browser's own calendar-picker button is invisible but still stretched
+   to cover the whole field, so tapping anywhere opens the date picker; the
+   visible calendar glyph is a separate <Icon> placed on top in markup (see
+   EventForm), purely decorative. */
+.field[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
 }
 .field-error {
   border: 2px solid var(--danger-border);
@@ -478,7 +498,10 @@ body {
   border: none;
   background: none;
   font-family: var(--font-body);
-  font-size: 14px;
+  /* 16px, not 14px: anything smaller makes iOS Safari auto-zoom the whole
+     page on focus, which is what was pushing the Ends field (and whatever
+     else was on screen) off the right edge the moment you tapped into it. */
+  font-size: 16px;
   color: var(--text-primary);
   flex: 1;
   min-width: 0;

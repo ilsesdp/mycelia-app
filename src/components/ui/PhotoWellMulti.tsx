@@ -81,7 +81,13 @@ export function PhotoWellMulti({
           padding: 6,
         }}
       >
-        <span style={{ fontSize: 18, lineHeight: 1 }}>+</span>
+        {/* Same camera glyph as the farm's single cover-photo picker
+            (PhotoWell), not a plain "+" — so the two "add a photo"
+            affordances in the app read as the same control. */}
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+          <path d="M4 7h3l2-2h6l2 2h3a1 1 0 011 1v11a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z" />
+          <circle cx="12" cy="13" r="3.5" />
+        </svg>
         <span className="caption" style={{ color: "var(--text-tertiary)", fontSize: 11 }}>
           {photos.length ? "Add more" : label}
         </span>

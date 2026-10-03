@@ -6,6 +6,7 @@ import { AppBar } from "@/components/ui/AppBar";
 import { PhotoWellMulti } from "@/components/ui/PhotoWellMulti";
 import { TimeField } from "@/components/ui/TimeField";
 import { ConfirmSheet } from "@/components/settings/ConfirmSheet";
+import { Icon } from "@/components/ui/Icon";
 import { createClient } from "@/lib/supabase/client";
 import type { EventRow } from "@/lib/myFarm";
 
@@ -82,6 +83,16 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
       if (url) await supabase.from("event_photos").insert({ event_id: eventId, url, sort_order: baseOrder + i });
     }
 
+    // The card thumbnail everywhere else (EventCard, the public Events tab,
+    // the farm's Manage list) reads events.photo_url, a single column — not
+    // the event_photos carousel this form actually writes to. Without this,
+    // that column was never set, so a freshly uploaded photo never showed
+    // up anywhere except the event's own detail-page carousel. Read back
+    // whichever photo actually ended up first after the mutations above
+    // (rather than trying to track it through adds/removes) and mirror it.
+    const { data: firstPhoto } = await supabase.from("event_photos").select("url").eq("event_id", eventId).order("sort_order").limit(1).maybeSingle();
+    await supabase.from("events").update({ photo_url: firstPhoto?.url ?? null }).eq("id", eventId);
+
     setSaving(false);
     router.push(backHref);
   }
@@ -121,7 +132,28 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
           What day is it?
         </div>
         <div style={{ height: 8 }} />
-        <input className="field" type="date" value={draft.date} onChange={(e) => patch({ date: e.target.value })} />
+        <div style={{ position: "relative" }}>
+          <input
+            className="field"
+            type="date"
+            style={{ paddingRight: 40 }}
+            value={draft.date}
+            onChange={(e) => patch({ date: e.target.value })}
+          />
+          <span
+            style={{
+              position: "absolute",
+              right: 14,
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "var(--text-tertiary)",
+              pointerEvents: "none",
+              display: "flex",
+            }}
+          >
+            <Icon name="calendar" size={18} />
+          </span>
+        </div>
 
         <div style={{ height: 20 }} />
         <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>

@@ -40,7 +40,7 @@ export default async function FarmEventsPage({ params, searchParams }: PageProps
     getFarmHeader(supabase, id),
     supabase
       .from("events")
-      .select("id, name, event_date, starts_at, ends_at")
+      .select("id, name, event_date, starts_at, ends_at, photo_url")
       .eq("farm_id", id)
       .gte("event_date", today)
       .order("event_date")
@@ -71,7 +71,14 @@ export default async function FarmEventsPage({ params, searchParams }: PageProps
             textDecoration: "none",
           }}
         >
-          <div style={{ width: 64, height: 64, borderRadius: 16, background: "var(--bg-subtle)", border: "1px dashed var(--border-subtle)", flexShrink: 0 }} />
+          {event.photo_url ? (
+            <div style={{ width: 64, height: 64, borderRadius: 16, overflow: "hidden", flexShrink: 0 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={event.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </div>
+          ) : (
+            <div style={{ width: 64, height: 64, borderRadius: 16, background: "var(--bg-subtle)", border: "1px dashed var(--border-subtle)", flexShrink: 0 }} />
+          )}
           <div style={{ flex: 1 }}>
             <div className="body-m-strong">{event.name}</div>
             <div className="body-s-medium">{fmtEventDate(event.event_date)}</div>

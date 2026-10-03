@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { Database } from "@/lib/types/database";
 import { farmTodayStatus, statusTone, STATUS_TONE_COLOR, type HourRow, type TodayStatus } from "@/lib/farmStatus";
+import { marketStatus } from "@/lib/marketStatus";
 import { MapControls } from "@/components/browse/MapControls";
 import { BottomNav } from "@/components/browse/BottomNav";
 import { FiltersEmptyState } from "@/components/browse/FiltersEmptyState";
@@ -24,6 +25,10 @@ export type MarketListItem = {
   id: string;
   name: string;
   location: string | null;
+  schedule_text: string | null;
+  day_of_week: number | null;
+  open_time: string | null;
+  close_time: string | null;
 };
 
 type Status = { open: boolean; label: string; note: string };
@@ -79,9 +84,12 @@ export default function FarmList({
       kind: "market" as const,
       id: m.id,
       name: m.name,
-      meta: m.location ?? "",
+      // Location plus the market's own day/hours — same reason a farm's
+      // meta line shows its categories: the next line down is where the
+      // live open/closed status (computed from these columns) appears.
+      meta: [m.location, m.schedule_text].filter(Boolean).join(" · "),
       categories: [] as string[],
-      status: { open: true, label: "Open", note: "" },
+      status: marketStatus(m.day_of_week, m.open_time, m.close_time),
       hasReadyProduct: false,
     })),
   ];

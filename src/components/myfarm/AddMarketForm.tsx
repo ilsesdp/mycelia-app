@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { PhotoWellMulti } from "@/components/ui/PhotoWellMulti";
+import { ComboField } from "@/components/ui/ComboField";
 import { createClient } from "@/lib/supabase/client";
+import { DAY_OPTIONS, HOURS_OPTIONS, dayOfWeekFromLabel, parseHoursRange } from "@/lib/marketSchedule";
 
 type NewPhoto = { key: string; file: File; preview: string };
 
@@ -49,6 +51,8 @@ export function AddMarketForm({ farmId }: { farmId: string }) {
     setSaving(true);
     setError(null);
     const schedule_text = [day, hours].filter(Boolean).join(" ");
+    const day_of_week = day ? dayOfWeekFromLabel(day) : null;
+    const parsedHours = hours ? parseHoursRange(hours) : null;
     const coords = location ? await geocode(location) : null;
     const { data, error: insertError } = await supabase
       .from("markets")
@@ -56,6 +60,9 @@ export function AddMarketForm({ farmId }: { farmId: string }) {
         name,
         location: location || null,
         schedule_text: schedule_text || null,
+        day_of_week,
+        open_time: parsedHours?.open_time ?? null,
+        close_time: parsedHours?.close_time ?? null,
         lat: coords?.lat ?? null,
         lng: coords?.lng ?? null,
       })
@@ -107,13 +114,13 @@ export function AddMarketForm({ farmId }: { farmId: string }) {
             <div className="caption" style={{ marginBottom: 4 }}>
               Day
             </div>
-            <input className="field" placeholder="Saturdays" value={day} onChange={(e) => setDay(e.target.value)} />
+            <ComboField options={DAY_OPTIONS} placeholder="Saturdays" value={day} onChange={setDay} />
           </div>
           <div style={{ flex: 1 }}>
             <div className="caption" style={{ marginBottom: 4 }}>
               Hours
             </div>
-            <input className="field" placeholder="8am – 1pm" value={hours} onChange={(e) => setHours(e.target.value)} />
+            <ComboField options={HOURS_OPTIONS} placeholder="9:00am - 1:30pm" value={hours} onChange={setHours} />
           </div>
         </div>
 

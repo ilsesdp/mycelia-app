@@ -299,30 +299,39 @@ export type Database = {
       }
       markets: {
         Row: {
+          close_time: string | null
           created_at: string
+          day_of_week: number | null
           id: string
           lat: number | null
           lng: number | null
           location: string | null
           name: string
+          open_time: string | null
           schedule_text: string | null
         }
         Insert: {
+          close_time?: string | null
           created_at?: string
+          day_of_week?: number | null
           id?: string
           lat?: number | null
           lng?: number | null
           location?: string | null
           name: string
+          open_time?: string | null
           schedule_text?: string | null
         }
         Update: {
+          close_time?: string | null
           created_at?: string
+          day_of_week?: number | null
           id?: string
           lat?: number | null
           lng?: number | null
           location?: string | null
           name?: string
+          open_time?: string | null
           schedule_text?: string | null
         }
         Relationships: []

@@ -50,7 +50,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
       )
       .eq("published", true)
       .order("name"),
-    supabase.from("markets").select("id, name, location").order("name"),
+    supabase.from("markets").select("id, name, location, schedule_text, day_of_week, open_time, close_time").order("name"),
   ]);
 
   const items: FarmListItem[] = (farms ?? []).map((f) => ({
@@ -67,6 +67,10 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
     id: m.id,
     name: m.name,
     location: m.location,
+    schedule_text: m.schedule_text,
+    day_of_week: m.day_of_week,
+    open_time: m.open_time,
+    close_time: m.close_time,
   }));
 
   return (

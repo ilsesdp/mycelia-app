@@ -143,7 +143,16 @@ export function MapView({
   }
 
   return (
-    <main className="flex flex-col min-h-screen" style={{ position: "relative", flex: 1 }}>
+    // Fixed to the viewport height and non-scrolling, not min-h-screen: the
+    // map and every absolutely-positioned child here (search bar, controls,
+    // legend) are meant to stay put while you pan/zoom the map art itself,
+    // not ride along with a page scroll. min-h-screen (min-height: 100vh)
+    // left a few px of rubber-band scroll available on mobile Safari (the
+    // 100vh-vs-visual-viewport quirk), which was enough to make the legend
+    // bar look like it detached from the map. The other render branch above
+    // (filtered-empty-state) keeps min-h-screen on purpose — it has real
+    // scrolling content (search bar + empty-state illustration).
+    <main className="flex flex-col" style={{ position: "relative", flex: 1, height: "100dvh", overflow: "hidden" }}>
       <MapArt pins={visible} onPinTap={tapPin} ownFarm={ownFarm} />
 
       <div style={{ position: "absolute", left: 16, right: 16, top: 16, zIndex: 5 }}>

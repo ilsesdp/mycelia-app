@@ -8,25 +8,7 @@ import { PhotoWell } from "@/components/ui/PhotoWell";
 import { ComboField } from "@/components/ui/ComboField";
 import { useOnboarding, type MarketDraft } from "@/lib/onboarding/context";
 import { createClient } from "@/lib/supabase/client";
-
-const DAY_OPTIONS = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays"];
-// One canonical shape everywhere a schedule shows — "9:00am - 1:30pm":
-// always h:mm (never a bare "9am"), a space-hyphen-space between start and
-// end, lowercase am/pm glued to the number. Matches the real markets'
-// schedule_text, normalized in the database to the same format.
-const HOURS_OPTIONS = [
-  "7:00am - 12:00pm",
-  "7:00am - 1:00pm",
-  "8:00am - 1:00pm",
-  "8:00am - 2:00pm",
-  "9:00am - 1:00pm",
-  "9:00am - 2:00pm",
-  "9:00am - 3:00pm",
-  "10:00am - 2:00pm",
-  "10:00am - 3:00pm",
-  "12:00pm - 5:00pm",
-  "3:00pm - 7:00pm",
-];
+import { DAY_OPTIONS, HOURS_OPTIONS, dayOfWeekFromLabel, parseHoursRange } from "@/lib/marketSchedule";
 
 function emptyDraft(): MarketDraft {
   return { name: "", location: "", day: "", hours: "" };
@@ -72,6 +54,8 @@ export default function NewMarketPage() {
     setSaving(true);
     setError(null);
     const schedule_text = [draft.day, draft.hours].filter(Boolean).join(" ");
+    const day_of_week = draft.day ? dayOfWeekFromLabel(draft.day) : null;
+    const parsedHours = draft.hours ? parseHoursRange(draft.hours) : null;
     const coords = draft.location ? await geocode(draft.location) : null;
     const { data, error } = await supabase
       .from("markets")
@@ -79,6 +63,9 @@ export default function NewMarketPage() {
         name: draft.name,
         location: draft.location || null,
         schedule_text: schedule_text || null,
+        day_of_week,
+        open_time: parsedHours?.open_time ?? null,
+        close_time: parsedHours?.close_time ?? null,
         lat: coords?.lat ?? null,
         lng: coords?.lng ?? null,
       })

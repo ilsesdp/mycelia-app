@@ -103,11 +103,11 @@ export function AccountForm({
           {saving ? "Saving…" : "Save changes"}
         </button>
         <div style={{ height: 10 }} />
-        <button className="btn btn-secondary" onClick={() => router.push("/settings/password")}>
+        <button className="btn btn-ghost" onClick={() => router.push("/settings/password")}>
           Change password
         </button>
         <div style={{ height: 10 }} />
-        <button className="btn btn-danger" onClick={() => setShowDelete(true)}>
+        <button className="btn btn-ghost" style={{ color: "var(--text-danger)" }} onClick={() => setShowDelete(true)}>
           Delete my account
         </button>
       </div>

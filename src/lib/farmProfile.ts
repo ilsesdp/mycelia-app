@@ -11,6 +11,7 @@ export type FarmHeader = {
   name: string;
   address: string | null;
   about: string | null;
+  directions: string | null;
   lat: number | null;
   lng: number | null;
   coverPhotoUrl: string | null;
@@ -42,6 +43,7 @@ export async function getFarmHeader(
       name,
       address,
       about,
+      directions,
       lat,
       lng,
       cover_photo_url,
@@ -61,6 +63,7 @@ export async function getFarmHeader(
     name: data.name,
     address: data.address,
     about: data.about,
+    directions: data.directions,
     lat: data.lat,
     lng: data.lng,
     coverPhotoUrl: data.cover_photo_url,

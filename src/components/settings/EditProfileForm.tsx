@@ -37,6 +37,7 @@ export function EditProfileForm({
   initialName,
   initialAddress,
   initialAbout,
+  initialDirections,
   initialContactName,
   initialCoverPhotoUrl,
 }: {
@@ -44,6 +45,7 @@ export function EditProfileForm({
   initialName: string;
   initialAddress: string;
   initialAbout: string;
+  initialDirections: string;
   initialContactName: string;
   initialCoverPhotoUrl: string | null;
 }) {
@@ -53,6 +55,7 @@ export function EditProfileForm({
   const [name, setName] = useState(initialName);
   const [address, setAddress] = useState(initialAddress);
   const [about, setAbout] = useState(initialAbout);
+  const [directions, setDirections] = useState(initialDirections);
   const [contactName, setContactName] = useState(initialContactName);
   const [coverPreview, setCoverPreview] = useState(initialCoverPhotoUrl);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -81,6 +84,7 @@ export function EditProfileForm({
           name,
           address,
           about,
+          directions,
           cover_photo_url: coverPhotoUrl,
           ...(addressChanged ? { lat: coords?.lat ?? null, lng: coords?.lng ?? null } : {}),
         })
@@ -110,9 +114,21 @@ export function EditProfileForm({
         <div style={{ height: 6 }} />
         <textarea
           className="field"
+          style={{ height: 88, resize: "vertical", paddingTop: 10 }}
           placeholder="A sentence or two about your farm"
           value={about}
           onChange={(e) => setAbout(e.target.value)}
+        />
+        <div style={{ height: 18 }} />
+
+        <div className="label-caps">Directions</div>
+        <div style={{ height: 6 }} />
+        <textarea
+          className="field"
+          style={{ height: 88, resize: "vertical", paddingTop: 10 }}
+          placeholder="Help people find you — e.g. gravel driveway on the left, past the red barn"
+          value={directions}
+          onChange={(e) => setDirections(e.target.value)}
         />
         <div style={{ height: 18 }} />
 

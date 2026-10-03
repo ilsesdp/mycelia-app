@@ -46,10 +46,10 @@ export default async function FarmAboutPage({ params, searchParams }: PageProps<
       <div style={{ height: 8 }} />
       <HoursBox hours={hours ?? []} />
       <div style={{ height: 12 }} />
-      {farm.address && (
+      {farm.directions && (
         <div style={{ display: "flex", gap: 4, alignItems: "flex-start", color: "var(--text-secondary)" }}>
           <Icon name="pin" size={16} />
-          <span className="body-s">{farm.address}</span>
+          <span className="body-s">{farm.directions}</span>
         </div>
       )}
       <div style={{ height: 16 }} />

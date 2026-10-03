@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icon } from "@/components/ui/Icon";
 import { productRailLabel, type ProductRow } from "@/lib/myFarm";
 
 const KIND_LABEL: Record<"ready" | "producing" | "planning", string> = {
@@ -15,10 +16,32 @@ const KIND_CLASS: Record<"ready" | "producing" | "planning", string> = {
 function RailCard({ p, kind, tappable }: { p: ProductRow; kind: "ready" | "producing" | "planning"; tappable: boolean }) {
   const card = (
     <div className="avail-card" style={tappable ? { cursor: "pointer" } : undefined}>
-      <div className="photo">
+      <div className="photo" style={{ position: "relative" }}>
         {p.photo_url && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          <img src={p.photo_url} alt="" draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        )}
+        {/* A visible cue that the card itself navigates to edit, not just
+            the "Manage" link above — otherwise nothing here looks tappable
+            on a touch screen (no hover state to reveal it). */}
+        {tappable && (
+          <div
+            style={{
+              position: "absolute",
+              top: 6,
+              right: 6,
+              width: 22,
+              height: 22,
+              borderRadius: 999,
+              background: "rgba(255,255,255,.92)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--text-secondary)",
+            }}
+          >
+            <Icon name="pencil" size={12} />
+          </div>
         )}
       </div>
       <div style={{ height: 8 }} />
@@ -28,7 +51,16 @@ function RailCard({ p, kind, tappable }: { p: ProductRow; kind: "ready" | "produ
       <span className={`avail ${KIND_CLASS[kind]}`}>{KIND_LABEL[kind]}</span>
     </div>
   );
-  return tappable ? <Link href={`/my-farm/products/${p.id}`}>{card}</Link> : card;
+  // display:block (Link renders an <a>, inline by default) so the whole
+  // card is one unambiguous tap target edge-to-edge, not just wherever
+  // text happens to sit.
+  return tappable ? (
+    <Link href={`/my-farm/products/${p.id}`} style={{ display: "block", textDecoration: "none" }}>
+      {card}
+    </Link>
+  ) : (
+    card
+  );
 }
 
 function Section({ label, kind, items, tappable }: { label: string; kind: "ready" | "producing" | "planning"; items: ProductRow[]; tappable: boolean }) {

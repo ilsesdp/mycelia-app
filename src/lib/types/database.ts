@@ -209,6 +209,7 @@ export type Database = {
           address: string | null
           cover_photo_url: string | null
           created_at: string
+          directions: string | null
           google_place_id: string | null
           id: string
           lat: number | null
@@ -225,6 +226,7 @@ export type Database = {
           address?: string | null
           cover_photo_url?: string | null
           created_at?: string
+          directions?: string | null
           google_place_id?: string | null
           id?: string
           lat?: number | null
@@ -241,6 +243,7 @@ export type Database = {
           address?: string | null
           cover_photo_url?: string | null
           created_at?: string
+          directions?: string | null
           google_place_id?: string | null
           id?: string
           lat?: number | null

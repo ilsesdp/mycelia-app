@@ -28,7 +28,7 @@ export default async function MyFarmAboutPage({ searchParams }: PageProps<"/my-f
 
   const [farm, { data: farmRow }, { data: profile }] = await Promise.all([
     getMyFarmIdentity(supabase, farmId),
-    supabase.from("farms").select("about, address").eq("id", farmId).maybeSingle(),
+    supabase.from("farms").select("about, directions").eq("id", farmId).maybeSingle(),
     supabase.from("profiles").select("contact_email, contact_phone, email_visibility, phone_visibility").eq("id", user.id).maybeSingle(),
   ]);
   if (!farm) redirect("/settings");
@@ -51,14 +51,14 @@ export default async function MyFarmAboutPage({ searchParams }: PageProps<"/my-f
       <div style={{ height: 8 }} />
       <HoursBox hours={farm.hours} />
       <div style={{ height: 12 }} />
-      {farmRow?.address && (
+      {farmRow?.directions && (
         <div style={{ display: "flex", gap: 4, alignItems: "flex-start", color: "var(--text-secondary)" }}>
           <Icon name="pin" size={16} />
-          <span className="body-s">{farmRow.address}</span>
+          <span className="body-s">{farmRow.directions}</span>
         </div>
       )}
       <div style={{ height: 16 }} />
-      <DirectionsButton address={farmRow?.address ?? null} disabled={preview} />
+      <DirectionsButton address={farm.address} disabled={preview} />
       <div style={{ height: 24 }} />
       <div className="label-caps">Contact</div>
       {showEmail && <p className="body-s">{email}</p>}

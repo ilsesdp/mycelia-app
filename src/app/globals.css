@@ -107,12 +107,11 @@
 }
 
 body {
-  /* The prototype's .screen (what fills the whole viewport, per-screen) is
-     var(--bg-raised) — white — with --bg-canvas reserved for recessed
-     surfaces inside a screen (fields, empty-state wells). This app has no
-     device-frame chrome around each screen, so body itself needs to be the
-     screen background, not the canvas one. */
-  background: var(--bg-raised);
+  /* Ilse's call (2026-10-03): the screen body itself is bg-canvas now, not
+     bg-raised. Cards, fields, sheets and other "raised" surfaces inside a
+     screen keep their own explicit background (bg-raised/bg-subtle/white)
+     so they still read as sitting on top of the canvas. */
+  background: var(--bg-canvas);
   color: var(--text-primary);
   font-family: var(--font-inter), -apple-system, sans-serif;
 }

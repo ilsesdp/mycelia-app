@@ -74,7 +74,7 @@ export default function AddressPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/path" />
-      <div className="px-6 pt-4">
+      <div className="px-4 pt-4">
         <StepHeader
           step={1}
           title="Where's your farm?"

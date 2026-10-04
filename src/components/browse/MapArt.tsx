@@ -59,13 +59,13 @@ export function MapArt({
         <path d="M0,120 C80,100 140,180 220,150 S 360,90 402,140" stroke="#a9c493" strokeWidth="10" fill="none" />
         <path d="M0,300 C100,280 160,360 260,330 S 380,260 402,320" stroke="#a9c493" strokeWidth="8" fill="none" />
         <path d="M40,0 C60,120 20,240 60,769" stroke="#bcd2a6" strokeWidth="6" fill="none" />
-        <text x="16" y="330" fontSize="13" fill="#696158">
+        <text x="16" y="330" fontSize="13" fill="var(--text-tertiary)">
           County Line Rd
         </text>
-        <text x="205" y="575" fontSize="13" fill="#696158">
+        <text x="205" y="575" fontSize="13" fill="var(--text-tertiary)">
           Willow Creek Rd
         </text>
-        <text x="310" y="20" fontSize="13" fill="#696158">
+        <text x="310" y="20" fontSize="13" fill="var(--text-tertiary)">
           Rt 20
         </text>
       </svg>
@@ -122,7 +122,7 @@ export function MapArt({
           <div
             style={{
               marginTop: 4,
-              background: "#fff",
+              background: "var(--bg-raised)",
               border: "1px solid var(--border-subtle)",
               borderRadius: 8,
               padding: "4px 8px",
@@ -211,7 +211,7 @@ export function MapArt({
                 top: 4,
                 ...labelStyle,
                 maxWidth: 160,
-                background: "#fff",
+                background: "var(--bg-raised)",
                 border: "1px solid var(--border-subtle)",
                 borderRadius: 8,
                 padding: "4px 8px",
@@ -248,7 +248,7 @@ function YouAreHereLabel({
           top: "47.3%",
           transform: "translateX(-50%)",
           width: 150,
-          background: "#fff",
+          background: "var(--bg-raised)",
           border: "1px solid var(--border-subtle)",
           borderRadius: 8,
           padding: "6px 8px",
@@ -283,7 +283,7 @@ function YouAreHereLabel({
         transform: "translateX(-50%)",
         width: 130,
         height: 26,
-        background: "#fff",
+        background: "var(--bg-raised)",
         border: "1px solid var(--border-subtle)",
         borderRadius: 8,
         display: "flex",

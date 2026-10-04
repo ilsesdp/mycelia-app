@@ -22,7 +22,7 @@ export default function FarmDetailsPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/address-result" />
-      <div className="px-6 pt-4 pb-8">
+      <div className="px-4 pt-4 pb-8">
         <StepHeader step={2} title="Your farm" />
 
         <label className="label-caps" htmlFor="farm-name">

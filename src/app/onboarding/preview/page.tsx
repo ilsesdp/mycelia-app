@@ -99,7 +99,7 @@ export default function PreviewPage() {
               : undefined
           }
         />
-        <div className="px-6" style={{ position: "relative" }}>
+        <div className="px-4" style={{ position: "relative" }}>
           {/* Disabled on purpose — this is a preview of your own farm, not
               a real visitor's view. The only action here is "Publish my
               farm" below; messaging yourself never made sense anyway. */}
@@ -153,7 +153,7 @@ export default function PreviewPage() {
           <div style={{ height: 20 }} />
         </div>
       </div>
-      <div className="px-6" style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", flexShrink: 0 }}>
+      <div className="px-4" style={{ display: "flex", borderBottom: "1px solid var(--border-subtle)", flexShrink: 0 }}>
         {(["Products", "About", "Events"] as const).map((t) => (
           <div
             key={t}
@@ -166,7 +166,7 @@ export default function PreviewPage() {
           </div>
         ))}
       </div>
-      <div className="px-6" style={{ paddingTop: 16, paddingBottom: 112 }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 112 }}>
         {tab === "Products" ? (
           <>
             <div className="label-caps">What&apos;s available</div>

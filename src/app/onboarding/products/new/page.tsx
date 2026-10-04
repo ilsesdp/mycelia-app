@@ -67,7 +67,7 @@ export default function NewProductPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref={backHref} title="Add a product" />
-      <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
+      <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
         <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="product-name">
           What is your product?
         </label>

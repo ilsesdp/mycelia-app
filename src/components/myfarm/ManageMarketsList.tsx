@@ -104,7 +104,7 @@ export function ManageMarketsList({ farmId, markets }: { farmId: string; markets
                       borderRadius: 4,
                       border: `1.5px solid ${isSelected ? "transparent" : "var(--border-strong)"}`,
                       background: isSelected ? "var(--interactive-primary)" : "transparent",
-                      color: "#fff",
+                      color: "var(--text-on-brand)",
                       fontSize: 13,
                       display: "flex",
                       alignItems: "center",

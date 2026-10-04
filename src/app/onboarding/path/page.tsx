@@ -20,7 +20,7 @@ export default function ChoosePathPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/welcome" />
-      <div className="px-6 pt-4">
+      <div className="px-4 pt-4">
         <div className="title-l" style={{ color: "var(--text-primary)" }}>
           What brings you here?
         </div>

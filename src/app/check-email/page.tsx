@@ -30,7 +30,7 @@ function CheckEmailInner() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/login" />
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-6">
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-4">
         <div
           style={{
             width: 72,

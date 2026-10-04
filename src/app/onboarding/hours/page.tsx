@@ -38,7 +38,7 @@ export default function HoursPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/products" />
-      <div className="px-6 pt-4">
+      <div className="px-4 pt-4">
         <StepHeader step={5} title="When are you open?" subtitle="Set your regular hours so growers and customers know when they can reach you" />
         <div className="label-caps">Quick setup</div>
         <div style={{ height: 10 }} />
@@ -99,7 +99,7 @@ export default function HoursPage() {
           );
         })}
       </div>
-      <div className="px-6 pt-5 pb-6">
+      <div className="px-4 pt-5 pb-6">
         <Button variant="primary" onClick={() => router.push("/onboarding/markets")}>
           Continue
         </Button>

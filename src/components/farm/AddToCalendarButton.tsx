@@ -80,7 +80,7 @@ export function AddToCalendarButton({ event, farmName, farmAddress }: { event: E
             top: -36,
             transform: "translateX(-50%)",
             background: "var(--text-primary)",
-            color: "#fff",
+            color: "var(--text-on-brand)",
             borderRadius: 8,
             padding: "8px 12px",
             fontSize: 13,

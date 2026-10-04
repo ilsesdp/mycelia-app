@@ -93,7 +93,7 @@ export default function NewMarketPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/markets" backLabel="Markets" title="Add a market" />
-      <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
+      <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
         <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="market-name">
           What is the market called?
         </label>

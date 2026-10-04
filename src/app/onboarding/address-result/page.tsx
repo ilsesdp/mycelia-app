@@ -15,7 +15,7 @@ export default function AddressResultPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/address" />
-      <div className="flex-1 flex flex-col px-6 pt-4">
+      <div className="flex-1 flex flex-col px-4 pt-4">
         <StepHeader step={1} title={found ? "We found this address" : "We couldn't find that address"} />
 
         {found ? (

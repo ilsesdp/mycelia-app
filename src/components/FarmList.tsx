@@ -193,7 +193,7 @@ export default function FarmList({
                     key={c}
                     style={{
                       background: "var(--interactive-primary)",
-                      color: "#fff",
+                      color: "var(--text-on-brand)",
                       padding: "8px 12px",
                       borderRadius: 999,
                       fontFamily: "var(--font-body)",

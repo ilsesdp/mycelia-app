@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 // Ports SCREENS['1.1'] — the welcome screen.
 export default function WelcomePage() {
   return (
-    <main className="min-h-screen flex flex-col justify-between px-6 py-10">
+    <main className="min-h-screen flex flex-col justify-between px-4 py-10">
       <div />
       <div className="flex flex-col items-center text-center gap-1">
         <Image src="/logo.png" alt="Mycelia" width={93 * 2.02} height={93} priority />

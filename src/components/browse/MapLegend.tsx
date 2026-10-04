@@ -29,7 +29,7 @@ export function MapLegend() {
   return (
     <div
       style={{
-        background: "#fff",
+        background: "var(--bg-raised)",
         border: "1px solid var(--border-subtle)",
         borderRadius: 999,
         padding: "8px 10px",
@@ -39,8 +39,8 @@ export function MapLegend() {
         justifyContent: "center",
       }}
     >
-      {leafItem("#385912", "Open now")}
-      {leafItem("#B0A8A1", "Closed")}
+      {leafItem("var(--text-brand)", "Open now")}
+      {leafItem("var(--text-disabled)", "Closed")}
       {marketItem}
     </div>
   );

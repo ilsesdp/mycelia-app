@@ -56,7 +56,7 @@ export default function CategoriesPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/farm" />
-      <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
+      <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
         <StepHeader step={3} title="What do you grow or make?" subtitle="Choose the categories that best describe what you offer." />
         <div>{shown.map(row)}</div>
         {!expanded ? (

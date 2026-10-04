@@ -54,7 +54,7 @@ export function PhotoWellMulti({
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              color: "#fff",
+              color: "var(--text-on-brand)",
             }}
             aria-label="Remove photo"
           >

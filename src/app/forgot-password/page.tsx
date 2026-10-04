@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/login" />
-      <div className="flex flex-col gap-4 px-6 pt-4">
+      <div className="flex flex-col gap-4 px-4 pt-4">
         <div>
           <div className="title-l" style={{ color: "var(--text-primary)" }}>
             Reset your password

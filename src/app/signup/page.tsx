@@ -69,7 +69,7 @@ export default function SignupPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/welcome" title="Create account" />
-      <div className="flex-1 flex flex-col px-6 pt-4">
+      <div className="flex-1 flex flex-col px-4 pt-4">
         <div className="title-l" style={{ color: "var(--text-primary)" }}>
           Set up your account
         </div>
@@ -132,7 +132,7 @@ export default function SignupPage() {
 
         <div style={{ flex: 1 }} />
       </div>
-      <div className="px-6 pb-6 flex flex-col gap-4">
+      <div className="px-4 pb-6 flex flex-col gap-4">
         <Button variant="primary" disabled={!canSubmit || submitting} onClick={handleSubmit}>
           {submitting ? "Creating account…" : "Create account"}
         </Button>

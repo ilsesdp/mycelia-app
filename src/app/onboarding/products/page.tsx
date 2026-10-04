@@ -26,7 +26,7 @@ export default function ProductsPage() {
     return (
       <main className="min-h-screen flex flex-col">
         <AppBar backHref="/onboarding/categories" />
-        <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
+        <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
           <StepHeader step={4} title="Add your products" subtitle="Add the specific products you offer. You can edit or add more anytime." />
           <p className="caption">Based on your choices</p>
           <div style={{ height: 8 }} />
@@ -83,7 +83,7 @@ export default function ProductsPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/categories" />
-      <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
+      <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
         <StepHeader step={4} title="Your products" subtitle="Review what you've added. You can add more or continue." />
         {Object.entries(grouped).map(([cat, items]) => (
           <div key={cat}>

@@ -22,7 +22,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/markets" />
-      <div className="px-6 pt-4 pb-8 flex-1 flex flex-col">
+      <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
         <StepHeader step={7} title="How should people reach you?" />
 
         <label className="label-caps" htmlFor="contact-name">

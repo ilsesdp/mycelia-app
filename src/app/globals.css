@@ -53,16 +53,24 @@
   --cat-egg-bg: #ffc3e4;
   --cat-egg-fg: #7f3f64;
 
-  /* Availability chips — resolved canonical set (component_drift.md QA
-     pass): Ready = solid green, Producing/Growing = gold w/ secondary
-     text, Planning = solid rich-earth. */
+  /* Availability chips — Ilse's resolved canonical set (2026-10-03):
+     fill/stroke/text per status, all three on white text so they read as
+     one solid-chip family. Ready: fill interactive/primary/hover, stroke
+     status/ready/border. Producing: fill color/golden-harvest/500, stroke
+     reuses its own bg (status/producing/bg) as the border. Planning: fill
+     color/rich-earth/700, stroke reuses the producing/growing tier's gold
+     (status/growing/border) rather than self-matching — ties the ladder's
+     colors together; flag to Ilse if a self-matching rich-earth border was
+     meant instead. */
   --avail-ready-bg: var(--interactive-primary-hover);
   --avail-ready-border: var(--border-brand);
   --avail-ready-fg: var(--text-on-brand);
   --avail-producing-bg: var(--golden-500);
-  --avail-producing-fg: var(--text-secondary);
+  --avail-producing-border: var(--golden-500);
+  --avail-producing-fg: var(--text-on-brand);
   --avail-planning-bg: var(--rich-earth-700);
-  --avail-planning-fg: #ffffff;
+  --avail-planning-border: var(--golden-500);
+  --avail-planning-fg: var(--text-on-brand);
 
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -773,12 +781,12 @@ body {
 }
 .avail-producing {
   background: var(--avail-producing-bg);
-  border: 1px solid var(--avail-producing-bg);
+  border: 1px solid var(--avail-producing-border);
   color: var(--avail-producing-fg);
 }
 .avail-planning-solid {
   background: var(--avail-planning-bg);
-  border: 1px solid var(--avail-planning-bg);
+  border: 1px solid var(--avail-planning-border);
   color: var(--avail-planning-fg);
 }
 
@@ -950,14 +958,17 @@ body {
   font-weight: 600;
 }
 
-/* App bar */
+/* App bar — one flat treatment on every screen now (Ilse's call,
+   2026-10-03): bg-canvas background, text-primary for all header text,
+   resolving the earlier split spec (white on browse, deep-green band on
+   trust screens) that was never built. */
 .appbar {
   height: 56px;
   display: flex;
   align-items: center;
   padding: 0 16px;
   gap: 8px;
-  background: var(--bg-raised);
+  background: var(--bg-canvas);
   border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
   justify-content: space-between;
@@ -967,7 +978,7 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: var(--text-brand);
+  color: var(--text-primary);
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 16px;

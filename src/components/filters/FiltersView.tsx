@@ -81,7 +81,7 @@ export function FiltersView({
                 key={k}
                 onClick={() => toggleKind(k)}
                 style={{
-                  background: selected ? "var(--harvest-green-100)" : "#fff",
+                  background: selected ? "var(--harvest-green-100)" : "var(--bg-raised)",
                   border: `1px solid ${selected ? "var(--text-brand)" : "var(--border-subtle)"}`,
                   borderRadius: 16,
                   padding: 12,
@@ -121,7 +121,7 @@ export function FiltersView({
                   fontWeight: 500,
                   fontSize: 14,
                   background: selected ? "var(--interactive-primary)" : bg,
-                  color: selected ? "#fff" : fg,
+                  color: selected ? "var(--text-on-brand)" : fg,
                   border: `1px solid ${selected ? "var(--interactive-primary)" : fg}`,
                 }}
               >
@@ -149,7 +149,7 @@ export function FiltersView({
           <div
             onClick={toggleReady}
             style={{
-              background: filters.readyOnly ? "var(--harvest-green-100)" : "#fff",
+              background: filters.readyOnly ? "var(--harvest-green-100)" : "var(--bg-raised)",
               border: `1px solid ${filters.readyOnly ? "var(--text-brand)" : "var(--border-subtle)"}`,
               borderRadius: 16,
               padding: 12,
@@ -169,7 +169,7 @@ export function FiltersView({
           <div
             onClick={toggleOpen}
             style={{
-              background: filters.openOnly ? "var(--harvest-green-100)" : "#fff",
+              background: filters.openOnly ? "var(--harvest-green-100)" : "var(--bg-raised)",
               border: `1px solid ${filters.openOnly ? "var(--text-brand)" : "var(--border-subtle)"}`,
               borderRadius: 16,
               padding: 12,

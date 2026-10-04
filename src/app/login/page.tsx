@@ -45,7 +45,7 @@ function LoginInner() {
   return (
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/welcome" />
-      <div className="flex-1 flex flex-col px-6 pt-4">
+      <div className="flex-1 flex flex-col px-4 pt-4">
         <div className="title-l" style={{ color: "var(--text-primary)" }}>
           Log in
         </div>

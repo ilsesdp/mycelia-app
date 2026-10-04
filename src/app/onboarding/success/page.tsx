@@ -29,7 +29,7 @@ export default function OnboardingSuccessPage() {
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center justify-center px-6 py-6"
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-6"
       onClick={() => router.push("/map")}
       role="button"
       tabIndex={0}
@@ -49,7 +49,7 @@ export default function OnboardingSuccessPage() {
             alignItems: "center",
             justifyContent: "center",
             margin: "0 auto",
-            color: "#fff",
+            color: "var(--text-on-brand)",
           }}
         >
           <Icon name="check" size={40} />

@@ -31,8 +31,8 @@ export default function ChoosePathPage() {
           className="w-full flex flex-col items-center gap-2 text-left"
           style={{
             cursor: "pointer",
-            background: "var(--bg-brand-subtle)",
-            border: "1px solid #825d17",
+            background: "var(--harvest-green-100)",
+            border: "1px solid var(--border-default)",
             borderRadius: 16,
             padding: 16,
             position: "relative",

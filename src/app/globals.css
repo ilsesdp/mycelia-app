@@ -107,11 +107,10 @@
 }
 
 body {
-  /* Ilse's call (2026-10-03): the screen body itself is bg-canvas now, not
-     bg-raised. Cards, fields, sheets and other "raised" surfaces inside a
-     screen keep their own explicit background (bg-raised/bg-subtle/white)
-     so they still read as sitting on top of the canvas. */
-  background: var(--bg-canvas);
+  /* Ilse's call (2026-10-05): back to bg-raised (white) so the screen body
+     matches .navbar3 and the rest of the app's raised surfaces, instead of
+     the bg-canvas (Linen) tried on 2026-10-03. */
+  background: var(--bg-raised);
   color: var(--text-primary);
   font-family: var(--font-inter), -apple-system, sans-serif;
 }
@@ -967,7 +966,7 @@ body {
   align-items: center;
   padding: 0 16px;
   gap: 8px;
-  background: var(--bg-canvas);
+  background: var(--bg-raised);
   border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
   justify-content: space-between;

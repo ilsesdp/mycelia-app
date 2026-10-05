@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { StepHeader } from "@/components/ui/StepHeader";
 import { useOnboarding } from "@/lib/onboarding/context";
 import { swatchColor } from "@/lib/categoryStyle";
-import { CATEGORIES } from "@/lib/myFarm";
+import { CATEGORIES, CATEGORY_DESCRIPTIONS } from "@/lib/myFarm";
 import type { Database } from "@/lib/types/database";
 
 type Category = Database["public"]["Enums"]["category_t"];
@@ -35,9 +35,14 @@ export default function CategoriesPage() {
     return (
       <div key={c} className={`cat-row ${selected ? "selected" : ""}`} onClick={() => toggle(c)}>
         <div className="cat-swatch" style={{ background: swatchColor(c) }} />
-        <span className="body-m" style={{ color: "var(--text-primary)" }}>
-          {c}
-        </span>
+        <div className="cat-row-text">
+          <span className="body-m-strong" style={{ color: swatchColor(c) }}>
+            {c}
+          </span>
+          <span className="body-s" style={{ color: "var(--text-secondary)" }}>
+            {CATEGORY_DESCRIPTIONS[c]}
+          </span>
+        </div>
         <span className="cat-checkbox">{selected ? "✓" : ""}</span>
       </div>
     );
@@ -51,13 +56,13 @@ export default function CategoriesPage() {
         <div>{shown.map(row)}</div>
         {!expanded ? (
           <div
-            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", cursor: "pointer" }}
+            style={{ display: "flex", alignItems: "center", gap: 6, padding: "12px 16px", cursor: "pointer" }}
             onClick={() => setExpanded(true)}
           >
-            <span className="body-m" style={{ color: "var(--text-brand)" }}>
-              See more
+            <span className="body-m-strong" style={{ color: "var(--text-brand)" }}>
+              Show all categories
             </span>
-            <span>↓</span>
+            <span style={{ color: "var(--text-brand)" }}>⌄</span>
           </div>
         ) : (
           <div>{rest.map(row)}</div>

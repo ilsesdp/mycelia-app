@@ -26,6 +26,25 @@ export const CATEGORIES: Category[] = [
 // "kg" stays in the DB enum (existing rows may use it) but is dropped from
 // the app-facing unit list per product decision.
 export const UNITS: Unit[] = ["lb", "oz", "fl oz", "pint", "quart", "gallon", "each", "dozen", "bunch", "jar", "pack", "bag", "loaf"];
+
+// A few example items for each category, shown as the subtitle under its
+// name on the onboarding categories step (1.7) — helps a grower unsure
+// which bucket something falls into (e.g. is a candle "Handmade Crafts"?).
+export const CATEGORY_DESCRIPTIONS: Record<Category, string> = {
+  Vegetables: "Carrots, tomatoes, peppers, leafy greens",
+  Fruit: "Apples, berries, peaches, melons",
+  Eggs: "Chicken, duck, or quail eggs",
+  Dairy: "Milk, cheese, yogurt, butter",
+  Honey: "Raw honey, infused honey, honeycomb",
+  Flowers: "Cut flowers, bouquets, dried flowers",
+  Herbs: "Basil, mint, rosemary, cilantro",
+  "Handmade Crafts": "Handmade soaps, candles, pottery, baskets",
+  "Baked Goods": "Bread, cookies, pies, pastries",
+  Seeds: "Vegetable, herb, and flower seeds",
+  "Fiber Goods": "Wool, fleece, yarn, woven goods",
+  Mushrooms: "Oyster, shiitake, lion's mane, button",
+  "Dry Goods": "Dried beans, grains, cornmeal, flour",
+};
 export const AVAILABILITY_DISPLAY: Record<Availability, "Ready now" | "Producing" | "Planning"> = {
   ready_now: "Ready now",
   producing: "Producing",

@@ -44,6 +44,20 @@ function fmtShortTime(t?: string) {
   return m[2] === "00" ? `${h}${m[3].toLowerCase()}` : `${h}:${m[2]}${m[3].toLowerCase()}`;
 }
 
+// Onboarding's hours draft stores "9:00 AM"-style strings (see
+// lib/onboarding/context.tsx), unlike farm_hours' 24h "HH:MM:SS" — this is
+// the same parse to minutes-since-midnight, just for that 12h format.
+function to12hMinutes(t?: string): number | null {
+  if (!t) return null;
+  const m = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(t.trim());
+  if (!m) return null;
+  let h = parseInt(m[1], 10);
+  const mer = m[3].toUpperCase();
+  if (mer === "PM" && h !== 12) h += 12;
+  if (mer === "AM" && h === 12) h = 0;
+  return h * 60 + parseInt(m[2], 10);
+}
+
 // Ports SCREENS['1.12'] — last review step before the single real write.
 // "Publish my farm" calls publishFarm() (all the inserts at once, same as
 // the prototype's one-shot write) and, on success, routes to /onboarding/success.
@@ -58,6 +72,15 @@ export default function PreviewPage() {
   for (const p of state.products) (grouped[p.availability] ||= []).push(p);
   const today = state.hours[todayKey()];
   const categories = Object.entries(state.categories).filter(([, v]) => v).map(([k]) => k);
+
+  // Mirrors farmStatus()'s real open/closed check (lib/farmStatus.ts) — the
+  // status row used to just read today.closed and call anything else
+  // "Open until <close>", even hours after close_time had passed.
+  const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+  const openMin = today.closed ? null : to12hMinutes(today.open);
+  const closeMin = today.closed ? null : to12hMinutes(today.close);
+  const isOpenNow = openMin !== null && closeMin !== null && nowMinutes >= openMin && nowMinutes < closeMin;
+  const opensLaterToday = !today.closed && openMin !== null && nowMinutes < openMin;
 
   async function publish() {
     setPublishing(true);
@@ -121,21 +144,21 @@ export default function PreviewPage() {
             {state.farmAddress || "Add your address"}
           </div>
           <div style={{ height: 8 }} />
-          {today.closed ? (
-            <div className="status-row">
-              <span className="dot" style={{ background: STATUS_TONE_COLOR.closed }} />
-              <span className="label" style={{ color: STATUS_TONE_COLOR.closed }}>
-                Closed
-              </span>
-              <span className="detail">&nbsp;today</span>
-            </div>
-          ) : (
+          {isOpenNow ? (
             <div className="status-row">
               <span className="dot" style={{ background: STATUS_TONE_COLOR.open }} />
               <span className="label" style={{ color: STATUS_TONE_COLOR.open }}>
                 Open
               </span>
               <span className="detail">&nbsp;until {fmtShortTime(today.close) || "5pm"}</span>
+            </div>
+          ) : (
+            <div className="status-row">
+              <span className="dot" style={{ background: STATUS_TONE_COLOR.closed }} />
+              <span className="label" style={{ color: STATUS_TONE_COLOR.closed }}>
+                Closed
+              </span>
+              <span className="detail">&nbsp;{opensLaterToday ? `opens today ${fmtShortTime(today.open)}` : "today"}</span>
             </div>
           )}
           <div style={{ height: 10 }} />
@@ -235,6 +258,16 @@ export default function PreviewPage() {
                 <Icon name="pin" size={16} />
                 <span className="body-s">{state.farmAddress}</span>
               </div>
+            )}
+            {state.farmDirections && (
+              <>
+                <div style={{ height: 20 }} />
+                <div className="label-caps">Directions</div>
+                <div style={{ height: 10 }} />
+                <p className="body-m" style={{ lineHeight: "20px" }}>
+                  {state.farmDirections}
+                </p>
+              </>
             )}
             <div style={{ height: 16 }} />
             <DirectionsButton address={state.farmAddress || null} disabled />

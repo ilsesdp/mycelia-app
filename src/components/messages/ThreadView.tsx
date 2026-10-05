@@ -77,7 +77,7 @@ export function ThreadView({
     <main className="flex flex-col min-h-screen">
       <AppBar backHref={backHref} title={title} />
       <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-        <div className="col" style={{ padding: "16px 0" }}>
+        <div className="col" style={{ padding: "16px 16px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <span style={{ color: "var(--text-brand)" }}>
               <Icon name="lock" size={16} />
@@ -126,7 +126,7 @@ export function ThreadView({
           display: "flex",
           gap: 8,
           alignItems: "center",
-          padding: "12px 24px",
+          padding: "12px 16px",
           borderTop: "1px solid var(--border-subtle)",
           background: "var(--bg-raised)",
         }}

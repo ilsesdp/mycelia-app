@@ -17,6 +17,7 @@ export type FarmSheetData = {
   status: { open: boolean; label: string; note: string };
   ready: SheetProduct[];
   producing: SheetProduct[];
+  coverPhotoUrl: string | null;
 };
 
 function productCard(p: SheetProduct, kind: "ready" | "producing") {
@@ -91,7 +92,16 @@ export function FarmPinSheet({
         <div style={{ width: 40, height: 4, borderRadius: 999, background: "var(--border-strong)", margin: "0 auto 14px" }} />
 
         <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-          <div style={{ width: 64, height: 64, borderRadius: 16, border: "1px dashed var(--border-subtle)", flexShrink: 0 }} />
+          {farm.coverPhotoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={farm.coverPhotoUrl}
+              alt=""
+              style={{ width: 64, height: 64, borderRadius: 16, objectFit: "cover", border: "1px solid var(--border-subtle)", flexShrink: 0, display: "block" }}
+            />
+          ) : (
+            <div style={{ width: 64, height: 64, borderRadius: 16, border: "1px dashed var(--border-subtle)", flexShrink: 0 }} />
+          )}
           <div style={{ flex: 1 }}>
             <div className="title-m" style={{ color: "var(--text-primary)" }}>
               {farm.name}

@@ -49,6 +49,7 @@ export async function publishFarm(state: OnboardingState, userId: string) {
       owner_id: userId,
       name: state.farmName,
       address: state.farmAddress || null,
+      directions: state.farmDirections || null,
       lat: state.farmLat,
       lng: state.farmLng,
       about: state.farmAbout || null,

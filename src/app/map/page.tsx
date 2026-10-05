@@ -32,6 +32,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       lat,
       lng,
       today_status,
+      cover_photo_url,
       farm_categories ( category ),
       farm_hours ( day_of_week, open_time, close_time, closed ),
       products ( id, name, qty, availability, photo_url )
@@ -100,6 +101,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
         status: match.status,
         ready: match.products.filter((p) => p.availability === "ready_now"),
         producing: match.products.filter((p) => p.availability === "producing"),
+        coverPhotoUrl: match.cover_photo_url,
       };
     }
   }

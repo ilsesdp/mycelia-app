@@ -64,6 +64,11 @@ export function UsualHoursForm({ farmId, initialHours }: { farmId: string; initi
     }));
     await supabase.from("farm_hours").upsert(rows, { onConflict: "farm_id,day_of_week" });
     setSaving(false);
+    // Without this, the chip/map status (fetched fresh via router.push's
+    // target segment) update, but any already-visited page in this
+    // session's Router Cache — most commonly /my-farm/about's Hours box —
+    // keeps serving its stale RSC payload until something invalidates it.
+    router.refresh();
     router.push("/my-farm");
   }
 

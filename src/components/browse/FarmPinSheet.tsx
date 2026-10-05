@@ -3,7 +3,7 @@ import { Icon } from "@/components/ui/Icon";
 import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { catBg, catFg } from "@/lib/categoryStyle";
 import { abbreviateAddress } from "@/lib/geo";
-import { statusTone, STATUS_TONE_COLOR } from "@/lib/farmStatus";
+import { farmTodayStatus, statusTone, STATUS_TONE_COLOR, type HourRow, type TodayStatus } from "@/lib/farmStatus";
 
 export type SheetProduct = { id: string; name: string; qty: string | null; photo_url: string | null };
 
@@ -14,7 +14,11 @@ export type FarmSheetData = {
   lat: number | null;
   lng: number | null;
   categories: string[];
-  status: { open: boolean; label: string; note: string };
+  // Raw hours + manual override, computed into open/label/note below at
+  // render time (in the browser) rather than upstream on the server — see
+  // MapPin's comment in MapArt.tsx for why.
+  hours: HourRow[];
+  todayStatus: TodayStatus;
   ready: SheetProduct[];
   producing: SheetProduct[];
   coverPhotoUrl: string | null;
@@ -65,6 +69,7 @@ export function FarmPinSheet({
   open: boolean;
   onCloseTransitionEnd?: () => void;
 }) {
+  const status = farmTodayStatus(farm.hours, farm.todayStatus);
   return (
     <div
       onClick={(e) => e.stopPropagation()}
@@ -118,11 +123,11 @@ export function FarmPinSheet({
             )}
             <div style={{ height: 4 }} />
             <div className="status-row">
-              <span className="dot" style={{ background: STATUS_TONE_COLOR[statusTone(farm.status)] }} />
-              <span className="label" style={{ color: STATUS_TONE_COLOR[statusTone(farm.status)] }}>
-                {farm.status.label}
+              <span className="dot" style={{ background: STATUS_TONE_COLOR[statusTone(status)] }} />
+              <span className="label" style={{ color: STATUS_TONE_COLOR[statusTone(status)] }}>
+                {status.label}
               </span>
-              <span className="detail">&nbsp;{farm.status.note}</span>
+              <span className="detail">&nbsp;{status.note}</span>
             </div>
           </div>
         </div>

@@ -41,6 +41,11 @@ type Row = {
   categories: string[];
   status: Status;
   hasReadyProduct: boolean;
+  // Market only — the owner's own "Saturdays, 8am – 1pm"-style free text,
+  // shown beside the status dot/label (same position as a farm's status
+  // note) instead of up in the meta line, so a market card has the same
+  // two-line shape as a farm card: name+meta, then status+hours.
+  scheduleText?: string | null;
 };
 
 // Matches the tested prototype's matchesSearch(): name only, case-insensitive
@@ -84,13 +89,14 @@ export default function FarmList({
       kind: "market" as const,
       id: m.id,
       name: m.name,
-      // Location plus the market's own day/hours — same reason a farm's
-      // meta line shows its categories: the next line down is where the
-      // live open/closed status (computed from these columns) appears.
-      meta: [m.location, m.schedule_text].filter(Boolean).join(" · "),
+      // Just the location — matches a farm row's meta line (categories,
+      // or address as a fallback), with the market's own day/hours moved
+      // down next to the status dot/label instead, like a farm card.
+      meta: m.location ?? "",
       categories: [] as string[],
       status: marketStatus(m.day_of_week, m.open_time, m.close_time),
       hasReadyProduct: false,
+      scheduleText: m.schedule_text,
     })),
   ];
 
@@ -254,7 +260,11 @@ export default function FarmList({
                     <span className="body-s-strong" style={{ color: STATUS_TONE_COLOR[statusTone(row.status)] }}>
                       {row.status.label}
                     </span>
-                    {row.status.note && <span className="body-s-medium">&nbsp;{row.status.note}</span>}
+                    {row.kind === "market" ? (
+                      row.scheduleText && <span className="body-s-medium">&nbsp;{row.scheduleText}</span>
+                    ) : (
+                      row.status.note && <span className="body-s-medium">&nbsp;{row.status.note}</span>
+                    )}
                   </div>
                 </div>
                 <span style={{ color: "var(--text-tertiary)" }}>&#8250;</span>

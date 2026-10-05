@@ -3,21 +3,30 @@
 import type { CSSProperties } from "react";
 import { useGeolocation } from "@/lib/useGeolocation";
 import { pinImageSrc, pinState, youPinImageSrc, type PinKind } from "@/lib/mapPins";
+import { farmTodayStatus, type HourRow, type TodayStatus } from "@/lib/farmStatus";
 
 export type MapPin = {
   id: string;
   kind: PinKind;
   name: string;
-  open: boolean;
-  closedEarly: boolean;
+  // Raw hours + manual override, not a precomputed open/closedEarly — this
+  // is a client component, so computing farmTodayStatus() here (not on the
+  // server in map/page.tsx) means "now" is the visitor's own local clock,
+  // not the server's UTC clock. Farms span multiple real timezones (WA,
+  // IL, ...) with no stored per-farm timezone, so neither clock is exactly
+  // "the farm's local time" — but the server's UTC clock was wrong by
+  // several hours for virtually every US visitor, every day, which is what
+  // made pins look permanently out of sync with the farm's actual hours.
+  hours: HourRow[];
+  todayStatus: TodayStatus;
   xPct: number;
   yPct: number;
 };
 
 export type OwnFarmMarker = {
   name: string;
-  open: boolean;
-  closedEarly: boolean;
+  hours: HourRow[];
+  todayStatus: TodayStatus;
 };
 
 // Ports mapArt() + youAreHereLabel(). Same stylized illustration (gradient
@@ -39,6 +48,7 @@ export function MapArt({
   ownFarm: OwnFarmMarker | null;
 }) {
   const { status, coords } = useGeolocation();
+  const ownFarmStatus = ownFarm ? farmTodayStatus(ownFarm.hours, ownFarm.todayStatus) : null;
 
   return (
     <div
@@ -113,7 +123,7 @@ export function MapArt({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={youPinImageSrc(pinState("farm", ownFarm.open, ownFarm.closedEarly))}
+            src={youPinImageSrc(pinState("farm", ownFarmStatus!.open, ownFarmStatus!.closedEarly))}
             alt=""
             width={51}
             height={58}
@@ -153,7 +163,8 @@ export function MapArt({
       )}
 
       {pins.map((p) => {
-        const state = pinState(p.kind, p.open, p.closedEarly);
+        const pStatus = farmTodayStatus(p.hours, p.todayStatus);
+        const state = pinState(p.kind, pStatus.open, pStatus.closedEarly);
         // Label anchoring: the pin icon always stays centered on its own
         // (xPct, yPct) point, but the name label used to be centered under
         // it too — on a pin near either edge (pinPosition keeps xPct within

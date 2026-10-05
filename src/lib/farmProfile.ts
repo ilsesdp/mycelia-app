@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { farmTodayStatus } from "@/lib/farmStatus";
+import type { HourRow, TodayStatus } from "@/lib/farmStatus";
 import type { Database } from "@/lib/types/database";
 
 // Shared by every farm-profile tab (2.3 Products, 2.4 About, 2.5 Events) so
@@ -16,7 +16,15 @@ export type FarmHeader = {
   lng: number | null;
   coverPhotoUrl: string | null;
   categories: Database["public"]["Enums"]["category_t"][];
-  status: ReturnType<typeof farmTodayStatus>;
+  // Raw hours + manual override, not a precomputed status — the status
+  // chip (StatusChip) computes farmTodayStatus() client-side, in the
+  // visitor's own browser, rather than here on the server. See MapPin's
+  // comment in components/browse/MapArt.tsx for why: farms span multiple
+  // real timezones with no stored per-farm timezone, so there's no clock
+  // that's exactly right, but the server's UTC clock was wrong by several
+  // hours for virtually every US visitor, every day.
+  hours: HourRow[];
+  todayStatus: TodayStatus;
 };
 
 // Ports S.lastMapView — FarmList and the map's pin sheet both link in here
@@ -68,6 +76,7 @@ export async function getFarmHeader(
     lng: data.lng,
     coverPhotoUrl: data.cover_photo_url,
     categories: data.farm_categories.map((c) => c.category),
-    status: farmTodayStatus(data.farm_hours, data.today_status),
+    hours: data.farm_hours,
+    todayStatus: data.today_status,
   };
 }

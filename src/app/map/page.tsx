@@ -71,19 +71,25 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
   );
 
   const pins: MapPinInput[] = [
+    // Raw hours + manual override, not the precomputed open/closedEarly
+    // above (those exist for server-side filtering, via matchesBrowseFilters
+    // — see MapPin's comment in MapArt.tsx for why the pin itself needs the
+    // raw data instead).
     ...visibleFarms.map((f) => ({
       id: f.id,
       kind: "farm" as const,
       name: f.name,
-      open: f.status.open,
-      closedEarly: f.closedEarly,
+      hours: f.farm_hours,
+      todayStatus: f.today_status,
     })),
     ...visibleMarkets.map((m) => ({
       id: m.id,
       kind: "market" as const,
       name: m.name,
-      open: true, // markets have no stored hours/status yet — always shown open
-      closedEarly: false,
+      // Markets have no stored hours/status yet, and their pin's icon
+      // never varies by state anyway (see pinImageSrc in lib/mapPins.ts).
+      hours: [],
+      todayStatus: null,
     })),
   ];
 
@@ -98,7 +104,8 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
         lat: match.lat,
         lng: match.lng,
         categories: match.categories,
-        status: match.status,
+        hours: match.farm_hours,
+        todayStatus: match.today_status,
         ready: match.products.filter((p) => p.availability === "ready_now"),
         producing: match.products.filter((p) => p.availability === "producing"),
         coverPhotoUrl: match.cover_photo_url,
@@ -113,7 +120,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       loggedIn={!!user}
       loadError={farmsError?.message ?? marketsError?.message ?? null}
       sheet={sheet}
-      ownFarm={ownFarm ? { name: ownFarm.name, open: ownFarm.status.open, closedEarly: ownFarm.closedEarly } : null}
+      ownFarm={ownFarm ? { name: ownFarm.name, hours: ownFarm.farm_hours, todayStatus: ownFarm.today_status } : null}
     />
   );
 }

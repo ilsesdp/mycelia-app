@@ -597,9 +597,12 @@ export type Database = {
         | "Honey"
         | "Flowers"
         | "Herbs"
-        | "Hand Crafts"
-        | "Baked goods"
+        | "Handmade Crafts"
+        | "Baked Goods"
         | "Seeds"
+        | "Fiber Goods"
+        | "Mushrooms"
+        | "Dry Goods"
       message_channel_t: "text_me" | "email_me" | "both"
       today_status_t: "open" | "closed_early" | "closed"
       unit_t:
@@ -612,6 +615,11 @@ export type Database = {
         | "quart"
         | "jar"
         | "each"
+        | "fl oz"
+        | "gallon"
+        | "pack"
+        | "bag"
+        | "loaf"
       visibility_t: "growers_only" | "everyone" | "nobody"
     }
     CompositeTypes: {
@@ -749,9 +757,12 @@ export const Constants = {
         "Honey",
         "Flowers",
         "Herbs",
-        "Hand Crafts",
-        "Baked goods",
+        "Handmade Crafts",
+        "Baked Goods",
         "Seeds",
+        "Fiber Goods",
+        "Mushrooms",
+        "Dry Goods",
       ],
       message_channel_t: ["text_me", "email_me", "both"],
       today_status_t: ["open", "closed_early", "closed"],
@@ -765,6 +776,11 @@ export const Constants = {
         "quart",
         "jar",
         "each",
+        "fl oz",
+        "gallon",
+        "pack",
+        "bag",
+        "loaf",
       ],
       visibility_t: ["growers_only", "everyone", "nobody"],
     },

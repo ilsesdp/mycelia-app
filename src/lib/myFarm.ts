@@ -16,11 +16,16 @@ export const CATEGORIES: Category[] = [
   "Honey",
   "Flowers",
   "Herbs",
-  "Hand Crafts",
-  "Baked goods",
+  "Handmade Crafts",
+  "Baked Goods",
   "Seeds",
+  "Fiber Goods",
+  "Mushrooms",
+  "Dry Goods",
 ];
-export const UNITS: Unit[] = ["lb", "oz", "kg", "bunch", "dozen", "pint", "quart", "jar", "each"];
+// "kg" stays in the DB enum (existing rows may use it) but is dropped from
+// the app-facing unit list per product decision.
+export const UNITS: Unit[] = ["lb", "oz", "fl oz", "pint", "quart", "gallon", "each", "dozen", "bunch", "jar", "pack", "bag", "loaf"];
 export const AVAILABILITY_DISPLAY: Record<Availability, "Ready now" | "Producing" | "Planning"> = {
   ready_now: "Ready now",
   producing: "Producing",

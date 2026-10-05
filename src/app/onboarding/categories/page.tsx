@@ -7,25 +7,15 @@ import { Button } from "@/components/ui/Button";
 import { StepHeader } from "@/components/ui/StepHeader";
 import { useOnboarding } from "@/lib/onboarding/context";
 import { swatchColor } from "@/lib/categoryStyle";
+import { CATEGORIES } from "@/lib/myFarm";
 import type { Database } from "@/lib/types/database";
 
 type Category = Database["public"]["Enums"]["category_t"];
 
 // Ports SCREENS['1.7'] — first screen of onboarding sub-batch 2b. Nothing
 // starts pre-checked; Continue stays disabled until at least one category
-// is picked, same as every other step in this flow.
-const CATEGORIES: Category[] = [
-  "Vegetables",
-  "Fruit",
-  "Eggs",
-  "Dairy",
-  "Honey",
-  "Flowers",
-  "Herbs",
-  "Hand Crafts",
-  "Baked goods",
-  "Seeds",
-];
+// is picked, same as every other step in this flow. CATEGORIES is the
+// canonical list from lib/myFarm.ts, not a local duplicate.
 
 export default function CategoriesPage() {
   const router = useRouter();

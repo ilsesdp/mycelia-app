@@ -6,24 +6,12 @@ import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { PhotoWell } from "@/components/ui/PhotoWell";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
+import { CATEGORIES, UNITS } from "@/lib/myFarm";
 import type { Database } from "@/lib/types/database";
 
 type Category = Database["public"]["Enums"]["category_t"];
 type Unit = Database["public"]["Enums"]["unit_t"];
 
-const CATEGORIES: Category[] = [
-  "Vegetables",
-  "Fruit",
-  "Eggs",
-  "Dairy",
-  "Honey",
-  "Flowers",
-  "Herbs",
-  "Hand Crafts",
-  "Baked goods",
-  "Seeds",
-];
-const UNITS: Unit[] = ["lb", "oz", "kg", "bunch", "dozen", "pint", "quart", "jar", "each"];
 const AVAILABILITY: ProductDraft["availability"][] = ["Ready now", "Producing", "Planning"];
 
 function emptyDraft(): ProductDraft {

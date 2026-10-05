@@ -1,4 +1,5 @@
 import type { Database } from "@/lib/types/database";
+import { CATEGORIES } from "@/lib/myFarm";
 
 export type Category = Database["public"]["Enums"]["category_t"];
 
@@ -6,19 +7,9 @@ export type Category = Database["public"]["Enums"]["category_t"];
 // from during onboarding (1.9), so they're what the Filters screen's
 // "What they offer" chips offer too, replacing the prototype's own
 // OFFER_CHIPS list (which named a few categories, like 'Livestock' and
-// 'Grain', that don't exist in the schema).
-export const CATEGORY_OPTIONS: Category[] = [
-  "Vegetables",
-  "Fruit",
-  "Eggs",
-  "Dairy",
-  "Honey",
-  "Flowers",
-  "Herbs",
-  "Hand Crafts",
-  "Baked goods",
-  "Seeds",
-];
+// 'Grain', that don't exist in the schema). CATEGORIES is the canonical
+// list from lib/myFarm.ts, not a local duplicate.
+export const CATEGORY_OPTIONS: Category[] = CATEGORIES;
 
 export const DISTANCE_OPTIONS = ["5 mi", "15 mi", "30 mi"] as const;
 export type Distance = (typeof DISTANCE_OPTIONS)[number];

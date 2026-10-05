@@ -12,9 +12,12 @@ export function swatchColor(c: Category): string {
     Honey: "var(--golden-500)",
     Flowers: "#21578b",
     Herbs: "#405d28",
-    "Hand Crafts": "var(--rich-earth-700)",
-    "Baked goods": "#a9722f",
+    "Handmade Crafts": "var(--rich-earth-700)",
+    "Baked Goods": "#a9722f",
     Seeds: "#604b80",
+    "Fiber Goods": "#8a7968",
+    Mushrooms: "#6e5a44",
+    "Dry Goods": "#9c8a54",
   };
   return map[c] || "var(--border-default)";
 }

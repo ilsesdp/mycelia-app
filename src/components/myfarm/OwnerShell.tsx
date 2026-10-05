@@ -97,6 +97,7 @@ export function OwnerShell({
             hours={farm.hours}
             todayStatus={farm.todayStatus}
             todayStatusNote={farm.todayStatusNote}
+            timezone={farm.timezone}
             tappable={!preview}
           />
           <div style={{ height: 8 }} />

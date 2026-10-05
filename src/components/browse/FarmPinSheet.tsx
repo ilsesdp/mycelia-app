@@ -14,11 +14,11 @@ export type FarmSheetData = {
   lat: number | null;
   lng: number | null;
   categories: string[];
-  // Raw hours + manual override, computed into open/label/note below at
-  // render time (in the browser) rather than upstream on the server — see
-  // MapPin's comment in MapArt.tsx for why.
+  // Raw hours + manual override, computed into open/label/note below using
+  // the farm's own stored timezone.
   hours: HourRow[];
   todayStatus: TodayStatus;
+  timezone: string;
   ready: SheetProduct[];
   producing: SheetProduct[];
   coverPhotoUrl: string | null;
@@ -69,7 +69,7 @@ export function FarmPinSheet({
   open: boolean;
   onCloseTransitionEnd?: () => void;
 }) {
-  const status = farmTodayStatus(farm.hours, farm.todayStatus);
+  const status = farmTodayStatus(farm.hours, farm.todayStatus, farm.timezone);
   return (
     <div
       onClick={(e) => e.stopPropagation()}

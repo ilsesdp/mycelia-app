@@ -1,6 +1,37 @@
 const DAY_LABEL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WEEKDAY_INDEX: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 
 export type HourRow = { day_of_week: number; open_time: string | null; close_time: string | null; closed: boolean };
+
+// The real fix for the map-pin/status-chip timezone bug: farms.timezone and
+// markets.timezone (IANA names, e.g. "America/Chicago") now store each
+// farm/market's own timezone, so "today" and "now" can be computed exactly
+// for that farm — not approximated from the server's UTC clock or a
+// visitor's local clock (see the now-removed comments this replaces in
+// StatusChip.tsx/MapArt.tsx/map/page.tsx). Intl.DateTimeFormat with an
+// explicit `timeZone` works the same in the browser and in Node, so this is
+// safe to call from either a Server Component or a client component.
+export function nowInTimezone(timeZone: string, at: Date = new Date()): { dayOfWeek: number; minutes: number } {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(at);
+
+  let weekday = "";
+  let hour = 0;
+  let minute = 0;
+  for (const part of parts) {
+    if (part.type === "weekday") weekday = part.value;
+    else if (part.type === "hour") hour = parseInt(part.value, 10);
+    else if (part.type === "minute") minute = parseInt(part.value, 10);
+  }
+  if (hour === 24) hour = 0; // hour12:false can format midnight as "24"
+
+  return { dayOfWeek: WEEKDAY_INDEX[weekday] ?? at.getDay(), minutes: hour * 60 + minute };
+}
 
 export function fmtTime(t: string): string {
   // "17:00:00" -> "5pm", "09:30:00" -> "9:30am"
@@ -25,11 +56,12 @@ const CLOSING_SOON_MINUTES = 60;
 // Ports the prototype's per-card status line ("Open · until 6pm" /
 // "Closed · opens Sat 8am") from real farm_hours rows instead of the
 // prototype's hardcoded per-entry strings.
-export function farmStatus(hours: HourRow[]): { open: boolean; closingSoon: boolean; label: string; note: string } {
+export function farmStatus(
+  hours: HourRow[],
+  timezone: string
+): { open: boolean; closingSoon: boolean; label: string; note: string } {
   if (!hours.length) return { open: false, closingSoon: false, label: "Closed", note: "" };
-  const now = new Date();
-  const todayIdx = now.getDay();
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const { dayOfWeek: todayIdx, minutes: nowMinutes } = nowInTimezone(timezone);
   const today = hours.find((h) => h.day_of_week === todayIdx);
 
   // "Today has hours and isn't marked closed" used to be enough to say
@@ -68,8 +100,8 @@ export type TodayStatus = "open" | "closed_early" | "closed" | null;
 // tools, not built yet — farms.today_status) on top of the regular weekly
 // schedule. Shared by the map (pin color) and the farm profile (status
 // chip) so the two never drift.
-export function farmTodayStatus(hours: HourRow[], todayStatus: TodayStatus) {
-  const hoursStatus = farmStatus(hours);
+export function farmTodayStatus(hours: HourRow[], todayStatus: TodayStatus, timezone: string) {
+  const hoursStatus = farmStatus(hours, timezone);
   const closedEarly = todayStatus === "closed_early";
   const overrideClosed = todayStatus === "closed" || closedEarly;
   return {

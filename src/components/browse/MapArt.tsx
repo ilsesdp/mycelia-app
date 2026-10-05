@@ -9,16 +9,13 @@ export type MapPin = {
   id: string;
   kind: PinKind;
   name: string;
-  // Raw hours + manual override, not a precomputed open/closedEarly — this
-  // is a client component, so computing farmTodayStatus() here (not on the
-  // server in map/page.tsx) means "now" is the visitor's own local clock,
-  // not the server's UTC clock. Farms span multiple real timezones (WA,
-  // IL, ...) with no stored per-farm timezone, so neither clock is exactly
-  // "the farm's local time" — but the server's UTC clock was wrong by
-  // several hours for virtually every US visitor, every day, which is what
-  // made pins look permanently out of sync with the farm's actual hours.
+  // Raw hours + manual override, not a precomputed open/closedEarly — the
+  // farm's own stored timezone (farms.timezone) is passed down too, so
+  // farmTodayStatus() below gives the exact answer for that farm regardless
+  // of where it's computed or who's viewing.
   hours: HourRow[];
   todayStatus: TodayStatus;
+  timezone: string;
   xPct: number;
   yPct: number;
 };
@@ -27,6 +24,7 @@ export type OwnFarmMarker = {
   name: string;
   hours: HourRow[];
   todayStatus: TodayStatus;
+  timezone: string;
 };
 
 // Ports mapArt() + youAreHereLabel(). Same stylized illustration (gradient
@@ -48,7 +46,7 @@ export function MapArt({
   ownFarm: OwnFarmMarker | null;
 }) {
   const { status, coords } = useGeolocation();
-  const ownFarmStatus = ownFarm ? farmTodayStatus(ownFarm.hours, ownFarm.todayStatus) : null;
+  const ownFarmStatus = ownFarm ? farmTodayStatus(ownFarm.hours, ownFarm.todayStatus, ownFarm.timezone) : null;
 
   return (
     <div
@@ -163,7 +161,7 @@ export function MapArt({
       )}
 
       {pins.map((p) => {
-        const pStatus = farmTodayStatus(p.hours, p.todayStatus);
+        const pStatus = farmTodayStatus(p.hours, p.todayStatus, p.timezone);
         const state = pinState(p.kind, pStatus.open, pStatus.closedEarly);
         // Label anchoring: the pin icon always stays centered on its own
         // (xPct, yPct) point, but the name label used to be centered under

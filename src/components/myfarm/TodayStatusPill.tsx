@@ -18,19 +18,21 @@ export function TodayStatusPill({
   hours,
   todayStatus,
   todayStatusNote,
+  timezone,
   tappable,
 }: {
   farmId: string;
   hours: HourRow[];
   todayStatus: TodayStatusEnum | null;
   todayStatusNote: string | null;
+  timezone: string;
   tappable: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(todayStatus);
   const [note, setNote] = useState(todayStatusNote);
   const [toast, setToast] = useState<string | null>(null);
-  const computed = farmTodayStatus(hours, status);
+  const computed = farmTodayStatus(hours, status, timezone);
   const toneColor = STATUS_TONE_COLOR[statusTone(computed)];
 
   useEffect(() => {

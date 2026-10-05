@@ -17,14 +17,12 @@ export type FarmHeader = {
   coverPhotoUrl: string | null;
   categories: Database["public"]["Enums"]["category_t"][];
   // Raw hours + manual override, not a precomputed status — the status
-  // chip (StatusChip) computes farmTodayStatus() client-side, in the
-  // visitor's own browser, rather than here on the server. See MapPin's
-  // comment in components/browse/MapArt.tsx for why: farms span multiple
-  // real timezones with no stored per-farm timezone, so there's no clock
-  // that's exactly right, but the server's UTC clock was wrong by several
-  // hours for virtually every US visitor, every day.
+  // chip (StatusChip) computes farmTodayStatus(hours, todayStatus, timezone)
+  // using the farm's own stored timezone (farms.timezone), so it's exact
+  // regardless of where it's computed or who's viewing.
   hours: HourRow[];
   todayStatus: TodayStatus;
+  timezone: string;
 };
 
 // Ports S.lastMapView — FarmList and the map's pin sheet both link in here
@@ -56,6 +54,7 @@ export async function getFarmHeader(
       lng,
       cover_photo_url,
       today_status,
+      timezone,
       farm_categories ( category ),
       farm_hours ( day_of_week, open_time, close_time, closed )
     `
@@ -78,5 +77,6 @@ export async function getFarmHeader(
     categories: data.farm_categories.map((c) => c.category),
     hours: data.farm_hours,
     todayStatus: data.today_status,
+    timezone: data.timezone,
   };
 }

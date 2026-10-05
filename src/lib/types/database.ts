@@ -217,6 +217,7 @@ export type Database = {
           name: string
           owner_id: string
           published: boolean
+          timezone: string
           today_status: Database["public"]["Enums"]["today_status_t"] | null
           today_status_note: string | null
           updated_at: string
@@ -234,6 +235,7 @@ export type Database = {
           name: string
           owner_id: string
           published?: boolean
+          timezone?: string
           today_status?: Database["public"]["Enums"]["today_status_t"] | null
           today_status_note?: string | null
           updated_at?: string
@@ -251,6 +253,7 @@ export type Database = {
           name?: string
           owner_id?: string
           published?: boolean
+          timezone?: string
           today_status?: Database["public"]["Enums"]["today_status_t"] | null
           today_status_note?: string | null
           updated_at?: string
@@ -309,6 +312,7 @@ export type Database = {
           name: string
           open_time: string | null
           schedule_text: string | null
+          timezone: string
         }
         Insert: {
           close_time?: string | null
@@ -321,6 +325,7 @@ export type Database = {
           name: string
           open_time?: string | null
           schedule_text?: string | null
+          timezone?: string
         }
         Update: {
           close_time?: string | null
@@ -333,6 +338,7 @@ export type Database = {
           name?: string
           open_time?: string | null
           schedule_text?: string | null
+          timezone?: string
         }
         Relationships: []
       }

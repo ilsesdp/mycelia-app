@@ -21,6 +21,7 @@ export default async function FiltersPage({ searchParams }: PageProps<"/filters"
         `
         id,
         today_status,
+        timezone,
         farm_categories ( category ),
         farm_hours ( day_of_week, open_time, close_time, closed ),
         products ( availability )
@@ -34,7 +35,7 @@ export default async function FiltersPage({ searchParams }: PageProps<"/filters"
     ...(farms ?? []).map((f) => ({
       kind: "farm" as const,
       categories: f.farm_categories.map((c) => c.category),
-      open: farmTodayStatus(f.farm_hours, f.today_status).open,
+      open: farmTodayStatus(f.farm_hours, f.today_status, f.timezone).open,
       hasReadyProduct: f.products.some((p) => p.availability === "ready_now"),
     })),
     ...(markets ?? []).map(() => ({

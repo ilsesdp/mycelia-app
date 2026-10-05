@@ -18,6 +18,7 @@ export type FarmListItem = {
   categories: Database["public"]["Enums"]["category_t"][];
   hours: HourRow[];
   todayStatus: TodayStatus;
+  timezone: string;
   hasReadyProduct: boolean;
 };
 
@@ -29,6 +30,7 @@ export type MarketListItem = {
   day_of_week: number | null;
   open_time: string | null;
   close_time: string | null;
+  timezone: string;
 };
 
 type Status = { open: boolean; label: string; note: string };
@@ -74,7 +76,7 @@ export default function FarmList({
 
   const rows: Row[] = [
     ...farms.map((f) => {
-      const status = farmTodayStatus(f.hours, f.todayStatus);
+      const status = farmTodayStatus(f.hours, f.todayStatus, f.timezone);
       return {
         kind: "farm" as const,
         id: f.id,
@@ -94,7 +96,7 @@ export default function FarmList({
       // down next to the status dot/label instead, like a farm card.
       meta: m.location ?? "",
       categories: [] as string[],
-      status: marketStatus(m.day_of_week, m.open_time, m.close_time),
+      status: marketStatus(m.day_of_week, m.open_time, m.close_time, m.timezone),
       hasReadyProduct: false,
       scheduleText: m.schedule_text,
     })),

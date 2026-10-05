@@ -43,6 +43,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
         name,
         address,
         today_status,
+        timezone,
         farm_categories ( category ),
         farm_hours ( day_of_week, open_time, close_time, closed ),
         products ( availability )
@@ -50,7 +51,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
       )
       .eq("published", true)
       .order("name"),
-    supabase.from("markets").select("id, name, location, schedule_text, day_of_week, open_time, close_time").order("name"),
+    supabase.from("markets").select("id, name, location, schedule_text, day_of_week, open_time, close_time, timezone").order("name"),
   ]);
 
   const items: FarmListItem[] = (farms ?? []).map((f) => ({
@@ -60,6 +61,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
     categories: f.farm_categories.map((c) => c.category),
     hours: f.farm_hours,
     todayStatus: f.today_status,
+    timezone: f.timezone,
     hasReadyProduct: f.products.some((p) => p.availability === "ready_now"),
   }));
 
@@ -71,6 +73,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
     day_of_week: m.day_of_week,
     open_time: m.open_time,
     close_time: m.close_time,
+    timezone: m.timezone,
   }));
 
   return (

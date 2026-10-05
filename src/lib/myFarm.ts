@@ -52,6 +52,7 @@ export type MyFarmIdentity = {
   hours: HourRow[];
   todayStatus: TodayStatusEnum | null;
   todayStatusNote: string | null;
+  timezone: string;
 };
 
 // Looks up the farm (if any) the signed-in user owns. Settings is reachable
@@ -67,7 +68,7 @@ export async function getMyFarmIdentity(supabase: Client, farmId: string): Promi
     .from("farms")
     .select(
       `
-      id, name, address, cover_photo_url, today_status, today_status_note,
+      id, name, address, cover_photo_url, today_status, today_status_note, timezone,
       farm_categories ( category ),
       farm_hours ( day_of_week, open_time, close_time, closed )
     `
@@ -81,10 +82,11 @@ export async function getMyFarmIdentity(supabase: Client, farmId: string): Promi
     address: data.address,
     coverPhotoUrl: data.cover_photo_url,
     categories: data.farm_categories.map((c) => c.category),
-    status: farmTodayStatus(data.farm_hours, data.today_status),
+    status: farmTodayStatus(data.farm_hours, data.today_status, data.timezone),
     hours: data.farm_hours,
     todayStatus: data.today_status,
     todayStatusNote: data.today_status_note,
+    timezone: data.timezone,
   };
 }
 

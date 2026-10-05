@@ -33,6 +33,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       lng,
       today_status,
       cover_photo_url,
+      timezone,
       farm_categories ( category ),
       farm_hours ( day_of_week, open_time, close_time, closed ),
       products ( id, name, qty, availability, photo_url )
@@ -44,7 +45,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
   ]);
 
   const withStatus = (farms ?? []).map((f) => {
-    const { closedEarly, ...status } = farmTodayStatus(f.farm_hours, f.today_status);
+    const { closedEarly, ...status } = farmTodayStatus(f.farm_hours, f.today_status, f.timezone);
     const categories = f.farm_categories.map((c) => c.category);
     return {
       ...f,
@@ -81,6 +82,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       name: f.name,
       hours: f.farm_hours,
       todayStatus: f.today_status,
+      timezone: f.timezone,
     })),
     ...visibleMarkets.map((m) => ({
       id: m.id,
@@ -90,6 +92,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       // never varies by state anyway (see pinImageSrc in lib/mapPins.ts).
       hours: [],
       todayStatus: null,
+      timezone: "America/Chicago",
     })),
   ];
 
@@ -106,6 +109,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
         categories: match.categories,
         hours: match.farm_hours,
         todayStatus: match.today_status,
+        timezone: match.timezone,
         ready: match.products.filter((p) => p.availability === "ready_now"),
         producing: match.products.filter((p) => p.availability === "producing"),
         coverPhotoUrl: match.cover_photo_url,
@@ -120,7 +124,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       loggedIn={!!user}
       loadError={farmsError?.message ?? marketsError?.message ?? null}
       sheet={sheet}
-      ownFarm={ownFarm ? { name: ownFarm.name, hours: ownFarm.farm_hours, todayStatus: ownFarm.today_status } : null}
+      ownFarm={ownFarm ? { name: ownFarm.name, hours: ownFarm.farm_hours, todayStatus: ownFarm.today_status, timezone: ownFarm.timezone } : null}
     />
   );
 }

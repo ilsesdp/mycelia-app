@@ -1,4 +1,4 @@
-import { fmtTime } from "@/lib/farmStatus";
+import { fmtTime, nowInTimezone } from "@/lib/farmStatus";
 
 const DAY_LABEL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -15,14 +15,17 @@ export type MarketStatusResult = { open: boolean; closingSoon: boolean; label: s
 // Mirrors farmStatus.ts's open/closing-soon/next-occurrence logic, but for a
 // market's single weekly occurrence (one day_of_week/open_time/close_time)
 // rather than a full week of farm_hours rows.
-export function marketStatus(dayOfWeek: number | null, openTime: string | null, closeTime: string | null): MarketStatusResult {
+export function marketStatus(
+  dayOfWeek: number | null,
+  openTime: string | null,
+  closeTime: string | null,
+  timezone: string
+): MarketStatusResult {
   if (dayOfWeek == null || !openTime || !closeTime) {
     return { open: false, closingSoon: false, label: "Closed", note: "" };
   }
 
-  const now = new Date();
-  const todayIdx = now.getDay();
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const { dayOfWeek: todayIdx, minutes: nowMinutes } = nowInTimezone(timezone);
   const openMin = toMinutes(openTime);
   const closeMin = toMinutes(closeTime);
 

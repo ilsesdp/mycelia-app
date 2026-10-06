@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { AppBar } from "@/components/ui/AppBar";
 import { Icon } from "@/components/ui/Icon";
-import { catBg, catFg } from "@/lib/categoryStyle";
 import {
   CATEGORY_OPTIONS,
   DISTANCE_OPTIONS,
@@ -105,10 +104,12 @@ export function FiltersView({
         <div className="label-caps">What they offer</div>
         <div style={{ height: 8 }} />
         <div style={{ display: "flex", gap: "6px 4px", flexWrap: "wrap" }}>
+          {/* Same bg-raised/border-subtle → harvest-green-100/text-brand
+              treatment as the kind cards and Availability rows below, not
+              each category's own color — one consistent selected/
+              unselected look across the whole filter panel. */}
           {CATEGORY_OPTIONS.map((c) => {
             const selected = filters.categories.includes(c);
-            const bg = catBg(c);
-            const fg = catFg(c);
             return (
               <span
                 key={c}
@@ -120,9 +121,9 @@ export function FiltersView({
                   fontFamily: "var(--font-body)",
                   fontWeight: 500,
                   fontSize: 14,
-                  background: selected ? "var(--interactive-primary)" : bg,
-                  color: selected ? "var(--text-on-brand)" : fg,
-                  border: `1px solid ${selected ? "var(--interactive-primary)" : fg}`,
+                  background: selected ? "var(--harvest-green-100)" : "var(--bg-raised)",
+                  color: "var(--text-secondary)",
+                  border: `1px solid ${selected ? "var(--text-brand)" : "var(--border-subtle)"}`,
                 }}
               >
                 {c}

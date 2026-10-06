@@ -253,13 +253,13 @@ export function MapView({
         {!displayedSheet && (
           <>
             <div style={{ height: 12 }} />
-            <MapControls filterCount={chips.length} view="map" queryString={qs} />
             {filtered && (
               <>
-                <div style={{ height: 10 }} />
                 <FilterChips chips={chips} basePath="/map" />
+                <div style={{ height: 10 }} />
               </>
             )}
+            <MapControls filterCount={chips.length} view="map" queryString={qs} />
           </>
         )}
       </div>
@@ -268,6 +268,53 @@ export function MapView({
         <p className="body-s" style={{ position: "absolute", left: 16, right: 16, top: 80, zIndex: 5, color: "var(--text-danger)" }}>
           Couldn&apos;t load the map: {loadError}
         </p>
+      )}
+
+      {/* The filters-leave-nothing case (no pins at all) is handled by the
+          early return above; this is the narrower case — pins exist, but
+          the search box's query matches none of them — which only the
+          list view (FarmList's own "No farms or markets match" block)
+          handled until now. Same icon/wording, as a floating card over
+          the map rather than inline content, since the map has no
+          scrolling content area to put it in. */}
+      {!displayedSheet && visible.length === 0 && positioned.length > 0 && (
+        <div
+          style={{
+            position: "absolute",
+            left: 16,
+            right: 16,
+            top: "42%",
+            transform: "translateY(-50%)",
+            zIndex: 5,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 10,
+            background: "var(--bg-raised)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: 16,
+            padding: "24px 16px",
+            boxShadow: "0 2px 10px rgba(0,0,0,.12)",
+          }}
+        >
+          <div
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 999,
+              border: "1.5px solid var(--border-default)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--text-tertiary)",
+            }}
+          >
+            <Icon name="search" size={20} />
+          </div>
+          <p className="body-s" style={{ textAlign: "center" }}>
+            No farms or markets match &quot;{query}&quot;
+          </p>
+        </div>
       )}
 
       {!displayedSheet && (

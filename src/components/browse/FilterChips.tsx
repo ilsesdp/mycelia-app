@@ -19,39 +19,44 @@ export function FilterChips({ chips, basePath }: { chips: FilterChip[]; basePath
   }
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-      {chips.map((c) => (
-        <span
-          key={c.label}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            background: "var(--interactive-primary)",
-            color: "var(--text-on-brand)",
-            padding: "6px 6px 6px 12px",
-            borderRadius: 999,
-            fontFamily: "var(--font-body)",
-            fontWeight: 500,
-            fontSize: 14,
-          }}
-        >
-          {c.label}
-          <button
-            type="button"
-            onClick={() => go(c.cleared)}
-            aria-label={`Remove ${c.label} filter`}
-            style={{ display: "flex", color: "var(--text-on-brand)", padding: 4 }}
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", flex: 1, minWidth: 0 }}>
+        {chips.map((c) => (
+          <span
+            key={c.label}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              background: "var(--interactive-primary)",
+              color: "var(--text-on-brand)",
+              padding: "6px 6px 6px 12px",
+              borderRadius: 999,
+              fontFamily: "var(--font-body)",
+              fontWeight: 500,
+              fontSize: 14,
+            }}
           >
-            <Icon name="close" size={14} />
-          </button>
-        </span>
-      ))}
+            {c.label}
+            <button
+              type="button"
+              onClick={() => go(c.cleared)}
+              aria-label={`Remove ${c.label} filter`}
+              style={{ display: "flex", color: "var(--text-on-brand)", padding: 4 }}
+            >
+              <Icon name="close" size={14} />
+            </button>
+          </span>
+        ))}
+      </div>
+      {/* Pinned to the right of the chip row, same line — not wrapped in
+          with the chips — and in the brand green (not the link blue) so
+          it reads as the row's primary action. */}
       <button
         type="button"
         onClick={() => go(EMPTY_FILTERS)}
         className="body-s-strong"
-        style={{ color: "var(--text-link)", padding: "6px 4px" }}
+        style={{ color: "var(--interactive-primary)", padding: "6px 4px", flexShrink: 0, whiteSpace: "nowrap" }}
       >
         Clear all
       </button>

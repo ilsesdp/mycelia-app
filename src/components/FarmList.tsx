@@ -116,6 +116,10 @@ export default function FarmList({
 
   const chips = activeFilterChips(filters);
   const filtered = chips.length > 0;
+  // "5 places near you" when both kinds are in play (no Kind filter set),
+  // narrowing to "farms"/"markets" once the visitor's picked one via the
+  // Filters screen's "What you're looking for" cards.
+  const placeNoun = filters.kind === "Farms" ? "farm" : filters.kind === "Markets" ? "market" : "place";
 
   return (
     <div className="flex-1 flex flex-col" style={{ paddingBottom: 70 }}>
@@ -194,6 +198,13 @@ export default function FarmList({
           )}
         </div>
 
+        {filtered && (
+          <>
+            <FilterChips chips={chips} basePath="/" />
+            <div style={{ height: 2 }} />
+          </>
+        )}
+
         <MapControls filterCount={chips.length} view="list" queryString={buildBrowseQuery(filters)} />
       </div>
 
@@ -207,19 +218,10 @@ export default function FarmList({
         <FiltersEmptyState chips={chips} view="list" />
       ) : (
         <div className="flex-1 px-4 pb-6 flex flex-col gap-1">
-          {filtered && (
-            <>
-              <FilterChips chips={chips} basePath="/" />
-              <div style={{ height: 10 }} />
-            </>
-          )}
-
           <p className="body-s">
             {query
               ? `${visible.length} result${visible.length === 1 ? "" : "s"} for "${query}"`
-              : filtered
-                ? `${visible.length} farm${visible.length === 1 ? "" : "s"} match your filters`
-                : `${visible.length} farm${visible.length === 1 ? "" : "s"} near you`}
+              : `${visible.length} ${placeNoun}${visible.length === 1 ? "" : "s"} near you`}
           </p>
           <div style={{ height: 10 }} />
 

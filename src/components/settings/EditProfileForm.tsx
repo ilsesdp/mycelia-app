@@ -111,7 +111,7 @@ export function EditProfileForm({
 
   return (
     <main className="flex flex-col min-h-screen">
-      <AppBar backHref="/settings" title="Edit profile" />
+      <AppBar backHref="/settings" title="Farm information" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
         <label className="label-caps" htmlFor="profile-name">
           Farm name

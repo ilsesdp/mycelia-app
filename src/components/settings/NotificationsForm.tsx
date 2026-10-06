@@ -20,24 +20,44 @@ type Channel = Database["public"]["Enums"]["message_channel_t"];
 // Ports SCREENS['5.4'] — every control here saves immediately (no "Save"
 // button in the tested design), same as the prototype's own instant
 // S.filters-style writes.
+//
+// `contactPhone` gates "Text me"/"Both": there's no phone-verification flow
+// in this build (contact_phone is just a free-text field), so rather than
+// let someone pick a text channel with no number on file and quietly never
+// hear from us, those two segments are disabled until a phone number
+// exists, with a note pointing at where to add one.
 export function NotificationsForm({
   initialChannel,
   initialMsgOn,
   initialMarketOn,
+  initialEventOn,
   initialPause,
+  contactPhone,
 }: {
   initialChannel: Channel;
   initialMsgOn: boolean;
   initialMarketOn: boolean;
+  initialEventOn: boolean;
   initialPause: boolean;
+  contactPhone: string | null;
 }) {
   const supabase = createClient();
   const [channel, setChannel] = useState(CHANNEL_DISPLAY[initialChannel]);
   const [msgOn, setMsgOn] = useState(initialMsgOn);
   const [marketOn, setMarketOn] = useState(initialMarketOn);
+  const [eventOn, setEventOn] = useState(initialEventOn);
   const [pause, setPause] = useState(initialPause);
+  const hasPhone = !!contactPhone;
 
-  async function save(patch: Partial<{ message_channel: Channel; notif_msg_on: boolean; notif_market_on: boolean; notif_pause: boolean }>) {
+  async function save(
+    patch: Partial<{
+      message_channel: Channel;
+      notif_msg_on: boolean;
+      notif_market_on: boolean;
+      notif_event_on: boolean;
+      notif_pause: boolean;
+    }>
+  ) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -52,21 +72,35 @@ export function NotificationsForm({
         <div className="label-caps">How we reach you</div>
         <div style={{ height: 8 }} />
         <div className="segmented">
-          {CHANNELS.map((v) => (
-            <button
-              key={v}
-              className={channel === v ? "active" : ""}
-              onClick={() => {
-                setChannel(v);
-                save({ message_channel: CHANNEL_DB[v] });
-              }}
-            >
-              {v}
-            </button>
-          ))}
+          {CHANNELS.map((v) => {
+            const needsPhone = (v === "Text me" || v === "Both") && !hasPhone;
+            return (
+              <button
+                key={v}
+                className={channel === v ? "active" : ""}
+                disabled={needsPhone}
+                style={needsPhone ? { opacity: 0.45, cursor: "not-allowed" } : undefined}
+                onClick={() => {
+                  if (needsPhone) return;
+                  setChannel(v);
+                  save({ message_channel: CHANNEL_DB[v] });
+                }}
+              >
+                {v}
+              </button>
+            );
+          })}
         </div>
         <div style={{ height: 8 }} />
         <p className="caption">{MSG_CHANNEL_CAPTION[channel]}</p>
+        {!hasPhone && (
+          <>
+            <div style={{ height: 4 }} />
+            <p className="caption" style={{ color: "var(--text-danger)" }}>
+              Add a phone number in Contact information to text you.
+            </p>
+          </>
+        )}
 
         <div style={{ height: 28 }} />
         <div className="label-caps">Tell me when</div>
@@ -91,6 +125,17 @@ export function NotificationsForm({
             const next = !marketOn;
             setMarketOn(next);
             save({ notif_market_on: next });
+          }}
+        />
+        <ToggleRow
+          title="The day before your event"
+          sub="Events you've added to your farm"
+          on={!pause && eventOn}
+          disabled={pause}
+          onToggle={() => {
+            const next = !eventOn;
+            setEventOn(next);
+            save({ notif_event_on: next });
           }}
         />
 

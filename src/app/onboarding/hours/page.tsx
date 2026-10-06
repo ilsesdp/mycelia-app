@@ -22,7 +22,7 @@ export default function HoursPage() {
 
   function applyWeekday() {
     const hours: Record<string, DayHours> = { ...state.hours };
-    for (const d of DAYS) hours[d] = { ranges: [{ open: "09:00 AM", close: "05:00 PM" }], closed: false };
+    for (const d of DAYS) hours[d] = { ranges: [{ open: "9:00am", close: "5:00pm" }], closed: false };
     hours.Sat = { ...hours.Sat, closed: true };
     hours.Sun = { ...hours.Sun, closed: true };
     update({ hours, hoursMode: "weekday" });
@@ -38,7 +38,7 @@ export default function HoursPage() {
   }
 
   function addRange(day: string) {
-    const ranges = [...state.hours[day].ranges, { open: "09:00 AM", close: "05:00 PM" }];
+    const ranges = [...state.hours[day].ranges, { open: "9:00am", close: "5:00pm" }];
     update({ hours: { ...state.hours, [day]: { ...state.hours[day], ranges } }, hoursMode: "custom" });
   }
 
@@ -85,8 +85,10 @@ export default function HoursPage() {
           return (
             <div key={day} className="hour-day-block">
               <div className="hour-day-row">
-                <div className="day">{day}</div>
-                {h.closed && <span className="closed-label">Closed</span>}
+                <div className="hour-day-left">
+                  <div className="day">{day}</div>
+                  {h.closed && <span className="hour-day-closed-label">Closed</span>}
+                </div>
                 <div className={`toggle ${h.closed ? "" : "on"}`} onClick={() => setClosed(day, !h.closed)}>
                   <div className="track" />
                 </div>

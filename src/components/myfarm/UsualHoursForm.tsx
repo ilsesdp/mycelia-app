@@ -18,12 +18,12 @@ type TimeRange = { open: string; close: string };
 type DayDraft = { ranges: TimeRange[]; closed: boolean };
 
 function dbTimeTo12h(t: string | null): string {
-  if (!t) return "9:00 AM";
+  if (!t) return "9:00am";
   const [hStr, m] = t.split(":");
   let h = parseInt(hStr, 10);
-  const mer = h >= 12 ? "PM" : "AM";
+  const mer = h >= 12 ? "pm" : "am";
   h = h % 12 || 12;
-  return `${h}:${m} ${mer}`;
+  return `${h}:${m}${mer}`;
 }
 function to24h(t: string): string | null {
   const m = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(t.trim());
@@ -41,7 +41,7 @@ function draftFromHours(hours: HourRow[]): Record<string, DayDraft> {
     const rows = hours.filter((x) => x.day_of_week === DOW[day] && !x.closed && x.open_time && x.close_time).sort((a, b) => a.open_time!.localeCompare(b.open_time!));
     out[day] = rows.length
       ? { ranges: rows.map((r) => ({ open: dbTimeTo12h(r.open_time), close: dbTimeTo12h(r.close_time) })), closed: false }
-      : { ranges: [{ open: "9:00 AM", close: "5:00 PM" }], closed: true };
+      : { ranges: [{ open: "9:00am", close: "5:00pm" }], closed: true };
   }
   return out;
 }
@@ -63,7 +63,7 @@ export function UsualHoursForm({ farmId, initialHours }: { farmId: string; initi
     setHours((h) => ({ ...h, [day]: { ...h[day], ranges: h[day].ranges.map((r, i) => (i === idx ? { ...r, ...patch } : r)) } }));
   }
   function addRange(day: string) {
-    setHours((h) => ({ ...h, [day]: { ...h[day], ranges: [...h[day].ranges, { open: "9:00 AM", close: "5:00 PM" }] } }));
+    setHours((h) => ({ ...h, [day]: { ...h[day], ranges: [...h[day].ranges, { open: "9:00am", close: "5:00pm" }] } }));
   }
   function removeRange(day: string, idx: number) {
     setHours((h) => ({ ...h, [day]: { ...h[day], ranges: h[day].ranges.filter((_, i) => i !== idx) } }));
@@ -105,8 +105,10 @@ export function UsualHoursForm({ farmId, initialHours }: { farmId: string; initi
           return (
             <div key={day} className="hour-day-block">
               <div className="hour-day-row">
-                <div className="day">{day}</div>
-                {h.closed && <span className="closed-label">Closed</span>}
+                <div className="hour-day-left">
+                  <div className="day">{day}</div>
+                  {h.closed && <span className="hour-day-closed-label">Closed</span>}
+                </div>
                 <div className={`toggle ${h.closed ? "" : "on"}`} onClick={() => setClosed(day, !h.closed)}>
                   <div className="track" />
                 </div>

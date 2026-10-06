@@ -103,7 +103,7 @@ function initialState(): OnboardingState {
     coverPhotoPreview: null,
     categories: {},
     products: [],
-    hours: Object.fromEntries(DAYS.map((d) => [d, { ranges: [{ open: "09:00 AM", close: "05:00 PM" }], closed: false }])),
+    hours: Object.fromEntries(DAYS.map((d) => [d, { ranges: [{ open: "9:00am", close: "5:00pm" }], closed: false }])),
     hoursMode: null,
     selectedMarketIds: [],
     addedMarkets: [],

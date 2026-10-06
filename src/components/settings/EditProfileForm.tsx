@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { PhotoWell } from "@/components/ui/PhotoWell";
+import { SocialLinksFields } from "@/components/forms/SocialLinksFields";
 import { createClient } from "@/lib/supabase/client";
 
 async function uploadCoverPhoto(supabase: ReturnType<typeof createClient>, farmId: string, file: File): Promise<string | null> {
@@ -38,6 +39,9 @@ export function EditProfileForm({
   initialAddress,
   initialAbout,
   initialDirections,
+  initialWebsite,
+  initialInstagram,
+  initialFacebook,
   initialContactName,
   initialCoverPhotoUrl,
 }: {
@@ -46,6 +50,9 @@ export function EditProfileForm({
   initialAddress: string;
   initialAbout: string;
   initialDirections: string;
+  initialWebsite: string;
+  initialInstagram: string;
+  initialFacebook: string;
   initialContactName: string;
   initialCoverPhotoUrl: string | null;
 }) {
@@ -56,6 +63,9 @@ export function EditProfileForm({
   const [address, setAddress] = useState(initialAddress);
   const [about, setAbout] = useState(initialAbout);
   const [directions, setDirections] = useState(initialDirections);
+  const [website, setWebsite] = useState(initialWebsite);
+  const [instagram, setInstagram] = useState(initialInstagram);
+  const [facebook, setFacebook] = useState(initialFacebook);
   const [contactName, setContactName] = useState(initialContactName);
   const [coverPreview, setCoverPreview] = useState(initialCoverPhotoUrl);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -85,6 +95,9 @@ export function EditProfileForm({
           address,
           about,
           directions,
+          website: website || null,
+          instagram: instagram || null,
+          facebook: facebook || null,
           cover_photo_url: coverPhotoUrl,
           ...(addressChanged ? { lat: coords?.lat ?? null, lng: coords?.lng ?? null } : {}),
         })
@@ -139,6 +152,20 @@ export function EditProfileForm({
           placeholder="Help people find you — e.g. gravel driveway on the left, past the red barn"
           value={directions}
           onChange={(e) => setDirections(e.target.value)}
+        />
+        <div style={{ height: 18 }} />
+
+        <div className="label-caps">Website &amp; social media (optional)</div>
+        <div style={{ height: 4 }} />
+        <p className="caption">Add links so people can learn more about your farm.</p>
+        <div style={{ height: 8 }} />
+        <SocialLinksFields
+          value={{ website, instagram, facebook }}
+          onChange={(key, v) => {
+            if (key === "website") setWebsite(v);
+            else if (key === "instagram") setInstagram(v);
+            else setFacebook(v);
+          }}
         />
         <div style={{ height: 18 }} />
 

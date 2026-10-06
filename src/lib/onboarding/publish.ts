@@ -91,18 +91,23 @@ export async function publishFarm(state: OnboardingState, userId: string) {
   }
 
   if (state.hoursMode) {
-    const rows = DAYS.map((d) => {
+    const rows: { farm_id: string; day_of_week: number; open_time: string | null; close_time: string | null; closed: boolean }[] = [];
+    for (const d of DAYS) {
       const h = state.hours[d];
-      return {
-        farm_id: farmId,
-        day_of_week: DAY_INDEX[d],
-        open_time: h.closed ? null : to24h(h.open),
-        close_time: h.closed ? null : to24h(h.close),
-        closed: h.closed,
-      };
-    });
-    const { error } = await supabase.from("farm_hours").insert(rows);
-    if (error) throw new Error(error.message);
+      if (h.closed) {
+        rows.push({ farm_id: farmId, day_of_week: DAY_INDEX[d], open_time: null, close_time: null, closed: true });
+      } else {
+        // One row per time range — a day can have more than one (split
+        // shifts, e.g. 9am–12pm and 3pm–7pm).
+        for (const r of h.ranges) {
+          rows.push({ farm_id: farmId, day_of_week: DAY_INDEX[d], open_time: to24h(r.open), close_time: to24h(r.close), closed: false });
+        }
+      }
+    }
+    if (rows.length) {
+      const { error } = await supabase.from("farm_hours").insert(rows);
+      if (error) throw new Error(error.message);
+    }
   }
 
   if (state.selectedMarketIds.length) {

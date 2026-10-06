@@ -42,6 +42,19 @@ export function fmtTime(t: string): string {
   return m === "00" ? `${h}${mer}` : `${h}:${m}${mer}`;
 }
 
+// "17:00:00" -> "5 PM", "09:30:00" -> "9:30 AM" — the Hours box's own
+// display format (space + uppercase meridiem, no ":00" on the hour),
+// distinct from fmtTime()'s "5pm" used everywhere else (status chips,
+// TodayHoursSheet). Kept as its own function rather than changing fmtTime
+// so those other surfaces don't shift unrequested.
+export function fmtTimeBox(t: string): string {
+  const [hStr, m] = t.split(":");
+  let h = parseInt(hStr, 10);
+  const mer = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return m === "00" ? `${h} ${mer}` : `${h}:${m} ${mer}`;
+}
+
 function toMinutes(t: string): number {
   const [h, m] = t.split(":").map(Number);
   return h * 60 + (m || 0);
@@ -62,33 +75,40 @@ export function farmStatus(
 ): { open: boolean; closingSoon: boolean; label: string; note: string } {
   if (!hours.length) return { open: false, closingSoon: false, label: "Closed", note: "" };
   const { dayOfWeek: todayIdx, minutes: nowMinutes } = nowInTimezone(timezone);
-  const today = hours.find((h) => h.day_of_week === todayIdx);
+
+  // A day can now have more than one row (split shifts, e.g. 9am–12pm and
+  // 3pm–7pm), so today's open ranges are gathered and sorted instead of
+  // assuming a single row per day.
+  const todaysRanges = hours
+    .filter((h) => h.day_of_week === todayIdx && !h.closed && h.open_time && h.close_time)
+    .map((h) => ({ openMin: toMinutes(h.open_time!), closeMin: toMinutes(h.close_time!), open_time: h.open_time!, close_time: h.close_time! }))
+    .sort((a, b) => a.openMin - b.openMin);
 
   // "Today has hours and isn't marked closed" used to be enough to say
   // "Open until <close>" — it never actually checked the clock, so a farm
   // stayed "Open" long after its own close_time had passed. Compare against
-  // the current time before calling it open.
-  if (today && !today.closed && today.open_time && today.close_time) {
-    const openMin = toMinutes(today.open_time);
-    const closeMin = toMinutes(today.close_time);
-    if (nowMinutes >= openMin && nowMinutes < closeMin) {
-      const closingSoon = closeMin - nowMinutes <= CLOSING_SOON_MINUTES;
-      return { open: true, closingSoon, label: "Open", note: `until ${fmtTime(today.close_time)}` };
+  // the current time before calling it open, and check every range (not
+  // just the first) so a gap between two ranges on the same day reads as
+  // "opens today <next range>" rather than skipping straight to tomorrow.
+  for (const r of todaysRanges) {
+    if (nowMinutes >= r.openMin && nowMinutes < r.closeMin) {
+      const closingSoon = r.closeMin - nowMinutes <= CLOSING_SOON_MINUTES;
+      return { open: true, closingSoon, label: "Open", note: `until ${fmtTime(r.close_time)}` };
     }
-    if (nowMinutes < openMin) {
-      return { open: false, closingSoon: false, label: "Closed", note: `opens today ${fmtTime(today.open_time)}` };
-    }
-    // Past today's close_time — fall through to find the next open day.
+  }
+  const nextRangeToday = todaysRanges.find((r) => nowMinutes < r.openMin);
+  if (nextRangeToday) {
+    return { open: false, closingSoon: false, label: "Closed", note: `opens today ${fmtTime(nextRangeToday.open_time)}` };
   }
 
-  // Closed (today marked closed, no row for today, or already closed for
-  // the day) — find the next open day.
+  // Closed (today marked closed, no rows for today, or already past every
+  // range today) — find the next open day.
   for (let i = 1; i <= 7; i++) {
     const idx = (todayIdx + i) % 7;
-    const h = hours.find((x) => x.day_of_week === idx);
-    if (h && !h.closed && h.open_time) {
+    const dayRanges = hours.filter((h) => h.day_of_week === idx && !h.closed && h.open_time).sort((a, b) => a.open_time!.localeCompare(b.open_time!));
+    if (dayRanges.length) {
       const when = i === 1 ? "tomorrow" : DAY_LABEL[idx];
-      return { open: false, closingSoon: false, label: "Closed", note: `opens ${when} ${fmtTime(h.open_time)}` };
+      return { open: false, closingSoon: false, label: "Closed", note: `opens ${when} ${fmtTime(dayRanges[0].open_time!)}` };
     }
   }
   return { open: false, closingSoon: false, label: "Closed", note: "" };

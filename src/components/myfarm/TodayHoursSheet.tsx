@@ -74,10 +74,13 @@ export function TodayHoursSheet({
   const supabase = createClient();
   const router = useRouter();
   const todayIdx = new Date().getDay();
-  const todays = hours.find((h) => h.day_of_week === todayIdx);
-  const usualClose = todays && !todays.closed && todays.close_time ? fmtTime(todays.close_time) : "5pm";
-  const usualDetail =
-    todays && !todays.closed && todays.open_time && todays.close_time ? `${fmtTime(todays.open_time)} – ${fmtTime(todays.close_time)}` : "Closed";
+  // A day can hold more than one range (split shifts), so every row for
+  // today is gathered — not just the first match — and sorted by open time.
+  const todaysRanges = hours
+    .filter((h) => h.day_of_week === todayIdx && !h.closed && h.open_time && h.close_time)
+    .sort((a, b) => a.open_time!.localeCompare(b.open_time!));
+  const usualClose = todaysRanges.length ? fmtTime(todaysRanges[todaysRanges.length - 1].close_time!) : "5pm";
+  const usualDetail = todaysRanges.length ? todaysRanges.map((r) => `${fmtTime(r.open_time!)} – ${fmtTime(r.close_time!)}`).join(", ") : "Closed";
 
   const [view, setView] = useState<"hours" | "closeEarly">("hours");
   const [status, setStatus] = useState<TodayStatusEnum>(initialStatus ?? "open");

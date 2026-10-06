@@ -495,6 +495,70 @@ body {
   gap: 4px;
   align-items: center;
 }
+
+/* Hours rows with support for multiple time ranges per day (split shifts) —
+   used by onboarding's "When are you open?" step and the My Farm usual
+   hours screen. Each day is a block (day name + toggle on top, then its
+   range rows and an "Add time range" link below) rather than one fixed
+   row, since the block's height now varies with how many ranges a day has. */
+.hour-day-block {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.hour-day-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+}
+.hour-day-row .day {
+  width: 34px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+.hour-day-row .closed-label {
+  flex: 1;
+}
+.hour-ranges {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hour-range-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hour-range-row .times {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.range-remove {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--bg-subtle);
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+.add-range-link {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-brand);
+  cursor: pointer;
+  padding-top: 2px;
+}
 .time-field {
   flex: 1;
   height: 44px;

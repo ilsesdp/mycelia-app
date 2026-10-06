@@ -12,7 +12,10 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 // matches the prototype's DAY_ORDER / onboarding's hours screen.
 const DOW: Record<string, number> = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 0 };
 
-type DayDraft = { open: string; close: string; closed: boolean };
+type TimeRange = { open: string; close: string };
+// A day can now hold more than one range (split shifts) — closed:true
+// means the whole day is closed and ranges is ignored.
+type DayDraft = { ranges: TimeRange[]; closed: boolean };
 
 function dbTimeTo12h(t: string | null): string {
   if (!t) return "9:00 AM";
@@ -35,34 +38,55 @@ function to24h(t: string): string | null {
 function draftFromHours(hours: HourRow[]): Record<string, DayDraft> {
   const out: Record<string, DayDraft> = {};
   for (const day of DAYS) {
-    const h = hours.find((x) => x.day_of_week === DOW[day]);
-    out[day] = h && !h.closed && h.open_time && h.close_time ? { open: dbTimeTo12h(h.open_time), close: dbTimeTo12h(h.close_time), closed: false } : { open: "9:00 AM", close: "5:00 PM", closed: true };
+    const rows = hours.filter((x) => x.day_of_week === DOW[day] && !x.closed && x.open_time && x.close_time).sort((a, b) => a.open_time!.localeCompare(b.open_time!));
+    out[day] = rows.length
+      ? { ranges: rows.map((r) => ({ open: dbTimeTo12h(r.open_time), close: dbTimeTo12h(r.close_time) })), closed: false }
+      : { ranges: [{ open: "9:00 AM", close: "5:00 PM" }], closed: true };
   }
   return out;
 }
 
 // Ports SCREENS['4.20'] — reuses the T1 hour-row editor against the real
-// farm_hours table instead of onboarding's in-memory draft.
+// farm_hours table instead of onboarding's in-memory draft. A day can now
+// hold more than one time range (split shifts), matching the onboarding
+// hours step.
 export function UsualHoursForm({ farmId, initialHours }: { farmId: string; initialHours: HourRow[] }) {
   const supabase = createClient();
   const router = useRouter();
   const [hours, setHours] = useState<Record<string, DayDraft>>(draftFromHours(initialHours));
   const [saving, setSaving] = useState(false);
 
-  function setDay(day: string, patch: Partial<DayDraft>) {
-    setHours((h) => ({ ...h, [day]: { ...h[day], ...patch } }));
+  function setClosed(day: string, closed: boolean) {
+    setHours((h) => ({ ...h, [day]: { ...h[day], closed } }));
+  }
+  function setRange(day: string, idx: number, patch: Partial<TimeRange>) {
+    setHours((h) => ({ ...h, [day]: { ...h[day], ranges: h[day].ranges.map((r, i) => (i === idx ? { ...r, ...patch } : r)) } }));
+  }
+  function addRange(day: string) {
+    setHours((h) => ({ ...h, [day]: { ...h[day], ranges: [...h[day].ranges, { open: "9:00 AM", close: "5:00 PM" }] } }));
+  }
+  function removeRange(day: string, idx: number) {
+    setHours((h) => ({ ...h, [day]: { ...h[day], ranges: h[day].ranges.filter((_, i) => i !== idx) } }));
   }
 
   async function save() {
     setSaving(true);
-    const rows = DAYS.map((day) => ({
-      farm_id: farmId,
-      day_of_week: DOW[day],
-      closed: hours[day].closed,
-      open_time: hours[day].closed ? null : to24h(hours[day].open),
-      close_time: hours[day].closed ? null : to24h(hours[day].close),
-    }));
-    await supabase.from("farm_hours").upsert(rows, { onConflict: "farm_id,day_of_week" });
+    const rows: { farm_id: string; day_of_week: number; open_time: string | null; close_time: string | null; closed: boolean }[] = [];
+    for (const day of DAYS) {
+      const d = hours[day];
+      if (d.closed) {
+        rows.push({ farm_id: farmId, day_of_week: DOW[day], open_time: null, close_time: null, closed: true });
+      } else {
+        for (const r of d.ranges) {
+          rows.push({ farm_id: farmId, day_of_week: DOW[day], open_time: to24h(r.open), close_time: to24h(r.close), closed: false });
+        }
+      }
+    }
+    // A day can now have more than one row, so the old single-row-per-day
+    // upsert (onConflict: "farm_id,day_of_week") no longer applies —
+    // replace the whole week's rows instead.
+    await supabase.from("farm_hours").delete().eq("farm_id", farmId);
+    if (rows.length) await supabase.from("farm_hours").insert(rows);
     setSaving(false);
     // Without this, the chip/map status (fetched fresh via router.push's
     // target segment) update, but any already-visited page in this
@@ -79,20 +103,35 @@ export function UsualHoursForm({ farmId, initialHours }: { farmId: string; initi
         {DAYS.map((day) => {
           const h = hours[day];
           return (
-            <div key={day} className={`hour-row ${h.closed ? "closed-row" : ""}`}>
-              <div className="day">{day}</div>
-              {h.closed ? (
-                <span className="closed-label">Closed</span>
-              ) : (
-                <div className="times">
-                  <TimeField value={h.open} onChange={(v) => setDay(day, { open: v })} />
-                  <span className="to-label">to</span>
-                  <TimeField value={h.close} onChange={(v) => setDay(day, { close: v })} />
+            <div key={day} className="hour-day-block">
+              <div className="hour-day-row">
+                <div className="day">{day}</div>
+                {h.closed && <span className="closed-label">Closed</span>}
+                <div className={`toggle ${h.closed ? "" : "on"}`} onClick={() => setClosed(day, !h.closed)}>
+                  <div className="track" />
+                </div>
+              </div>
+              {!h.closed && (
+                <div className="hour-ranges">
+                  {h.ranges.map((r, i) => (
+                    <div key={i} className="hour-range-row">
+                      <div className="times">
+                        <TimeField value={r.open} onChange={(v) => setRange(day, i, { open: v })} />
+                        <span className="to-label">to</span>
+                        <TimeField value={r.close} onChange={(v) => setRange(day, i, { close: v })} />
+                      </div>
+                      {h.ranges.length > 1 && (
+                        <span className="range-remove" onClick={() => removeRange(day, i)}>
+                          ✕
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                  <div className="add-range-link" onClick={() => addRange(day)}>
+                    + Add time range
+                  </div>
                 </div>
               )}
-              <div className={`toggle ${h.closed ? "" : "on"}`} onClick={() => setDay(day, { closed: !h.closed })}>
-                <div className="track" />
-              </div>
             </div>
           );
         })}

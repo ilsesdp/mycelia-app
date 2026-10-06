@@ -133,6 +133,7 @@ export type Database = {
           closed: boolean
           day_of_week: number
           farm_id: string
+          id: string
           open_time: string | null
         }
         Insert: {
@@ -140,6 +141,7 @@ export type Database = {
           closed?: boolean
           day_of_week: number
           farm_id: string
+          id?: string
           open_time?: string | null
         }
         Update: {
@@ -147,6 +149,7 @@ export type Database = {
           closed?: boolean
           day_of_week?: number
           farm_id?: string
+          id?: string
           open_time?: string | null
         }
         Relationships: [

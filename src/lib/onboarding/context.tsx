@@ -26,7 +26,11 @@ export type MarketDraft = {
   hours: string;
 };
 
-export type DayHours = { open: string; close: string; closed: boolean };
+export type TimeRange = { open: string; close: string };
+// A day can now hold more than one range (split shifts, e.g. 9am–12pm and
+// 3pm–7pm) — closed:true means the whole day is closed and ranges is
+// ignored; otherwise ranges holds 1+ open/close pairs.
+export type DayHours = { ranges: TimeRange[]; closed: boolean };
 
 // The full shape of what onboarding collects across all ~10 prototype
 // screens (1.2, 1.4–1.13). 2a only uses the first few fields; the rest are
@@ -61,7 +65,7 @@ export type OnboardingState = {
 
   // 1.9 — hours (2c)
   hours: Record<string, DayHours>;
-  hoursMode: "weekday" | "24-7" | "custom" | null;
+  hoursMode: "weekday" | "custom" | null;
 
   // 1.10/1.17 — markets (2c) — ids of DB markets picked, plus any drafted here
   selectedMarketIds: string[];
@@ -99,7 +103,7 @@ function initialState(): OnboardingState {
     coverPhotoPreview: null,
     categories: {},
     products: [],
-    hours: Object.fromEntries(DAYS.map((d) => [d, { open: "09:00 AM", close: "05:00 PM", closed: false }])),
+    hours: Object.fromEntries(DAYS.map((d) => [d, { ranges: [{ open: "09:00 AM", close: "05:00 PM" }], closed: false }])),
     hoursMode: null,
     selectedMarketIds: [],
     addedMarkets: [],

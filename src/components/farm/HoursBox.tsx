@@ -1,4 +1,4 @@
-import { fmtTime, type HourRow } from "@/lib/farmStatus";
+import { fmtTimeBox, type HourRow } from "@/lib/farmStatus";
 
 const DAY_FULL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const DAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -6,34 +6,47 @@ const DAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 // stored day_of_week is JS getDay() (0=Sun..6=Sat), same as farmStatus.ts.
 const DISPLAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
-type Group = { days: number[]; closed: boolean; open_time: string | null; close_time: string | null };
+type TimeRange = { open_time: string; close_time: string };
+type Group = { days: number[]; closed: boolean; ranges: TimeRange[] };
 
-function scheduleKey(h: HourRow | undefined): string {
-  if (!h || h.closed || !h.open_time || !h.close_time) return "closed";
-  return `${h.open_time}-${h.close_time}`;
+// A day's sorted list of open ranges (empty = closed), used both to key
+// identical days together and to render each day's stacked range lines.
+function dayRanges(hours: HourRow[], dow: number): TimeRange[] {
+  return hours
+    .filter((h) => h.day_of_week === dow && !h.closed && h.open_time && h.close_time)
+    .sort((a, b) => a.open_time!.localeCompare(b.open_time!))
+    .map((h) => ({ open_time: h.open_time!, close_time: h.close_time! }));
 }
 
-// Collapses consecutive days that share the exact same open/close time (or
-// are all closed) into one row — "Mon – Fri · 9am – 6pm" reads the way a
-// person would actually say their hours, instead of repeating the same
-// range seven times.
+function scheduleKey(ranges: TimeRange[]): string {
+  if (!ranges.length) return "closed";
+  return ranges.map((r) => `${r.open_time}-${r.close_time}`).join(",");
+}
+
+// Collapses consecutive days that share the exact same set of time ranges
+// (or are all closed) into one row — "Mon – Fri · 9am – 6pm" reads the way
+// a person would actually say their hours, instead of repeating the same
+// range seven times. A day with split-shift ranges (e.g. 9–12 and 3–7)
+// still collapses with another day that has the identical pair.
 function groupHours(hours: HourRow[]): Group[] {
   const groups: Group[] = [];
   let lastKey: string | null = null;
   for (const dow of DISPLAY_ORDER) {
-    const h = hours.find((x) => x.day_of_week === dow);
-    const key = scheduleKey(h);
+    const ranges = dayRanges(hours, dow);
+    const key = scheduleKey(ranges);
     if (lastKey === key && groups.length) {
       groups[groups.length - 1].days.push(dow);
     } else {
-      groups.push({ days: [dow], closed: key === "closed", open_time: h?.open_time ?? null, close_time: h?.close_time ?? null });
+      groups.push({ days: [dow], closed: key === "closed", ranges });
     }
     lastKey = key;
   }
   return groups;
 }
 
-// Ports hoursBox().
+// Ports hoursBox(). Each group's value can now stack more than one line —
+// a day with split-shift ranges shows each range on its own line, matching
+// the farm's "9 AM – 12 PM" / "3 PM – 7 PM" display style.
 export function HoursBox({ hours }: { hours: HourRow[] }) {
   const groups = groupHours(hours);
   return (
@@ -48,7 +61,7 @@ export function HoursBox({ hours }: { hours: HourRow[] }) {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: "flex-start",
               padding: "12px 0",
               borderBottom: i < groups.length - 1 ? "1px solid var(--border-subtle)" : undefined,
             }}
@@ -56,9 +69,19 @@ export function HoursBox({ hours }: { hours: HourRow[] }) {
             <span className="body-m-strong" style={{ color: "var(--text-brand)" }}>
               {label}
             </span>
-            <span className="body-m" style={{ color: "var(--text-secondary)" }}>
-              {g.closed ? "Closed" : `${fmtTime(g.open_time!)} – ${fmtTime(g.close_time!)}`}
-            </span>
+            {g.closed ? (
+              <span className="body-m" style={{ color: "var(--text-secondary)" }}>
+                Closed
+              </span>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 }}>
+                {g.ranges.map((r, ri) => (
+                  <span key={ri} className="body-m" style={{ color: "var(--text-secondary)" }}>
+                    {fmtTimeBox(r.open_time)} – {fmtTimeBox(r.close_time)}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         );
       })}

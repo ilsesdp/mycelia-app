@@ -75,12 +75,20 @@ export default function PreviewPage() {
 
   // Mirrors farmStatus()'s real open/closed check (lib/farmStatus.ts) — the
   // status row used to just read today.closed and call anything else
-  // "Open until <close>", even hours after close_time had passed.
+  // "Open until <close>", even hours after close_time had passed. A day can
+  // now have more than one range (split shifts), so every range today is
+  // checked, not just the first.
   const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
-  const openMin = today.closed ? null : to12hMinutes(today.open);
-  const closeMin = today.closed ? null : to12hMinutes(today.close);
-  const isOpenNow = openMin !== null && closeMin !== null && nowMinutes >= openMin && nowMinutes < closeMin;
-  const opensLaterToday = !today.closed && openMin !== null && nowMinutes < openMin;
+  const todaysRanges = today.closed
+    ? []
+    : today.ranges
+        .map((r) => ({ ...r, openMin: to12hMinutes(r.open), closeMin: to12hMinutes(r.close) }))
+        .filter((r): r is typeof r & { openMin: number; closeMin: number } => r.openMin !== null && r.closeMin !== null)
+        .sort((a, b) => a.openMin - b.openMin);
+  const openRange = todaysRanges.find((r) => nowMinutes >= r.openMin && nowMinutes < r.closeMin);
+  const isOpenNow = !!openRange;
+  const nextRangeToday = todaysRanges.find((r) => nowMinutes < r.openMin);
+  const opensLaterToday = !!nextRangeToday;
 
   async function publish() {
     setPublishing(true);
@@ -150,7 +158,7 @@ export default function PreviewPage() {
               <span className="label" style={{ color: STATUS_TONE_COLOR.open }}>
                 Open
               </span>
-              <span className="detail">&nbsp;until {fmtShortTime(today.close) || "5pm"}</span>
+              <span className="detail">&nbsp;until {fmtShortTime(openRange?.close) || "5pm"}</span>
             </div>
           ) : (
             <div className="status-row">
@@ -158,7 +166,7 @@ export default function PreviewPage() {
               <span className="label" style={{ color: STATUS_TONE_COLOR.closed }}>
                 Closed
               </span>
-              <span className="detail">&nbsp;{opensLaterToday ? `opens today ${fmtShortTime(today.open)}` : "today"}</span>
+              <span className="detail">&nbsp;{opensLaterToday ? `opens today ${fmtShortTime(nextRangeToday?.open)}` : "today"}</span>
             </div>
           )}
           <div style={{ height: 10 }} />
@@ -245,9 +253,19 @@ export default function PreviewPage() {
               {DAYS.map((d, i) => {
                 const h = state.hours[d];
                 return (
-                  <div key={d} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: i < DAYS.length - 1 ? "1px solid var(--border-subtle)" : "none" }}>
+                  <div key={d} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "12px 0", borderBottom: i < DAYS.length - 1 ? "1px solid var(--border-subtle)" : "none" }}>
                     <span className="body-m" style={{ color: "var(--text-primary)" }}>{DAY_FULL[d]}</span>
-                    <span className="body-m">{h.closed ? "Closed" : `${h.open} – ${h.close}`}</span>
+                    {h.closed ? (
+                      <span className="body-m">Closed</span>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 }}>
+                        {h.ranges.map((r, ri) => (
+                          <span key={ri} className="body-m">
+                            {r.open} – {r.close}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}

@@ -5,17 +5,13 @@ import { FarmProfileShell } from "@/components/farm/FarmProfileShell";
 import { HoursBox } from "@/components/farm/HoursBox";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { MessageAction } from "@/components/farm/MessageAction";
+import { ConnectOnline } from "@/components/farm/ConnectOnline";
 
 // Ports SCREENS['2.4'] — the farm profile's About tab. Contact info comes
 // from farm_public_contact, the view that already nulls out email/phone per
 // the owner's Everyone/Growers-only/Nobody visibility choice (5.5 Privacy —
 // see its definition), so there's no extra filtering to do here: if a field
 // comes back null, this visitor simply isn't shown it.
-//
-// The prototype's "Follow" section (Instagram/Facebook/website) isn't
-// rendered — there's no social-links field anywhere in the schema yet
-// (that's set from the owner's Edit profile screen, 5.3, part of the My
-// Farm tools group that hasn't been built).
 export default async function FarmAboutPage({ params, searchParams }: PageProps<"/farms/[id]/about">) {
   const { id } = await params;
   const sp = await searchParams;
@@ -56,6 +52,12 @@ export default async function FarmAboutPage({ params, searchParams }: PageProps<
       )}
       <div style={{ height: 16 }} />
       <DirectionsButton address={farm.address} />
+      {(farm.website || farm.instagram || farm.facebook) && (
+        <>
+          <div style={{ height: 24 }} />
+          <ConnectOnline website={farm.website} instagram={farm.instagram} facebook={farm.facebook} />
+        </>
+      )}
       <div style={{ height: 24 }} />
       <div className="label-caps">Contact</div>
       {contact?.contact_email && <p className="body-s">{contact.contact_email}</p>}

@@ -1,4 +1,4 @@
-import { fmtTimeBox, type HourRow } from "@/lib/farmStatus";
+import { fmtTime, type HourRow } from "@/lib/farmStatus";
 
 const DAY_FULL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const DAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -45,8 +45,9 @@ function groupHours(hours: HourRow[]): Group[] {
 }
 
 // Ports hoursBox(). Each group's value can now stack more than one line —
-// a day with split-shift ranges shows each range on its own line, matching
-// the farm's "9 AM – 12 PM" / "3 PM – 7 PM" display style.
+// a day with split-shift ranges shows each range on its own line. Uses
+// fmtTime()'s lowercase "9am"/"5:30pm" format to match every other screen
+// that shows a time (status chips, TodayHoursSheet).
 export function HoursBox({ hours }: { hours: HourRow[] }) {
   const groups = groupHours(hours);
   return (
@@ -77,7 +78,7 @@ export function HoursBox({ hours }: { hours: HourRow[] }) {
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 }}>
                 {g.ranges.map((r, ri) => (
                   <span key={ri} className="body-m" style={{ color: "var(--text-secondary)" }}>
-                    {fmtTimeBox(r.open_time)} – {fmtTimeBox(r.close_time)}
+                    {fmtTime(r.open_time)} – {fmtTime(r.close_time)}
                   </span>
                 ))}
               </div>

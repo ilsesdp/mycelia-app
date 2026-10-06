@@ -42,19 +42,6 @@ export function fmtTime(t: string): string {
   return m === "00" ? `${h}${mer}` : `${h}:${m}${mer}`;
 }
 
-// "17:00:00" -> "5 PM", "09:30:00" -> "9:30 AM" — the Hours box's own
-// display format (space + uppercase meridiem, no ":00" on the hour),
-// distinct from fmtTime()'s "5pm" used everywhere else (status chips,
-// TodayHoursSheet). Kept as its own function rather than changing fmtTime
-// so those other surfaces don't shift unrequested.
-export function fmtTimeBox(t: string): string {
-  const [hStr, m] = t.split(":");
-  let h = parseInt(hStr, 10);
-  const mer = h >= 12 ? "PM" : "AM";
-  h = h % 12 || 12;
-  return m === "00" ? `${h} ${mer}` : `${h}:${m} ${mer}`;
-}
-
 function toMinutes(t: string): number {
   const [h, m] = t.split(":").map(Number);
   return h * 60 + (m || 0);

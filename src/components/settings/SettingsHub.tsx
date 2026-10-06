@@ -26,22 +26,26 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
       <div className="px-4" style={{ paddingTop: 16, flex: 1, display: "flex", flexDirection: "column" }}>
         {hasFarm && (
           <>
-            <div className="label-caps">Your farm</div>
+            <div className="label-caps">Farm profile</div>
             <div style={{ height: 8 }} />
-            <SettingsRow icon="pencil" title="Edit profile" href="/settings/profile" />
-            <SettingsRow icon="bell" title="Notifications" href="/settings/notifications" />
+            <SettingsRow icon="pencil" title="Farm information" sub="Name, location, description, photos and links" href="/settings/profile" />
+            <div style={{ height: 26 }} />
+            <div className="label-caps">Preferences</div>
+            <div style={{ height: 8 }} />
+            <SettingsRow icon="bell" title="Notifications" sub="How and when we notify you" href="/settings/notifications" />
             <div style={{ height: 26 }} />
           </>
         )}
-        <div className="label-caps">Account</div>
+        <div className="label-caps">Account & privacy</div>
         <div style={{ height: 8 }} />
-        <SettingsRow icon="user" title="Account information" href="/settings/account" />
-        <SettingsRow icon="lock" title="Privacy and visibility" href="/settings/privacy" />
+        <SettingsRow icon="user" title="Contact information" sub="Email and phone number" href="/settings/account" />
+        <SettingsRow icon="lock" title="Privacy & visibility" sub="Choose who can see your information" href="/settings/privacy" />
+        <SettingsRow icon="shield" title="Security" sub="Change your password" href="/settings/security" />
         <div style={{ height: 26 }} />
         <div className="label-caps">Support</div>
         <div style={{ height: 8 }} />
-        <SettingsRow icon="help" title="Help" href="/settings/help" />
-        <SettingsRow icon="msg" title="Contact support" href="/settings/support" />
+        <SettingsRow icon="help" title="Help center" sub="Find answers to common questions" href="/settings/help" />
+        <SettingsRow icon="msg" title="Contact support" sub="Get help from our team" href="/settings/support" />
         <div style={{ flex: 1, minHeight: 20 }} />
         <div style={{ paddingBottom: 24 }}>
           <button className="btn btn-ghost" onClick={() => setShowLogOut(true)}>

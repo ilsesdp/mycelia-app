@@ -12,13 +12,14 @@ type VisibilityEnum = Database["public"]["Enums"]["visibility_t"];
 
 // A fixed, non-interactive "Everyone" pill for the rows the tested design
 // shows but the schema has no per-field visibility column for: a published
-// farm's name, products, hours, events and markets are always public, and
-// anyone logged in can message any published farm — there's no real toggle
-// behind those, so this isn't made into a working Growers-only/Only-me
-// dropdown (that would say something untrue). It shares the same
-// `.visibility-pill` look as the real dropdown below — a real icon instead
-// of an emoji, no chevron since there's nothing to open — so it reads as
-// one consistent family of pills, just this one isn't clickable.
+// farm's name, products, hours, events and markets are always public, with
+// no toggle behind them — so these stay fixed rather than becoming a
+// working Growers-only/Only-me dropdown (that would say something untrue).
+// It shares the same `.visibility-pill` look as the real dropdown below —
+// no chevron since there's nothing to open — so it reads as one consistent
+// family of pills, just this one isn't clickable. "Who can message you" was
+// one of these too until message_visibility (see Row below) made it real:
+// enforced in message_threads_insert's RLS policy, not just this label.
 function FixedRow({ label }: { label: string }) {
   return (
     <div
@@ -65,15 +66,20 @@ function Row({ label, value, onChange }: { label: string; value: Visibility; onC
 export function PrivacyForm({
   initialEmailVisibility,
   initialPhoneVisibility,
+  initialMessageVisibility,
 }: {
   initialEmailVisibility: VisibilityEnum;
   initialPhoneVisibility: VisibilityEnum;
+  initialMessageVisibility: VisibilityEnum;
 }) {
   const supabase = createClient();
   const [emailVis, setEmailVis] = useState<Visibility>(VISIBILITY_DISPLAY[initialEmailVisibility]);
   const [phoneVis, setPhoneVis] = useState<Visibility>(VISIBILITY_DISPLAY[initialPhoneVisibility]);
+  const [messageVis, setMessageVis] = useState<Visibility>(VISIBILITY_DISPLAY[initialMessageVisibility]);
 
-  async function save(patch: Partial<{ email_visibility: VisibilityEnum; phone_visibility: VisibilityEnum }>) {
+  async function save(
+    patch: Partial<{ email_visibility: VisibilityEnum; phone_visibility: VisibilityEnum; message_visibility: VisibilityEnum }>
+  ) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -115,7 +121,14 @@ export function PrivacyForm({
             save({ phone_visibility: VISIBILITY_DB[v] });
           }}
         />
-        <FixedRow label="Who can message you" />
+        <Row
+          label="Who can message you"
+          value={messageVis}
+          onChange={(v) => {
+            setMessageVis(v);
+            save({ message_visibility: VISIBILITY_DB[v] });
+          }}
+        />
       </div>
     </main>
   );

@@ -6,16 +6,15 @@ import { HoursBox } from "@/components/farm/HoursBox";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import Link from "next/link";
 
-// Ports SCREENS['4.8'] (owner) and its public-preview render (?preview=1).
-// The prototype's "Message {farmName}" button is left out here — this is
-// always the owner looking at their own farm, preview or not, and a
-// message-yourself button has no real destination. The "Connect online"
-// (Instagram/Facebook/website) section is also left out, same as the
-// visitor-facing About tab (2.4) — there's still no social-links column on
-// `farms` for Edit profile (5.3) to have written one into.
-export default async function MyFarmAboutPage({ searchParams }: PageProps<"/my-farm/about">) {
-  const sp = await searchParams;
-  const preview = sp.preview === "1";
+// Ports SCREENS['4.8'] (owner). The public-preview render (formerly
+// ?preview=1) has been removed. The prototype's "Message {farmName}"
+// button is left out here — this is always the owner looking at their own
+// farm, and a message-yourself button has no real destination. The
+// "Connect online" (Instagram/Facebook/website) section is also left out,
+// same as the visitor-facing About tab (2.4) — there's still no
+// social-links column on `farms` for Edit profile (5.3) to have written
+// one into.
+export default async function MyFarmAboutPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -39,7 +38,7 @@ export default async function MyFarmAboutPage({ searchParams }: PageProps<"/my-f
   const showPhone = !!phone && profile?.phone_visibility !== "nobody";
 
   return (
-    <OwnerShell farm={farm} activeTab="About" preview={preview}>
+    <OwnerShell farm={farm} activeTab="About">
       <div className="label-caps">Your story</div>
       <div style={{ height: 10 }} />
       <p className="body-m" style={{ lineHeight: "20px" }}>
@@ -60,7 +59,7 @@ export default async function MyFarmAboutPage({ searchParams }: PageProps<"/my-f
         </>
       )}
       <div style={{ height: 16 }} />
-      <DirectionsButton address={farm.address} disabled={preview} />
+      <DirectionsButton address={farm.address} />
       <div style={{ height: 24 }} />
       <div className="label-caps">Contact</div>
       {showEmail && <p className="body-s">{email}</p>}

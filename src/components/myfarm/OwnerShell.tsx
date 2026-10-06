@@ -12,44 +12,24 @@ const TABS: Array<["Products" | "About" | "Events", string]> = [
 ];
 
 // Ports ownerShell()/ownerIdentity()/ownerTabs()/farmHero() — the chrome
-// shared by 4.1/4.2/4.8/4.9/4.13/4.15. `preview` mirrors the prototype's
-// S.ownerPreview: a read-only "what visitors see" mode reached via the eye
-// icon, with a banner and the bottom nav's Map tab highlighted instead of
-// Profile. Exiting preview always returns to Products (4.1), matching the
-// prototype's hardcoded bannerExitTo.
+// shared by 4.1/4.8/4.9/4.13/4.15. The public-preview render (formerly
+// reached via ?preview=1 and the eye icon) has been removed — the only
+// farm preview left is the onboarding Preview screen (1.12), which is its
+// own standalone page, not this shell.
 export function OwnerShell({
   farm,
   activeTab,
-  preview,
   children,
 }: {
   farm: MyFarmIdentity;
   activeTab: "Products" | "About" | "Events";
-  preview: boolean;
   children: React.ReactNode;
 }) {
-  const qs = preview ? "?preview=1" : "";
   return (
     <main className="flex flex-col min-h-screen">
       {/* Hero/header/tabs flow with the page — the whole screen scrolls as
           one, same as the public farm page (FarmProfileShell). */}
       <div style={{ flexShrink: 0 }}>
-        {preview && (
-          <div style={{ background: "var(--info-bg)", padding: "12px 16px", display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ color: "var(--info-fg)", display: "flex", flexShrink: 0 }}>
-              <Icon name="eye" size={18} />
-            </span>
-            <span className="body-s-strong" style={{ color: "var(--info-fg)", flex: 1 }}>
-              Viewing as public
-            </span>
-            <Link
-              href="/my-farm"
-              style={{ cursor: "pointer", textDecoration: "none", color: "var(--info-fg)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14, flexShrink: 0 }}
-            >
-              Exit preview
-            </Link>
-          </div>
-        )}
         <div
           className="hero"
           style={
@@ -73,13 +53,11 @@ export function OwnerShell({
             <div className="title-l" style={{ color: "var(--text-primary)" }}>
               {farm.name}
             </div>
-            {!preview && (
-              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                <Link href="/settings" className="owner-icon-btn" title="Settings">
-                  <Icon name="gear" size={18} />
-                </Link>
-              </div>
-            )}
+            <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+              <Link href="/settings" className="owner-icon-btn" title="Settings">
+                <Icon name="gear" size={18} />
+              </Link>
+            </div>
           </div>
           <div style={{ height: 4 }} />
           {farm.address && (
@@ -95,7 +73,7 @@ export function OwnerShell({
             todayStatus={farm.todayStatus}
             todayStatusNote={farm.todayStatusNote}
             timezone={farm.timezone}
-            tappable={!preview}
+            tappable
           />
           <div style={{ height: 8 }} />
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -121,7 +99,7 @@ export function OwnerShell({
           <div style={{ height: 16 }} />
           <div className="farm-tabs">
             {TABS.map(([label, slug]) => (
-              <Link key={label} href={`/my-farm${slug}${qs}`} className={activeTab === label ? "active" : ""}>
+              <Link key={label} href={`/my-farm${slug}`} className={activeTab === label ? "active" : ""}>
                 {label}
               </Link>
             ))}
@@ -133,7 +111,7 @@ export function OwnerShell({
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 98 }}>
         {children}
       </div>
-      <BottomNav active={preview ? "Map" : "Profile"} loggedIn />
+      <BottomNav active="Profile" loggedIn />
     </main>
   );
 }

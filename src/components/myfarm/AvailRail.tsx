@@ -52,13 +52,12 @@ function ProductCard({ p }: { p: ProductRow }) {
   );
 }
 
-// Ports availSection()/farmOwnerBody()/farmOwnerBodyPublic() — "Our
-// products" on 4.1 (owner) and 4.2 (public preview). Both are read-only
-// displays; the owner edits products from Manage (4.3), not from here. A
-// row of All/Ready now/Producing/Planning filter pills replaces the old
-// per-availability horizontal-scrolling rails, so the tab scrolls only
-// vertically and products show in a fixed two-column grid.
-export function AvailRail({ products, showManage }: { products: ProductRow[]; showManage: boolean }) {
+// Ports availSection()/farmOwnerBody() — "Our products" on 4.1 (owner).
+// Read-only display; the owner edits products from Manage (4.3), not from
+// here. A row of All/Ready now/Producing/Planning filter pills replaces
+// the old per-availability horizontal-scrolling rails, so the tab scrolls
+// only vertically and products show in a fixed two-column grid.
+export function AvailRail({ products }: { products: ProductRow[] }) {
   const [filter, setFilter] = useState<FilterKey>("all");
 
   if (!products.length) {
@@ -79,11 +78,9 @@ export function AvailRail({ products, showManage }: { products: ProductRow[]; sh
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <div className="label-caps">Our products</div>
-        {showManage && (
-          <Link href="/my-farm/products" style={{ cursor: "pointer", textDecoration: "none", color: "var(--text-link)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14 }}>
-            Manage
-          </Link>
-        )}
+        <Link href="/my-farm/products" style={{ cursor: "pointer", textDecoration: "none", color: "var(--text-link)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14 }}>
+          Manage
+        </Link>
       </div>
       <div style={{ height: 14 }} />
       <div className="product-filter-row">

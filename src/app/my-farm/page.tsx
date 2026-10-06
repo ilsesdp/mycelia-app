@@ -7,13 +7,10 @@ import { AvailRail } from "@/components/myfarm/AvailRail";
 import { EmptyProducts } from "@/components/myfarm/EmptyProducts";
 import { SavedToast } from "@/components/myfarm/SavedToast";
 
-// Ports SCREENS['4.1'] (owner), SCREENS['4.13'] (empty state) and
-// SCREENS['4.2'] (public preview, via ?preview=1) — one route for all
-// three since they share the same data and only the rendering mode
-// differs, mirroring the prototype's own S.ownerPreview flag.
-export default async function MyFarmPage({ searchParams }: PageProps<"/my-farm">) {
-  const sp = await searchParams;
-  const preview = sp.preview === "1";
+// Ports SCREENS['4.1'] (owner) and SCREENS['4.13'] (empty state). The
+// public-preview render (formerly SCREENS['4.2'] via ?preview=1) has been
+// removed — the only farm preview left is onboarding's own Preview screen.
+export default async function MyFarmPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -32,17 +29,11 @@ export default async function MyFarmPage({ searchParams }: PageProps<"/my-farm">
   const list = (products ?? []) as ProductRow[];
 
   return (
-    <OwnerShell farm={farm} activeTab="Products" preview={preview}>
-      {!preview && list.length === 0 ? (
-        <EmptyProducts />
-      ) : (
-        <AvailRail products={list} showManage={!preview} />
-      )}
-      {!preview && (
-        <Suspense fallback={null}>
-          <SavedToast />
-        </Suspense>
-      )}
+    <OwnerShell farm={farm} activeTab="Products">
+      {list.length === 0 ? <EmptyProducts /> : <AvailRail products={list} />}
+      <Suspense fallback={null}>
+        <SavedToast />
+      </Suspense>
     </OwnerShell>
   );
 }

@@ -128,7 +128,7 @@ export function EditProfileForm({
         <div style={{ height: 18 }} />
 
         <label className="label-caps" htmlFor="profile-about">
-          About the farm
+          About your farm
         </label>
         <div style={{ height: 6 }} />
         <textarea
@@ -142,7 +142,7 @@ export function EditProfileForm({
         <div style={{ height: 18 }} />
 
         <label className="label-caps" htmlFor="profile-directions">
-          Directions
+          Arrival instructions
         </label>
         <div style={{ height: 6 }} />
         <textarea

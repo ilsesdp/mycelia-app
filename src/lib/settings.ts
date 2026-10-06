@@ -18,15 +18,15 @@ export const VISIBILITY_DB: Record<"Growers only" | "Only me", Database["public"
   "Only me": "nobody",
 };
 
-export const CHANNEL_DISPLAY: Record<Database["public"]["Enums"]["message_channel_t"], "Text me" | "Email me" | "Both"> = {
-  text_me: "Text me",
-  email_me: "Email me",
-  both: "Both",
+export const CHANNEL_DISPLAY: Record<Database["public"]["Enums"]["message_channel_t"], "Text" | "Email" | "Text & Email"> = {
+  text_me: "Text",
+  email_me: "Email",
+  both: "Text & Email",
 };
-export const CHANNEL_DB: Record<"Text me" | "Email me" | "Both", Database["public"]["Enums"]["message_channel_t"]> = {
-  "Text me": "text_me",
-  "Email me": "email_me",
-  Both: "both",
+export const CHANNEL_DB: Record<"Text" | "Email" | "Text & Email", Database["public"]["Enums"]["message_channel_t"]> = {
+  Text: "text_me",
+  Email: "email_me",
+  "Text & Email": "both",
 };
 
 export type SettingsProfile = {

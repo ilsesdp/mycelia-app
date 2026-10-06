@@ -52,7 +52,7 @@ export default function FarmDetailsPage() {
         <div style={{ height: 12 }} />
 
         <label className="label-caps" htmlFor="farm-directions">
-          Directions
+          Arrival instructions
         </label>
         <div style={{ height: 4 }} />
         <textarea
@@ -66,7 +66,7 @@ export default function FarmDetailsPage() {
         <div style={{ height: 12 }} />
 
         <label className="label-caps" htmlFor="farm-about">
-          About the farm
+          About your farm
         </label>
         <div style={{ height: 12 }} />
         <textarea

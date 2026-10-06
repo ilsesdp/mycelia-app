@@ -48,7 +48,7 @@ export default async function MyFarmAboutPage() {
       {farmRow?.directions && (
         <>
           <div style={{ height: 20 }} />
-          <div className="label-caps">Directions</div>
+          <div className="label-caps">Arrival instructions</div>
           <div style={{ height: 10 }} />
           <p className="body-m" style={{ lineHeight: "20px" }}>
             {farmRow.directions}

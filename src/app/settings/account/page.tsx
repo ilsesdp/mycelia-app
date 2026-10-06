@@ -17,11 +17,7 @@ export default async function AccountPage() {
 
   return (
     <>
-      <AccountForm
-        authEmail={user.email ?? ""}
-        initialEmail={profile?.contact_email ?? ""}
-        initialPhone={profile?.contact_phone ?? ""}
-      />
+      <AccountForm initialEmail={profile?.contact_email ?? ""} initialPhone={profile?.contact_phone ?? ""} />
       <Suspense fallback={null}>
         <SavedToast />
       </Suspense>

@@ -48,7 +48,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
         <SettingsRow icon="msg" title="Contact support" sub="Get help from our team" href="/settings/support" />
         <div style={{ flex: 1, minHeight: 20 }} />
         <div style={{ paddingBottom: 24 }}>
-          <button className="btn btn-ghost" onClick={() => setShowLogOut(true)}>
+          <button className="btn btn-ghost" style={{ color: "var(--text-danger)" }} onClick={() => setShowLogOut(true)}>
             Log out
           </button>
         </div>

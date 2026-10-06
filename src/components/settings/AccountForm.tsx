@@ -14,11 +14,9 @@ function isValidEmail(v: string) {
 // "Security" row on the hub, SCREENS['5.10']) rather than living on this
 // screen, so this one stays scoped to "how people reach you."
 export function AccountForm({
-  authEmail,
   initialEmail,
   initialPhone,
 }: {
-  authEmail: string;
   initialEmail: string;
   initialPhone: string;
 }) {
@@ -48,10 +46,8 @@ export function AccountForm({
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Contact information" />
-      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
-        <p className="body-m">
-          The email you sign in with is {authEmail}. This is how people reach you — choose who sees it from Privacy &amp; visibility.
-        </p>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, flex: 1, display: "flex", flexDirection: "column" }}>
+        <p className="body-m">Keep your contact details up to date. You can choose who can see them in Privacy &amp; visibility.</p>
         <div style={{ height: 20 }} />
 
         <label className="label-caps" htmlFor="account-email">
@@ -86,7 +82,7 @@ export function AccountForm({
           placeholder="(555) 555-0123"
         />
 
-        <div style={{ height: 20 }} />
+        <div style={{ flex: 1, minHeight: 20 }} />
         <button className="btn btn-primary" disabled={!emailOk || saving} onClick={save}>
           {saving ? "Saving…" : "Save changes"}
         </button>

@@ -8,11 +8,11 @@ import { createClient } from "@/lib/supabase/client";
 import { CHANNEL_DB, CHANNEL_DISPLAY } from "@/lib/settings";
 import type { Database } from "@/lib/types/database";
 
-const CHANNELS = ["Text me", "Email me", "Both"] as const;
+const CHANNELS = ["Text", "Email", "Text & Email"] as const;
 const MSG_CHANNEL_CAPTION: Record<string, string> = {
-  "Text me": "We'll text you when someone gets in touch.",
-  "Email me": "We'll email you when someone gets in touch.",
-  Both: "We'll text and email you when someone gets in touch.",
+  Text: "We'll text you when someone gets in touch.",
+  Email: "We'll email you when someone gets in touch.",
+  "Text & Email": "We'll text and email you when someone gets in touch.",
 };
 
 type Channel = Database["public"]["Enums"]["message_channel_t"];
@@ -21,7 +21,7 @@ type Channel = Database["public"]["Enums"]["message_channel_t"];
 // button in the tested design), same as the prototype's own instant
 // S.filters-style writes.
 //
-// `contactPhone` gates "Text me"/"Both": there's no phone-verification flow
+// `contactPhone` gates "Text"/"Text & Email": there's no phone-verification flow
 // in this build (contact_phone is just a free-text field), so rather than
 // let someone pick a text channel with no number on file and quietly never
 // hear from us, those two segments are disabled until a phone number
@@ -69,11 +69,11 @@ export function NotificationsForm({
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Notifications" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
-        <div className="label-caps">How we reach you</div>
+        <div className="label-caps">How you are notified</div>
         <div style={{ height: 8 }} />
         <div className="segmented">
           {CHANNELS.map((v) => {
-            const needsPhone = (v === "Text me" || v === "Both") && !hasPhone;
+            const needsPhone = (v === "Text" || v === "Text & Email") && !hasPhone;
             return (
               <button
                 key={v}
@@ -103,11 +103,11 @@ export function NotificationsForm({
         )}
 
         <div style={{ height: 28 }} />
-        <div className="label-caps">Tell me when</div>
+        <div className="label-caps">Notify me about</div>
         <div style={{ height: 8 }} />
         <ToggleRow
-          title="Someone messages you"
-          sub="A grower or a visitor writes to you"
+          title="New messages"
+          sub="When someone sends you a message"
           on={!pause && msgOn}
           disabled={pause}
           onToggle={() => {
@@ -117,8 +117,8 @@ export function NotificationsForm({
           }}
         />
         <ToggleRow
-          title="The day before a market"
-          sub="Only markets you're listed at"
+          title="Upcoming markets"
+          sub="The day before a market you're attending"
           on={!pause && marketOn}
           disabled={pause}
           onToggle={() => {
@@ -128,8 +128,8 @@ export function NotificationsForm({
           }}
         />
         <ToggleRow
-          title="The day before your event"
-          sub="Events you've added to your farm"
+          title="Upcoming events"
+          sub="The day before an event you're hosting"
           on={!pause && eventOn}
           disabled={pause}
           onToggle={() => {
@@ -140,11 +140,11 @@ export function NotificationsForm({
         />
 
         <div style={{ height: 28 }} />
-        <div className="label-caps">Quiet</div>
+        <div className="label-caps">Pause notifications</div>
         <div style={{ height: 8 }} />
         <ToggleRow
-          title="Pause everything"
-          sub="Nothing reaches you until you turn this back on"
+          title="Pause all notifications"
+          sub="You won't receive notifications until you turn this back on"
           on={pause}
           onToggle={() => {
             const next = !pause;

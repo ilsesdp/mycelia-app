@@ -18,6 +18,7 @@ export type IconName =
   | "msg"
   | "search"
   | "lock"
+  | "shield"
   | "basket"
   | "clock"
   | "close"
@@ -80,6 +81,13 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
         <svg {...props}>
           <rect x="5" y="10.5" width="14" height="9" rx="2" />
           <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg {...props}>
+          <path d="M12 3.5 5 6v5.5c0 4.6 3 8 7 9 4-1 7-4.4 7-9V6l-7-2.5Z" />
+          <path d="m9 12 2 2 4-4.2" />
         </svg>
       );
     case "basket":

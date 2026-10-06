@@ -38,7 +38,8 @@ export type IconName =
   | "filter"
   | "menu"
   | "map"
-  | "check";
+  | "check"
+  | "store";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const props = { ...SHARED, width: size, height: size };
@@ -228,6 +229,13 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
       return (
         <svg {...props}>
           <path d="M5 12.5 10 17.5 19 7" />
+        </svg>
+      );
+    case "store":
+      return (
+        <svg {...props}>
+          <path d="M4 4.5h16l1.5 5a2.2 2.2 0 0 1-4.3.8 2.2 2.2 0 0 1-4.2 0 2.2 2.2 0 0 1-4.2 0 2.2 2.2 0 0 1-4.3-.8Z" />
+          <path d="M5.5 10.3V19a1 1 0 0 0 1 1H10v-5.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V20h3.5a1 1 0 0 0 1-1v-8.7" />
         </svg>
       );
   }

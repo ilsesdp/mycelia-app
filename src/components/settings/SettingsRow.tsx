@@ -18,11 +18,13 @@ export function SettingsRow({
   href: string;
   // Title color. Defaults to the plain secondary text color (the Help
   // center FAQ rows and its own "Contact support" link keep this
-  // default); the Settings hub's top-level rows pass the brand green.
+  // default); the Settings hub's top-level rows pass the same green as
+  // the AppBar titlebar (var(--text-primary)) — not var(--text-brand),
+  // which is a different, slightly olive green used elsewhere.
   titleColor?: string;
   // Icon color, independent of titleColor — the Settings hub's rows match
   // this to the muted tertiary icon color Privacy & visibility's own rows
-  // use, rather than sharing the title's brand green.
+  // use, rather than sharing the title's green.
   iconColor?: string;
 }) {
   return (

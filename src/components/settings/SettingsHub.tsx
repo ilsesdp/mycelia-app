@@ -33,7 +33,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
               title="Farm information"
               sub="Name, location, description, photos and links"
               href="/settings/profile"
-              titleColor="var(--text-brand)"
+              titleColor="var(--text-primary)"
               iconColor="var(--text-tertiary)"
             />
             <div style={{ height: 26 }} />
@@ -44,7 +44,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
               title="Notifications"
               sub="How and when we notify you"
               href="/settings/notifications"
-              titleColor="var(--text-brand)"
+              titleColor="var(--text-primary)"
               iconColor="var(--text-tertiary)"
             />
             <div style={{ height: 26 }} />
@@ -57,7 +57,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
           title="Contact information"
           sub="Email and phone number"
           href="/settings/account"
-          titleColor="var(--text-brand)"
+          titleColor="var(--text-primary)"
           iconColor="var(--text-tertiary)"
         />
         <SettingsRow
@@ -65,7 +65,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
           title="Privacy & visibility"
           sub="Choose who can see your information"
           href="/settings/privacy"
-          titleColor="var(--text-brand)"
+          titleColor="var(--text-primary)"
           iconColor="var(--text-tertiary)"
         />
         <SettingsRow
@@ -73,7 +73,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
           title="Security"
           sub="Change your password"
           href="/settings/security"
-          titleColor="var(--text-brand)"
+          titleColor="var(--text-primary)"
           iconColor="var(--text-tertiary)"
         />
         <div style={{ height: 26 }} />
@@ -84,7 +84,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
           title="Help center"
           sub="Find answers to common questions"
           href="/settings/help"
-          titleColor="var(--text-brand)"
+          titleColor="var(--text-primary)"
           iconColor="var(--text-tertiary)"
         />
         <SettingsRow
@@ -92,7 +92,7 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
           title="Contact support"
           sub="Get help from our team"
           href="/settings/support"
-          titleColor="var(--text-brand)"
+          titleColor="var(--text-primary)"
           iconColor="var(--text-tertiary)"
         />
         <div style={{ flex: 1, minHeight: 20 }} />

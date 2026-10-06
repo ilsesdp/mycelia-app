@@ -52,7 +52,9 @@ function Row({
         <span style={{ flexShrink: 0, display: "flex", width: 20, height: 20, color: "var(--text-tertiary)" }}>
           <Icon name={icon} size={20} />
         </span>
-        <span className="body-m">{label}</span>
+        <span className="body-m" style={{ color: "var(--text-primary)" }}>
+          {label}
+        </span>
       </span>
       <VisibilityPill value={value} onChange={onChange} />
     </div>
@@ -91,7 +93,11 @@ export function PrivacyForm({
         <div style={{ height: 24 }} />
 
         <div className="label-caps">Public farm profile</div>
-        <div style={{ height: 8 }} />
+        <div style={{ height: 4 }} />
+        <p className="caption" style={{ color: "var(--text-tertiary)" }}>
+          The following information is visible to everyone and cannot be changed.
+        </p>
+        <div style={{ height: 10 }} />
         <FixedRow label="Farm name and location" icon="pin" />
         <FixedRow label="Products and availability" icon="basket" />
         <FixedRow label="Opening hours" icon="clock" />

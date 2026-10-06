@@ -4,16 +4,13 @@ import { getMyFarmId, getMyFarmIdentity } from "@/lib/myFarm";
 import { OwnerShell } from "@/components/myfarm/OwnerShell";
 import { HoursBox } from "@/components/farm/HoursBox";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
+import { ConnectOnline } from "@/components/farm/ConnectOnline";
 import Link from "next/link";
 
 // Ports SCREENS['4.8'] (owner). The public-preview render (formerly
 // ?preview=1) has been removed. The prototype's "Message {farmName}"
 // button is left out here — this is always the owner looking at their own
-// farm, and a message-yourself button has no real destination. The
-// "Connect online" (Instagram/Facebook/website) section is also left out,
-// same as the visitor-facing About tab (2.4) — there's still no
-// social-links column on `farms` for Edit profile (5.3) to have written
-// one into.
+// farm, and a message-yourself button has no real destination.
 export default async function MyFarmAboutPage() {
   const supabase = await createClient();
   const {
@@ -26,7 +23,7 @@ export default async function MyFarmAboutPage() {
 
   const [farm, { data: farmRow }, { data: profile }] = await Promise.all([
     getMyFarmIdentity(supabase, farmId),
-    supabase.from("farms").select("about, directions").eq("id", farmId).maybeSingle(),
+    supabase.from("farms").select("about, directions, website, instagram, facebook").eq("id", farmId).maybeSingle(),
     supabase.from("profiles").select("contact_email, contact_phone, email_visibility, phone_visibility").eq("id", user.id).maybeSingle(),
   ]);
   if (!farm) redirect("/settings");
@@ -60,6 +57,12 @@ export default async function MyFarmAboutPage() {
       )}
       <div style={{ height: 16 }} />
       <DirectionsButton address={farm.address} />
+      {(farmRow?.website || farmRow?.instagram || farmRow?.facebook) && (
+        <>
+          <div style={{ height: 24 }} />
+          <ConnectOnline website={farmRow?.website ?? null} instagram={farmRow?.instagram ?? null} facebook={farmRow?.facebook ?? null} />
+        </>
+      )}
       <div style={{ height: 24 }} />
       <div className="label-caps">Contact</div>
       {showEmail && <p className="body-s">{email}</p>}

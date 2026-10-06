@@ -18,7 +18,9 @@ export default async function NotificationsPage() {
       initialChannel={profile.messageChannel}
       initialMsgOn={profile.notifMsgOn}
       initialMarketOn={profile.notifMarketOn}
+      initialEventOn={profile.notifEventOn}
       initialPause={profile.notifPause}
+      contactPhone={profile.contactPhone}
     />
   );
 }

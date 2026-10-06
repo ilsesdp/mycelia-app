@@ -150,7 +150,11 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
         />
 
         <div style={{ height: 20 }} />
-        <p className="caption">We usually reply within two working days. You&apos;ll get our answer the same way you chose to be reached.</p>
+        {/* "Send to support" opens a mailto: draft (see the file comment),
+            so the reply always comes back by email regardless of the
+            Notifications channel someone's picked — this doesn't promise
+            otherwise. */}
+        <p className="caption">We usually reply within two working days, by email.</p>
         <div style={{ height: 12 }} />
         <button className="btn btn-primary" disabled={!canSend} onClick={send}>
           Send to support

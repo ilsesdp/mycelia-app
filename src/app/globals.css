@@ -937,6 +937,47 @@ body {
   height: 100%;
   object-fit: cover;
 }
+/* Same card, sized for the two-column Our Products grid (My Farm) instead
+   of a fixed-width horizontal rail — the photo keeps the rail's 150:108
+   aspect ratio but fills its grid cell's width. */
+.avail-card.grid {
+  width: 100%;
+}
+.avail-card.grid .photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 150 / 108;
+}
+
+/* Our Products filter pills + two-column grid (My Farm > Products) */
+.product-filter-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.product-filter-pill {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.product-filter-pill.active {
+  background: var(--harvest-green-100);
+  border-color: var(--border-brand);
+  color: var(--interactive-primary);
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 12px;
+}
 .product-row {
   display: flex;
   align-items: center;

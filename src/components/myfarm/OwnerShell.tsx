@@ -75,9 +75,6 @@ export function OwnerShell({
             </div>
             {!preview && (
               <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                <Link href="/my-farm?preview=1" className="owner-icon-btn" title="Preview">
-                  <Icon name="eye" size={18} />
-                </Link>
                 <Link href="/settings" className="owner-icon-btn" title="Settings">
                   <Icon name="gear" size={18} />
                 </Link>

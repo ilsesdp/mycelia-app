@@ -1,24 +1,42 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { productRailLabel, type ProductRow } from "@/lib/myFarm";
 
-const KIND_LABEL: Record<"ready" | "producing" | "planning", string> = {
+type Kind = "ready" | "producing" | "planning";
+type FilterKey = "all" | Kind;
+
+const KIND_LABEL: Record<Kind, string> = {
   ready: "Ready now",
   producing: "Producing",
   planning: "Planning",
 };
-const KIND_CLASS: Record<"ready" | "producing" | "planning", string> = {
+const KIND_CLASS: Record<Kind, string> = {
   ready: "avail-ready",
   producing: "avail-producing",
   planning: "avail-planning-solid",
 };
+const AVAILABILITY_KIND: Record<ProductRow["availability"], Kind> = {
+  ready_now: "ready",
+  producing: "producing",
+  planning: "planning",
+};
+const FILTERS: { key: FilterKey; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "ready", label: "Ready now" },
+  { key: "producing", label: "Producing" },
+  { key: "planning", label: "Planning" },
+];
 
 // Static display card — not a link. Editing a product goes through the
 // "Manage" link above, not by tapping a card here (tried making cards
 // themselves tappable-to-edit; turned out that's not what these rails are
 // for, so they're read-only summaries again regardless of context).
-function RailCard({ p, kind }: { p: ProductRow; kind: "ready" | "producing" | "planning" }) {
+function ProductCard({ p }: { p: ProductRow }) {
+  const kind = AVAILABILITY_KIND[p.availability];
   return (
-    <div className="avail-card">
+    <div className="avail-card grid">
       <div className="photo">
         {p.photo_url && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -34,36 +52,19 @@ function RailCard({ p, kind }: { p: ProductRow; kind: "ready" | "producing" | "p
   );
 }
 
-function Section({ label, kind, items }: { label: string; kind: "ready" | "producing" | "planning"; items: ProductRow[] }) {
-  if (!items.length) return null;
-  return (
-    <>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span className="body-s-strong">{label}</span>
-        <span className="caption">
-          {items.length} item{items.length === 1 ? "" : "s"}
-        </span>
-      </div>
-      <div style={{ height: 10 }} />
-      <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
-        {items.map((p) => (
-          <RailCard key={p.id} p={p} kind={kind} />
-        ))}
-      </div>
-      <div style={{ height: 20 }} />
-    </>
-  );
-}
-
-// Ports availSection()/farmOwnerBody()/farmOwnerBodyPublic() — the "What's
-// available" rails on 4.1 (owner) and 4.2 (public preview). Both are
-// read-only displays; the owner edits products from Manage (4.3), not from
-// here.
+// Ports availSection()/farmOwnerBody()/farmOwnerBodyPublic() — "Our
+// products" on 4.1 (owner) and 4.2 (public preview). Both are read-only
+// displays; the owner edits products from Manage (4.3), not from here. A
+// row of All/Ready now/Producing/Planning filter pills replaces the old
+// per-availability horizontal-scrolling rails, so the tab scrolls only
+// vertically and products show in a fixed two-column grid.
 export function AvailRail({ products, showManage }: { products: ProductRow[]; showManage: boolean }) {
+  const [filter, setFilter] = useState<FilterKey>("all");
+
   if (!products.length) {
     return (
       <>
-        <div className="label-caps">What&apos;s available</div>
+        <div className="label-caps">Our products</div>
         <div style={{ height: 14 }} />
         <p className="body-m" style={{ color: "var(--text-tertiary)" }}>
           This farm hasn&apos;t listed any products yet.
@@ -71,13 +72,13 @@ export function AvailRail({ products, showManage }: { products: ProductRow[]; sh
       </>
     );
   }
-  const ready = products.filter((p) => p.availability === "ready_now");
-  const producing = products.filter((p) => p.availability === "producing");
-  const planning = products.filter((p) => p.availability === "planning");
+
+  const shown = filter === "all" ? products : products.filter((p) => AVAILABILITY_KIND[p.availability] === filter);
+
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <div className="label-caps">What&apos;s available</div>
+        <div className="label-caps">Our products</div>
         {showManage && (
           <Link href="/my-farm/products" style={{ cursor: "pointer", textDecoration: "none", color: "var(--text-link)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14 }}>
             Manage
@@ -85,9 +86,25 @@ export function AvailRail({ products, showManage }: { products: ProductRow[]; sh
         )}
       </div>
       <div style={{ height: 14 }} />
-      <Section label="Ready now" kind="ready" items={ready} />
-      <Section label="Producing" kind="producing" items={producing} />
-      <Section label="Planning" kind="planning" items={planning} />
+      <div className="product-filter-row">
+        {FILTERS.map((f) => (
+          <button key={f.key} className={`product-filter-pill ${filter === f.key ? "active" : ""}`} onClick={() => setFilter(f.key)}>
+            {f.label}
+          </button>
+        ))}
+      </div>
+      <div style={{ height: 16 }} />
+      {shown.length ? (
+        <div className="product-grid">
+          {shown.map((p) => (
+            <ProductCard key={p.id} p={p} />
+          ))}
+        </div>
+      ) : (
+        <p className="body-m" style={{ color: "var(--text-tertiary)" }}>
+          No products in this category yet.
+        </p>
+      )}
     </>
   );
 }

@@ -51,7 +51,7 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Contact support" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, flex: 1, display: "flex", flexDirection: "column" }}>
-        <div className="label-caps">What&apos;s it about?</div>
+        <div className="label-caps">What do you need help with?</div>
         <div style={{ height: 8 }} />
         <div style={{ position: "relative" }}>
           <div
@@ -120,15 +120,15 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
           id="support-message"
           className="field"
           style={{ height: 120 }}
-          placeholder="The more you can tell us, the faster we can help."
+          placeholder="Describe what happened and what you were trying to do."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
 
         <div style={{ height: 20 }} />
         <ToggleRow
-          title="Include my farm and email"
-          sub="So we can find your account without asking"
+          title="Include my account details"
+          sub="Helps support find your account faster"
           on={includeAccount}
           onToggle={() => setIncludeAccount((v) => !v)}
         />

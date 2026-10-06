@@ -3,16 +3,16 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AppBar } from "@/components/ui/AppBar";
-import { ConfirmSheet } from "@/components/settings/ConfirmSheet";
 import { createClient } from "@/lib/supabase/client";
 
 function isValidEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 }
 
-// Ports SCREENS['5.6']. The prototype's "Delete my account" opens a
-// confirm sheet (5.11) rather than routing to a separate screen, so it's
-// handled here inline rather than as its own route.
+// Ports SCREENS['5.6'] — just the contact email/phone fields. Change
+// password and Delete account moved out to SecurityForm (its own
+// "Security" row on the hub, SCREENS['5.10']) rather than living on this
+// screen, so this one stays scoped to "how people reach you."
 export function AccountForm({
   authEmail,
   initialEmail,
@@ -27,8 +27,6 @@ export function AccountForm({
   const [email, setEmail] = useState(initialEmail);
   const [phone, setPhone] = useState(initialPhone);
   const [saving, setSaving] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const emailOk = isValidEmail(email);
 
   async function save() {
@@ -47,33 +45,13 @@ export function AccountForm({
     router.push("/settings?saved=Contact info saved");
   }
 
-  async function confirmDelete() {
-    if (deleting) return;
-    setDeleting(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
-      // Cascades to farm_hours, farm_categories, products, farm_markets,
-      // events and message_threads/messages via ON DELETE CASCADE. This
-      // removes everything the account owns, but the Supabase Auth login
-      // itself isn't deleted — that needs service-role/admin access this
-      // client-side app doesn't have.
-      await supabase.from("farms").delete().eq("owner_id", user.id);
-    }
-    await supabase.auth.signOut();
-    router.push("/welcome");
-  }
-
   return (
     <main className="flex flex-col min-h-screen">
-      <AppBar backHref="/settings" title="Account information" />
-      {/* Bottom padding clears the fixed button stack below (three buttons
-          + their gaps + safe-area inset) with real breathing room, not just
-          flush against it — same pattern as the onboarding preview's
-          sticky Publish button. */}
-      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 216, display: "flex", flexDirection: "column" }}>
-        <p className="body-m">The email you sign in with is {authEmail}. This is how people reach you.</p>
+      <AppBar backHref="/settings" title="Contact information" />
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
+        <p className="body-m">
+          The email you sign in with is {authEmail}. This is how people reach you — choose who sees it from Privacy &amp; visibility.
+        </p>
         <div style={{ height: 20 }} />
 
         <label className="label-caps" htmlFor="account-email">
@@ -107,50 +85,12 @@ export function AccountForm({
           onChange={(e) => setPhone(e.target.value)}
           placeholder="(555) 555-0123"
         />
-      </div>
 
-      {/* Fixed at the bottom of the viewport, same as the onboarding
-          preview's "Publish my farm" button — these are the actions for
-          this whole screen, so they stay reachable no matter how far
-          you've scrolled the fields above. */}
-      <div
-        style={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "var(--bg-raised)",
-          borderTop: "1px solid var(--border-subtle)",
-          padding: "12px 16px calc(12px + env(safe-area-inset-bottom))",
-          display: "flex",
-          flexDirection: "column",
-          zIndex: 50,
-        }}
-      >
+        <div style={{ height: 20 }} />
         <button className="btn btn-primary" disabled={!emailOk || saving} onClick={save}>
           {saving ? "Saving…" : "Save changes"}
         </button>
-        <div style={{ height: 10 }} />
-        <button className="btn btn-ghost" onClick={() => router.push("/settings/password")}>
-          Change password
-        </button>
-        <div style={{ height: 10 }} />
-        <button className="btn btn-ghost" style={{ color: "var(--text-danger)" }} onClick={() => setShowDelete(true)}>
-          Delete my account
-        </button>
       </div>
-
-      {showDelete && (
-        <ConfirmSheet
-          title="Delete your account?"
-          body="This removes your farm, products, markets, events and messages for good. This can't be undone."
-          confirmLabel="Delete account"
-          cancelLabel="Cancel"
-          busy={deleting}
-          onConfirm={confirmDelete}
-          onCancel={() => setShowDelete(false)}
-        />
-      )}
     </main>
   );
 }

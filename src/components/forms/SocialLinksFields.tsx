@@ -36,7 +36,7 @@ export function SocialLinksFields({ value, onChange }: { value: SocialLinksValue
             {f.label}
           </span>
           <input
-            className="body-s"
+            className="body-s social-field-input"
             placeholder={f.placeholder}
             value={value[f.key]}
             onChange={(e) => onChange(f.key, e.target.value)}

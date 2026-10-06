@@ -258,6 +258,11 @@ body {
 .search-field-input::placeholder {
   color: var(--text-tertiary);
 }
+/* Website & social media's row inputs (SocialLinksFields) aren't .field
+   either — same reasoning as search-field-input above. */
+.social-field-input::placeholder {
+  color: var(--text-tertiary);
+}
 .field:focus {
   outline: none;
   border-width: 1.5px;

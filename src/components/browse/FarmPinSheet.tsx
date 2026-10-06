@@ -5,7 +5,8 @@ import { catBg, catFg } from "@/lib/categoryStyle";
 import { abbreviateAddress } from "@/lib/geo";
 import { farmTodayStatus, statusTone, STATUS_TONE_COLOR, type HourRow, type TodayStatus } from "@/lib/farmStatus";
 
-export type SheetProduct = { id: string; name: string; qty: string | null; photo_url: string | null };
+type Availability = "ready_now" | "producing" | "planning";
+export type SheetProduct = { id: string; name: string; qty: string | null; photo_url: string | null; availability: Availability };
 
 export type FarmSheetData = {
   id: string;
@@ -19,40 +20,44 @@ export type FarmSheetData = {
   hours: HourRow[];
   todayStatus: TodayStatus;
   timezone: string;
-  ready: SheetProduct[];
-  producing: SheetProduct[];
+  products: SheetProduct[];
   coverPhotoUrl: string | null;
 };
 
-function productCard(p: SheetProduct, kind: "ready" | "producing") {
+const AVAIL_LABEL: Record<Availability, string> = { ready_now: "Ready now", producing: "Producing", planning: "Planning" };
+const AVAIL_CLASS: Record<Availability, string> = { ready_now: "avail-ready", producing: "avail-producing", planning: "avail-planning-solid" };
+// Ready-now items surface first in the sheet's 3-up preview, same priority
+// order as everywhere else products are grouped (AvailRail, onboarding).
+const AVAIL_ORDER: Record<Availability, number> = { ready_now: 0, producing: 1, planning: 2 };
+
+function productCard(p: SheetProduct) {
   return (
-    <div key={p.id} style={{ width: 140, flexShrink: 0 }}>
+    <div key={p.id}>
       {p.photo_url ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={p.photo_url}
           alt=""
-          style={{ width: 140, height: 100, borderRadius: 16, objectFit: "cover", border: "1px solid var(--border-subtle)", display: "block" }}
+          style={{ width: "100%", aspectRatio: "1 / 1", borderRadius: 16, objectFit: "cover", border: "1px solid var(--border-subtle)", display: "block" }}
         />
       ) : (
-        <div style={{ width: 140, height: 100, borderRadius: 16, background: "var(--bg-subtle)", border: "1px solid var(--border-subtle)" }} />
+        <div style={{ width: "100%", aspectRatio: "1 / 1", borderRadius: 16, background: "var(--bg-subtle)", border: "1px solid var(--border-subtle)" }} />
       )}
       <div style={{ height: 8 }} />
       <div className="body-s-strong">{p.name}</div>
       <div className="caption">{p.qty}</div>
       <div style={{ height: 4 }} />
-      <span className={`avail ${kind === "ready" ? "avail-ready" : "avail-producing"}`}>
-        {kind === "ready" ? "Ready now" : "Producing"}
-      </span>
+      <span className={`avail ${AVAIL_CLASS[p.availability]}`}>{AVAIL_LABEL[p.availability]}</span>
     </div>
   );
 }
 
 // Ports SCREENS['2.2'] — the bottom sheet a tapped farm pin opens, over the
-// (now dimmed) map. "See all" / "See the farm" both go to the farm's own
-// profile page; that route (2.3–2.5) is the next screen group and isn't
-// built yet, so — same as the list view's farm cards today — the link is
-// real but its destination isn't live yet.
+// (now dimmed) map. "View all" and "View farm profile" both go to the
+// farm's own pages. The sheet shows at most 3 products (ready-now first),
+// in a fixed, non-scrolling 3-up row — no "What's available" scroll
+// section anymore — so the sheet stays short enough that the map is still
+// visible above it.
 //
 // `open` drives a slide-up/slide-down transform (true = resting position,
 // false = translated off-screen below), so the caller can mount this with
@@ -70,6 +75,7 @@ export function FarmPinSheet({
   onCloseTransitionEnd?: () => void;
 }) {
   const status = farmTodayStatus(farm.hours, farm.todayStatus, farm.timezone);
+  const preview = [...farm.products].sort((a, b) => AVAIL_ORDER[a.availability] - AVAIL_ORDER[b.availability]).slice(0, 3);
   return (
     <div
       onClick={(e) => e.stopPropagation()}
@@ -84,7 +90,6 @@ export function FarmPinSheet({
         background: "var(--bg-raised)",
         borderRadius: "20px 20px 0 0",
         boxShadow: "0 -4px 24px rgba(0,0,0,.18)",
-        maxHeight: "80%",
         display: "flex",
         flexDirection: "column",
         zIndex: 60,
@@ -92,8 +97,7 @@ export function FarmPinSheet({
         transition: "transform 280ms cubic-bezier(0.32, 0.72, 0, 1)",
       }}
     >
-      {/* Static header — name, address, status, categories — never scrolls. */}
-      <div style={{ flexShrink: 0, padding: "12px 20px 0" }}>
+      <div style={{ padding: "12px 20px 0" }}>
         <div style={{ width: 40, height: 4, borderRadius: 999, background: "var(--border-strong)", margin: "0 auto 14px" }} />
 
         <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
@@ -145,40 +149,25 @@ export function FarmPinSheet({
         <div style={{ borderTop: "1px solid var(--border-subtle)" }} />
       </div>
 
-      {/* Only "What's available" scrolls. */}
-      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "16px 20px 0" }}>
-        <div className="label-caps">WHAT&apos;S AVAILABLE</div>
+      <div style={{ padding: "16px 20px 0" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="label-caps">Products</div>
+          <Link href={`/farms/${farm.id}/products?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
+            View all ({farm.products.length})
+          </Link>
+        </div>
         <div style={{ height: 14 }} />
-
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span className="body-s-strong">Ready now ({farm.ready.length})</span>
-          <Link href={`/farms/${farm.id}?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
-            See all
-          </Link>
-        </div>
-        <div style={{ height: 10 }} />
-        <div style={{ display: "flex", gap: 12, overflowX: "auto" }}>
-          {farm.ready.length ? farm.ready.map((p) => productCard(p, "ready")) : <p className="caption">Nothing marked ready now yet.</p>}
-        </div>
-
-        <div style={{ height: 20 }} />
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span className="body-s-strong">Producing ({farm.producing.length})</span>
-          <Link href={`/farms/${farm.id}?from=map`} style={{ color: "var(--info-fg)", fontWeight: 600, fontSize: 14 }}>
-            See all
-          </Link>
-        </div>
-        <div style={{ height: 10 }} />
-        <div style={{ display: "flex", gap: 12, overflowX: "auto" }}>
-          {farm.producing.length ? farm.producing.map((p) => productCard(p, "producing")) : <p className="caption">Nothing in progress yet.</p>}
-        </div>
+        {preview.length ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>{preview.map(productCard)}</div>
+        ) : (
+          <p className="caption">This farm hasn&apos;t listed any products yet.</p>
+        )}
         <div style={{ height: 18 }} />
       </div>
 
-      {/* Static footer — never scrolls. */}
-      <div style={{ flexShrink: 0, padding: "14px 20px 32px" }}>
+      <div style={{ padding: "14px 20px 32px" }}>
         <Link href={`/farms/${farm.id}?from=map`} className="btn btn-primary" style={{ height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          See the farm
+          View farm profile
         </Link>
       </div>
     </div>

@@ -110,8 +110,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
         hours: match.farm_hours,
         todayStatus: match.today_status,
         timezone: match.timezone,
-        ready: match.products.filter((p) => p.availability === "ready_now"),
-        producing: match.products.filter((p) => p.availability === "producing"),
+        products: match.products,
         coverPhotoUrl: match.cover_photo_url,
       };
     }

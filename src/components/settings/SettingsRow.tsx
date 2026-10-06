@@ -4,7 +4,22 @@ import { Icon, type IconName } from "@/components/ui/Icon";
 // Ports settingsRow() — an icon+title(+sub) row with a trailing chevron,
 // used throughout 5.2/5.7. Always a real navigation (Link), never a dead
 // row — this group has somewhere real to send every tap.
-export function SettingsRow({ icon, title, sub, href }: { icon?: IconName; title: string; sub?: string; href: string }) {
+export function SettingsRow({
+  icon,
+  title,
+  sub,
+  href,
+  color = "var(--text-secondary)",
+}: {
+  icon?: IconName;
+  title: string;
+  sub?: string;
+  href: string;
+  // Icon + title color. Defaults to the plain secondary text color (the
+  // Help center FAQ rows and its own "Contact support" link keep this
+  // default); the Settings hub's top-level rows pass the brand green.
+  color?: string;
+}) {
   return (
     <Link
       href={href}
@@ -19,12 +34,12 @@ export function SettingsRow({ icon, title, sub, href }: { icon?: IconName; title
       }}
     >
       {icon && (
-        <span style={{ display: "flex", width: 20, height: 20, flexShrink: 0, color: "var(--text-secondary)" }}>
+        <span style={{ display: "flex", width: 20, height: 20, flexShrink: 0, color }}>
           <Icon name={icon} size={20} />
         </span>
       )}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div className="body-m" style={{ color: "var(--text-secondary)" }}>
+        <div className="body-m" style={{ color }}>
           {title}
         </div>
         {sub && <div className="body-s-medium">{sub}</div>}

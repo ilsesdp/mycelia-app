@@ -58,7 +58,7 @@ export default async function MyFarmEventsPage() {
               No events yet
             </div>
             <p className="body-m" style={{ textAlign: "center" }}>
-              Add a market day or a farm visit so people know when to come.
+              Add farm visits, workshops, or other events people can attend.
             </p>
             <div style={{ height: 6 }} />
             <Link href="/my-farm/events/new?backTo=events" className="btn btn-primary">

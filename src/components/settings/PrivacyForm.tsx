@@ -83,7 +83,7 @@ export function PrivacyForm({
 
   return (
     <main className="flex flex-col min-h-screen">
-      <AppBar backHref="/settings" title="Privacy" />
+      <AppBar backHref="/settings" title="Privacy & visibility" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
         <p className="body-m">You choose what&apos;s public.</p>
         <div style={{ height: 24 }} />

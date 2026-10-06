@@ -20,6 +20,7 @@ export type FarmListItem = {
   categories: Database["public"]["Enums"]["category_t"][];
   hours: HourRow[];
   todayStatus: TodayStatus;
+  todayStatusDate: string | null;
   timezone: string;
   hasReadyProduct: boolean;
   productNames: string[];
@@ -72,7 +73,7 @@ export default function FarmList({
 
   const rows: Row[] = [
     ...farms.map((f) => {
-      const status = farmTodayStatus(f.hours, f.todayStatus, f.timezone);
+      const status = farmTodayStatus(f.hours, f.todayStatus, f.timezone, f.todayStatusDate);
       return {
         kind: "farm" as const,
         id: f.id,

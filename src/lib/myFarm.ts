@@ -71,6 +71,7 @@ export type MyFarmIdentity = {
   hours: HourRow[];
   todayStatus: TodayStatusEnum | null;
   todayStatusNote: string | null;
+  todayStatusDate: string | null;
   timezone: string;
 };
 
@@ -87,7 +88,7 @@ export async function getMyFarmIdentity(supabase: Client, farmId: string): Promi
     .from("farms")
     .select(
       `
-      id, name, address, cover_photo_url, today_status, today_status_note, timezone,
+      id, name, address, cover_photo_url, today_status, today_status_note, today_status_date, timezone,
       farm_categories ( category ),
       farm_hours ( day_of_week, open_time, close_time, closed )
     `
@@ -101,10 +102,11 @@ export async function getMyFarmIdentity(supabase: Client, farmId: string): Promi
     address: data.address,
     coverPhotoUrl: data.cover_photo_url,
     categories: data.farm_categories.map((c) => c.category),
-    status: farmTodayStatus(data.farm_hours, data.today_status, data.timezone),
+    status: farmTodayStatus(data.farm_hours, data.today_status, data.timezone, data.today_status_date),
     hours: data.farm_hours,
     todayStatus: data.today_status,
     todayStatusNote: data.today_status_note,
+    todayStatusDate: data.today_status_date,
     timezone: data.timezone,
   };
 }

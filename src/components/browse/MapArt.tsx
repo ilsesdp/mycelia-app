@@ -15,6 +15,7 @@ export type MapPin = {
   // of where it's computed or who's viewing.
   hours: HourRow[];
   todayStatus: TodayStatus;
+  todayStatusDate: string | null;
   timezone: string;
   // Farm pins only (markets carry no products in this schema) — lets the
   // map's search bar match "cilantro" the same way the list view does, via
@@ -28,6 +29,7 @@ export type OwnFarmMarker = {
   name: string;
   hours: HourRow[];
   todayStatus: TodayStatus;
+  todayStatusDate: string | null;
   timezone: string;
 };
 
@@ -55,7 +57,7 @@ export function MapArt({
   ownFarm: OwnFarmMarker | null;
 }) {
   const { status, coords } = useGeolocation();
-  const ownFarmStatus = ownFarm ? farmTodayStatus(ownFarm.hours, ownFarm.todayStatus, ownFarm.timezone) : null;
+  const ownFarmStatus = ownFarm ? farmTodayStatus(ownFarm.hours, ownFarm.todayStatus, ownFarm.timezone, ownFarm.todayStatusDate) : null;
 
   return (
     <div
@@ -170,7 +172,7 @@ export function MapArt({
       )}
 
       {pins.map((p) => {
-        const pStatus = farmTodayStatus(p.hours, p.todayStatus, p.timezone);
+        const pStatus = farmTodayStatus(p.hours, p.todayStatus, p.timezone, p.todayStatusDate);
         const state = pinState(p.kind, pStatus.open, pStatus.closedEarly);
         const selected = p.id === selectedId;
         // Only the selected pin grows a halo and shows its name — every

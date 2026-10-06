@@ -67,7 +67,7 @@ export function FarmProfileShell({
             </div>
           )}
           <div style={{ height: 4 }} />
-          <StatusChip hours={farm.hours} todayStatus={farm.todayStatus} timezone={farm.timezone} />
+          <StatusChip hours={farm.hours} todayStatus={farm.todayStatus} todayStatusDate={farm.todayStatusDate} timezone={farm.timezone} />
           <div style={{ height: 10 }} />
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {farm.categories.map((c) => (

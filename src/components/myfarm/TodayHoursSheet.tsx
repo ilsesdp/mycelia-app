@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { createClient } from "@/lib/supabase/client";
-import { fmtTime, type HourRow } from "@/lib/farmStatus";
+import { fmtTime, todayDateInTimezone, type HourRow } from "@/lib/farmStatus";
 import type { TodayStatusEnum } from "@/lib/myFarm";
 
 const DAY_FULL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -54,13 +54,18 @@ function RadioRow({ label, detail, selected, chevron, onClick }: { label: string
 // Ports 4.6 (Today's hours) + 4.7 (Close early) as one stateful sheet —
 // 4.7 is a drill-in from 4.6 in the prototype, not a separate route, so a
 // `view` toggle stands in for that screen-to-screen nav. Save writes the
-// farm's real today_status/today_status_note columns (farmStatus.ts already
-// reads these for the map pin and status chip everywhere).
+// farm's real today_status/today_status_note/today_status_date columns
+// (farmStatus.ts already reads these for the map pin and status chip
+// everywhere). today_status_date is what makes "This is for today only"
+// true — it's stamped with today's date (in the farm's own timezone) on
+// every save, and farmTodayStatus ignores the override once that date is
+// no longer today, instead of the status staying stuck indefinitely.
 export function TodayHoursSheet({
   farmId,
   hours,
   initialStatus,
   initialNote,
+  timezone,
   onClose,
   onSaved,
 }: {
@@ -68,8 +73,9 @@ export function TodayHoursSheet({
   hours: HourRow[];
   initialStatus: TodayStatusEnum | null;
   initialNote: string | null;
+  timezone: string;
   onClose: () => void;
-  onSaved: (status: TodayStatusEnum, note: string | null) => void;
+  onSaved: (status: TodayStatusEnum, note: string | null, date: string) => void;
 }) {
   const supabase = createClient();
   const router = useRouter();
@@ -96,10 +102,11 @@ export function TodayHoursSheet({
 
   async function save(nextStatus: TodayStatusEnum, note: string | null) {
     setSaving(true);
-    await supabase.from("farms").update({ today_status: nextStatus, today_status_note: note }).eq("id", farmId);
+    const date = todayDateInTimezone(timezone);
+    await supabase.from("farms").update({ today_status: nextStatus, today_status_note: note, today_status_date: date }).eq("id", farmId);
     setSaving(false);
     router.refresh();
-    onSaved(nextStatus, note);
+    onSaved(nextStatus, note, date);
   }
 
   if (view === "closeEarly") {

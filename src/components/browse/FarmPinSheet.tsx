@@ -19,6 +19,7 @@ export type FarmSheetData = {
   // the farm's own stored timezone.
   hours: HourRow[];
   todayStatus: TodayStatus;
+  todayStatusDate: string | null;
   timezone: string;
   products: SheetProduct[];
   coverPhotoUrl: string | null;
@@ -74,7 +75,7 @@ export function FarmPinSheet({
   open: boolean;
   onCloseTransitionEnd?: () => void;
 }) {
-  const status = farmTodayStatus(farm.hours, farm.todayStatus, farm.timezone);
+  const status = farmTodayStatus(farm.hours, farm.todayStatus, farm.timezone, farm.todayStatusDate);
   const preview = [...farm.products].sort((a, b) => AVAIL_ORDER[a.availability] - AVAIL_ORDER[b.availability]).slice(0, 3);
   return (
     <div

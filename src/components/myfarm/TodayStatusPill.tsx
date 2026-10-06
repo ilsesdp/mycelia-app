@@ -18,6 +18,7 @@ export function TodayStatusPill({
   hours,
   todayStatus,
   todayStatusNote,
+  todayStatusDate,
   timezone,
   tappable,
 }: {
@@ -25,14 +26,16 @@ export function TodayStatusPill({
   hours: HourRow[];
   todayStatus: TodayStatusEnum | null;
   todayStatusNote: string | null;
+  todayStatusDate: string | null;
   timezone: string;
   tappable: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(todayStatus);
   const [note, setNote] = useState(todayStatusNote);
+  const [date, setDate] = useState(todayStatusDate);
   const [toast, setToast] = useState<string | null>(null);
-  const computed = farmTodayStatus(hours, status, timezone);
+  const computed = farmTodayStatus(hours, status, timezone, date);
   const toneColor = STATUS_TONE_COLOR[statusTone(computed)];
 
   useEffect(() => {
@@ -57,10 +60,12 @@ export function TodayStatusPill({
           hours={hours}
           initialStatus={status}
           initialNote={note}
+          timezone={timezone}
           onClose={() => setOpen(false)}
-          onSaved={(s, n) => {
+          onSaved={(s, n, d) => {
             setStatus(s);
             setNote(n);
+            setDate(d);
             setOpen(false);
             setToast(savedToastText(s, n));
           }}

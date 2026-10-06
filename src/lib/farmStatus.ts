@@ -33,6 +33,12 @@ export function nowInTimezone(timeZone: string, at: Date = new Date()): { dayOfW
   return { dayOfWeek: WEEKDAY_INDEX[weekday] ?? at.getDay(), minutes: hour * 60 + minute };
 }
 
+// "YYYY-MM-DD" for the given timezone's current date — used only to compare
+// against today_status_date (see farmTodayStatus below), never to display.
+export function todayDateInTimezone(timezone: string, at: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(at);
+}
+
 export function fmtTime(t: string): string {
   // "17:00:00" -> "5pm", "09:30:00" -> "9:30am"
   const [hStr, m] = t.split(":");
@@ -103,14 +109,22 @@ export function farmStatus(
 
 export type TodayStatus = "open" | "closed_early" | "closed" | null;
 
-// Layers the owner's manual "close early / closed today" override (My Farm
-// tools, not built yet — farms.today_status) on top of the regular weekly
-// schedule. Shared by the map (pin color) and the farm profile (status
-// chip) so the two never drift.
-export function farmTodayStatus(hours: HourRow[], todayStatus: TodayStatus, timezone: string) {
+// Layers the owner's manual "close early / closed today" override
+// (farms.today_status) on top of the regular weekly schedule. Shared by the
+// map (pin color) and the farm profile (status chip) so the two never
+// drift.
+//
+// The override only applies when todayStatusDate matches the farm's own
+// "today" (computed in its own timezone) — it's a date-stamped override,
+// not a sticky flag, so a farm an owner marked "closed today" doesn't stay
+// stuck closed on every day after. todayStatusDate is optional only for
+// older call sites mid-migration; treat a missing date as "no date on
+// record" (the override never applies) rather than assuming it's current.
+export function farmTodayStatus(hours: HourRow[], todayStatus: TodayStatus, timezone: string, todayStatusDate?: string | null) {
   const hoursStatus = farmStatus(hours, timezone);
-  const closedEarly = todayStatus === "closed_early";
-  const overrideClosed = todayStatus === "closed" || closedEarly;
+  const current = !!todayStatusDate && todayStatusDate === todayDateInTimezone(timezone);
+  const closedEarly = current && todayStatus === "closed_early";
+  const overrideClosed = current && (todayStatus === "closed" || closedEarly);
   return {
     ...(overrideClosed ? { ...hoursStatus, open: false, closingSoon: false } : hoursStatus),
     closedEarly,

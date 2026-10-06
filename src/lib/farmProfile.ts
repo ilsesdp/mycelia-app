@@ -25,6 +25,7 @@ export type FarmHeader = {
   // regardless of where it's computed or who's viewing.
   hours: HourRow[];
   todayStatus: TodayStatus;
+  todayStatusDate: string | null;
   timezone: string;
 };
 
@@ -60,6 +61,7 @@ export async function getFarmHeader(
       lng,
       cover_photo_url,
       today_status,
+      today_status_date,
       timezone,
       farm_categories ( category ),
       farm_hours ( day_of_week, open_time, close_time, closed )
@@ -86,6 +88,7 @@ export async function getFarmHeader(
     categories: data.farm_categories.map((c) => c.category),
     hours: data.farm_hours,
     todayStatus: data.today_status,
+    todayStatusDate: data.today_status_date,
     timezone: data.timezone,
   };
 }

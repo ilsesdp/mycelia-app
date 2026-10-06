@@ -72,6 +72,7 @@ export function OwnerShell({
             hours={farm.hours}
             todayStatus={farm.todayStatus}
             todayStatusNote={farm.todayStatusNote}
+            todayStatusDate={farm.todayStatusDate}
             timezone={farm.timezone}
             tappable
           />

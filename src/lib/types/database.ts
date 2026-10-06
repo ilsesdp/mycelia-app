@@ -224,6 +224,7 @@ export type Database = {
           published: boolean
           timezone: string
           today_status: Database["public"]["Enums"]["today_status_t"] | null
+          today_status_date: string | null
           today_status_note: string | null
           updated_at: string
           website: string | null
@@ -245,6 +246,7 @@ export type Database = {
           published?: boolean
           timezone?: string
           today_status?: Database["public"]["Enums"]["today_status_t"] | null
+          today_status_date?: string | null
           today_status_note?: string | null
           updated_at?: string
           website?: string | null
@@ -266,6 +268,7 @@ export type Database = {
           published?: boolean
           timezone?: string
           today_status?: Database["public"]["Enums"]["today_status_t"] | null
+          today_status_date?: string | null
           today_status_note?: string | null
           updated_at?: string
           website?: string | null

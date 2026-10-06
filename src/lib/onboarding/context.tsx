@@ -84,6 +84,11 @@ export type OnboardingState = {
   emailVisibility: Visibility;
   phoneVisibility: Visibility;
   messageChannel: "Text me" | "Email me" | "Both";
+
+  // 1.11 — website & social media (optional)
+  farmWebsite: string;
+  farmInstagram: string;
+  farmFacebook: string;
 };
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -114,6 +119,9 @@ function initialState(): OnboardingState {
     emailVisibility: "Growers only",
     phoneVisibility: "Only me",
     messageChannel: "Text me",
+    farmWebsite: "",
+    farmInstagram: "",
+    farmFacebook: "",
   };
 }
 

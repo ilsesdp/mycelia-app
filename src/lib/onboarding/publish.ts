@@ -53,6 +53,9 @@ export async function publishFarm(state: OnboardingState, userId: string) {
       lat: state.farmLat,
       lng: state.farmLng,
       about: state.farmAbout || null,
+      website: state.farmWebsite || null,
+      instagram: state.farmInstagram || null,
+      facebook: state.farmFacebook || null,
       published: false,
     })
     .select("id")

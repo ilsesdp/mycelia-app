@@ -213,8 +213,10 @@ export type Database = {
           cover_photo_url: string | null
           created_at: string
           directions: string | null
+          facebook: string | null
           google_place_id: string | null
           id: string
+          instagram: string | null
           lat: number | null
           lng: number | null
           name: string
@@ -224,6 +226,7 @@ export type Database = {
           today_status: Database["public"]["Enums"]["today_status_t"] | null
           today_status_note: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
           about?: string | null
@@ -231,8 +234,10 @@ export type Database = {
           cover_photo_url?: string | null
           created_at?: string
           directions?: string | null
+          facebook?: string | null
           google_place_id?: string | null
           id?: string
+          instagram?: string | null
           lat?: number | null
           lng?: number | null
           name: string
@@ -242,6 +247,7 @@ export type Database = {
           today_status?: Database["public"]["Enums"]["today_status_t"] | null
           today_status_note?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
           about?: string | null
@@ -249,8 +255,10 @@ export type Database = {
           cover_photo_url?: string | null
           created_at?: string
           directions?: string | null
+          facebook?: string | null
           google_place_id?: string | null
           id?: string
+          instagram?: string | null
           lat?: number | null
           lng?: number | null
           name?: string
@@ -260,6 +268,7 @@ export type Database = {
           today_status?: Database["public"]["Enums"]["today_status_t"] | null
           today_status_note?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: [
           {

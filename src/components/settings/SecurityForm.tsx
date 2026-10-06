@@ -104,7 +104,7 @@ export function SecurityForm({ email }: { email: string }) {
         <div style={{ height: 6 }} />
         <PasswordField
           id="pw-current"
-          placeholder="At least 8 characters"
+          placeholder="Enter your current password"
           value={current}
           onChange={(e) => setCurrent(e.target.value)}
         />
@@ -133,7 +133,7 @@ export function SecurityForm({ email }: { email: string }) {
         <div style={{ height: 6 }} />
         <PasswordField
           id="pw-confirm"
-          placeholder="At least 8 characters"
+          placeholder="Enter your new password again"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
         />

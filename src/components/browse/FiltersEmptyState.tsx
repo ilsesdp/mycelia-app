@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
+import type { FilterChip } from "@/lib/filters";
 
 // Ports SCREENS['2.12'] — reached (in the prototype) only by tapping "Show
 // 0 results" on the Filters screen, but shown here any time the active
@@ -9,7 +10,7 @@ import { Icon } from "@/components/ui/Icon";
 // (list or map) the visitor is on — matching the prototype's own choice to
 // land on this screen rather than an empty map or an empty list, since
 // either one would look broken with zero results.
-export function FiltersEmptyState({ chips, view }: { chips: string[]; view: "list" | "map" }) {
+export function FiltersEmptyState({ chips, view }: { chips: FilterChip[]; view: "list" | "map" }) {
   const router = useRouter();
 
   function clearAll() {
@@ -21,7 +22,7 @@ export function FiltersEmptyState({ chips, view }: { chips: string[]; view: "lis
       <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
         {chips.map((c) => (
           <span
-            key={c}
+            key={c.label}
             style={{
               background: "var(--interactive-primary)",
               color: "var(--text-on-brand)",
@@ -32,7 +33,7 @@ export function FiltersEmptyState({ chips, view }: { chips: string[]; view: "lis
               fontSize: 14,
             }}
           >
-            {c}
+            {c.label}
           </span>
         ))}
       </div>

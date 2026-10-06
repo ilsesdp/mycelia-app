@@ -83,6 +83,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       hours: f.farm_hours,
       todayStatus: f.today_status,
       timezone: f.timezone,
+      productNames: f.products.map((p) => p.name),
     })),
     ...visibleMarkets.map((m) => ({
       id: m.id,
@@ -91,6 +92,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       // Markets have no stored hours/status yet, and their pin's icon
       // never varies by state anyway (see pinImageSrc in lib/mapPins.ts).
       hours: [],
+      productNames: [] as string[],
       todayStatus: null,
       timezone: "America/Chicago",
     })),

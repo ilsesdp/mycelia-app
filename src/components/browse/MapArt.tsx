@@ -16,6 +16,10 @@ export type MapPin = {
   hours: HourRow[];
   todayStatus: TodayStatus;
   timezone: string;
+  // Farm pins only (markets carry no products in this schema) — lets the
+  // map's search bar match "cilantro" the same way the list view does, via
+  // lib/search's matchesSearch/suggestionMatch.
+  productNames: string[];
   xPct: number;
   yPct: number;
 };
@@ -38,10 +42,15 @@ export type OwnFarmMarker = {
 // link to My Farm instead of the generic geolocation label.
 export function MapArt({
   pins,
+  selectedId,
   onPinTap,
   ownFarm,
 }: {
   pins: MapPin[];
+  // The one pin (if any) currently selected — the only pin whose name
+  // label shows, enlarged with a halo behind it (see the pins.map loop
+  // below). Every other pin is icon-only, no label, no enlargement.
+  selectedId: string | null;
   onPinTap: (pin: MapPin) => void;
   ownFarm: OwnFarmMarker | null;
 }) {
@@ -163,6 +172,13 @@ export function MapArt({
       {pins.map((p) => {
         const pStatus = farmTodayStatus(p.hours, p.todayStatus, p.timezone);
         const state = pinState(p.kind, pStatus.open, pStatus.closedEarly);
+        const selected = p.id === selectedId;
+        // Only the selected pin grows a halo and shows its name — every
+        // other pin is icon-only (see MapArt's own module comment on
+        // `selectedId`), so a size/opacity transition is what visually
+        // marks the selection instead of a label that was always there.
+        const iconSize = selected ? 56 : 40;
+        const haloSize = selected ? 96 : 0;
         // Label anchoring: the pin icon always stays centered on its own
         // (xPct, yPct) point, but the name label used to be centered under
         // it too — on a pin near either edge (pinPosition keeps xPct within
@@ -190,20 +206,54 @@ export function MapArt({
               width: 0,
               height: 0,
               cursor: "pointer",
+              zIndex: selected ? 1 : 0,
             }}
           >
+            {/* Halo — two soft rings behind the icon, centered roughly on
+                the pin body rather than its ground point, same idea as the
+                blue "you are here" halo above but green and selection-
+                driven instead of always on. Scales from 0 so it animates
+                in/out with the icon rather than popping. */}
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                top: -iconSize * 0.6,
+                width: haloSize,
+                height: haloSize,
+                borderRadius: "50%",
+                background: "rgba(6,72,40,.16)",
+                transform: "translate(-50%,-50%)",
+                transition: "width 200ms ease, height 200ms ease",
+                pointerEvents: "none",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                top: -iconSize * 0.6,
+                width: haloSize * 0.65,
+                height: haloSize * 0.65,
+                borderRadius: "50%",
+                background: "rgba(6,72,40,.24)",
+                transform: "translate(-50%,-50%)",
+                transition: "width 200ms ease, height 200ms ease",
+                pointerEvents: "none",
+              }}
+            />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={pinImageSrc(p.kind, state)}
               alt=""
-              width={40}
-              height={40}
+              width={iconSize}
+              height={iconSize}
               style={{
                 position: "absolute",
                 left: 0,
                 top: 0,
-                width: 40,
-                height: 40,
+                width: iconSize,
+                height: iconSize,
                 // Tailwind's preflight sets `img { max-width: 100% }`, which
                 // for an absolutely-positioned image resolves against its
                 // containing block — here the 0×0 pin anchor div below, so
@@ -211,27 +261,30 @@ export function MapArt({
                 // silently vanished (the label alone stayed visible).
                 maxWidth: "none",
                 transform: "translate(-50%,-100%)",
+                transition: "width 200ms ease, height 200ms ease",
                 display: "block",
               }}
             />
-            <div
-              style={{
-                position: "absolute",
-                top: 4,
-                ...labelStyle,
-                maxWidth: 160,
-                background: "var(--bg-raised)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: 8,
-                padding: "4px 8px",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                pointerEvents: "none",
-              }}
-            >
-              <span className="body-s-strong">{p.name}</span>
-            </div>
+            {selected && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 4,
+                  ...labelStyle,
+                  maxWidth: 160,
+                  background: "var(--bg-raised)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: 8,
+                  padding: "4px 8px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  pointerEvents: "none",
+                }}
+              >
+                <span className="body-s-strong">{p.name}</span>
+              </div>
+            )}
           </div>
         );
       })}

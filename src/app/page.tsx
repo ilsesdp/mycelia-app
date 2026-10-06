@@ -46,7 +46,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
         timezone,
         farm_categories ( category ),
         farm_hours ( day_of_week, open_time, close_time, closed ),
-        products ( availability )
+        products ( name, availability )
       `
       )
       .eq("published", true)
@@ -63,6 +63,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
     todayStatus: f.today_status,
     timezone: f.timezone,
     hasReadyProduct: f.products.some((p) => p.availability === "ready_now"),
+    productNames: f.products.map((p) => p.name),
   }));
 
   const marketItems: MarketListItem[] = (markets ?? []).map((m) => ({

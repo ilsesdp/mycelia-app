@@ -8,9 +8,11 @@ import { MapControls } from "./MapControls";
 import { BottomNav } from "./BottomNav";
 import { FarmPinSheet, type FarmSheetData } from "./FarmPinSheet";
 import { FiltersEmptyState } from "./FiltersEmptyState";
+import { FilterChips } from "./FilterChips";
 import { Icon } from "@/components/ui/Icon";
 import { pinPosition } from "@/lib/mapPins";
 import { activeFilterChips, buildBrowseQuery, type BrowseFilters } from "@/lib/filters";
+import { matchesSearch, suggestionMatch } from "@/lib/search";
 
 export type MapPinInput = Omit<MapPin, "xPct" | "yPct">;
 
@@ -54,9 +56,20 @@ export function MapView({
   // stays mounted and visible through its close animation.
   // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
   const [prevSheet, setPrevSheet] = useState<FarmSheetData | null>(sheet);
+
+  // The pin currently "selected" — the only one MapArt enlarges, haloes,
+  // and labels. Set optimistically the instant a pin is tapped (tapPin,
+  // below), not just derived from `sheet`, so the selection shows the same
+  // frame as the tap rather than waiting on the subsequent navigation to
+  // round-trip; the render-time sync just below then keeps it in step with
+  // `sheet` itself (e.g. a ?pin= link opened directly, or the sheet
+  // closing).
+  const [selectedId, setSelectedId] = useState<string | null>(sheet?.id ?? null);
+
   if (sheet !== prevSheet) {
     setPrevSheet(sheet);
     if (sheet) setDisplayedSheet(sheet);
+    setSelectedId(sheet?.id ?? null);
   }
 
   useEffect(() => {
@@ -82,23 +95,26 @@ export function MapView({
 
   const positioned = useMemo<MapPin[]>(() => pins.map((p) => ({ ...p, ...pinPosition(p.id) })), [pins]);
 
-  const visible = positioned.filter((p) => {
-    const q = query.trim().toLowerCase();
-    return !q || p.name.toLowerCase().includes(q);
-  });
+  const visible = positioned.filter((p) => matchesSearch(p.name, p.productNames, query));
 
-  // Autocomplete: names starting with what's typed so far — a narrower,
-  // prefix-only match than the "contains anywhere" filter the map itself
-  // uses for `visible`, since suggestions are meant to complete what's
-  // being typed, not just mention it.
+  // Autocomplete: names/products starting with what's typed so far — a
+  // narrower, prefix-only match than the "contains anywhere" filter the
+  // map itself uses for `visible`, since suggestions are meant to complete
+  // what's being typed, not just mention it.
   const q = query.trim().toLowerCase();
-  const suggestions = q ? positioned.filter((p) => p.name.toLowerCase().startsWith(q)).slice(0, 6) : [];
+  const suggestions = q
+    ? positioned
+        .map((p) => ({ pin: p, match: suggestionMatch(p.name, p.productNames, q) }))
+        .filter((s): s is { pin: MapPin; match: NonNullable<ReturnType<typeof suggestionMatch>> } => s.match !== null)
+        .slice(0, 6)
+    : [];
 
   const chips = activeFilterChips(filters);
   const filtered = chips.length > 0;
   const qs = buildBrowseQuery(filters);
 
   function tapPin(p: MapPin) {
+    setSelectedId(p.id);
     if (p.kind === "market") {
       router.push(`/markets/${p.id}?from=map`);
       return;
@@ -129,7 +145,7 @@ export function MapView({
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search a farm or market…"
+              placeholder="Search farms, markets, or products…"
               className="flex-1 min-w-0 bg-transparent outline-none body-s search-field-input"
               style={{ color: "var(--text-primary)" }}
             />
@@ -153,7 +169,7 @@ export function MapView({
     // (filtered-empty-state) keeps min-h-screen on purpose — it has real
     // scrolling content (search bar + empty-state illustration).
     <main className="flex flex-col" style={{ position: "relative", flex: 1, height: "100dvh", overflow: "hidden" }}>
-      <MapArt pins={visible} onPinTap={tapPin} ownFarm={ownFarm} />
+      <MapArt pins={visible} selectedId={selectedId} onPinTap={tapPin} ownFarm={ownFarm} />
 
       <div style={{ position: "absolute", left: 16, right: 16, top: 16, zIndex: 5 }}>
         {/* searchBar() port — identical markup to the list view's */}
@@ -171,7 +187,7 @@ export function MapView({
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => setSuggestOpen(true)}
               onBlur={() => setTimeout(() => setSuggestOpen(false), 120)}
-              placeholder="Search a farm or market…"
+              placeholder="Search farms, markets, or products…"
               className="flex-1 min-w-0 bg-transparent outline-none body-s search-field-input"
               style={{ color: "var(--text-primary)" }}
             />
@@ -198,13 +214,13 @@ export function MapView({
                 zIndex: 6,
               }}
             >
-              {suggestions.map((p, i) => (
+              {suggestions.map(({ pin: p, match }, i) => (
                 <div
                   key={p.id}
                   onMouseDown={(e) => {
                     e.preventDefault();
                     setSuggestOpen(false);
-                    setQuery(p.name);
+                    setQuery(match.matchedProduct ?? p.name);
                     tapPin(p);
                   }}
                   style={{
@@ -213,10 +229,21 @@ export function MapView({
                     borderBottom: i < suggestions.length - 1 ? "1px solid var(--border-subtle)" : "none",
                   }}
                 >
-                  <span className="body-s-strong">{p.name}</span>
-                  <span className="caption" style={{ marginLeft: 6, color: "var(--text-tertiary)" }}>
-                    {p.kind === "market" ? "Market" : "Farm"}
-                  </span>
+                  {match.matchedProduct ? (
+                    <>
+                      <span className="body-s-strong">{match.matchedProduct}</span>
+                      <span className="caption" style={{ marginLeft: 6, color: "var(--text-tertiary)" }}>
+                        at {p.name}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="body-s-strong">{p.name}</span>
+                      <span className="caption" style={{ marginLeft: 6, color: "var(--text-tertiary)" }}>
+                        {p.kind === "market" ? "Market" : "Farm"}
+                      </span>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
@@ -227,6 +254,12 @@ export function MapView({
           <>
             <div style={{ height: 12 }} />
             <MapControls filterCount={chips.length} view="map" queryString={qs} />
+            {filtered && (
+              <>
+                <div style={{ height: 10 }} />
+                <FilterChips chips={chips} basePath="/map" />
+              </>
+            )}
           </>
         )}
       </div>

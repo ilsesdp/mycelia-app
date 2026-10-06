@@ -8,8 +8,10 @@ import { marketStatus } from "@/lib/marketStatus";
 import { MapControls } from "@/components/browse/MapControls";
 import { BottomNav } from "@/components/browse/BottomNav";
 import { FiltersEmptyState } from "@/components/browse/FiltersEmptyState";
+import { FilterChips } from "@/components/browse/FilterChips";
 import { Icon } from "@/components/ui/Icon";
 import { activeFilterChips, buildBrowseQuery, matchesBrowseFilters, type BrowseFilters } from "@/lib/filters";
+import { matchesSearch, suggestionMatch } from "@/lib/search";
 
 export type FarmListItem = {
   id: string;
@@ -20,6 +22,7 @@ export type FarmListItem = {
   todayStatus: TodayStatus;
   timezone: string;
   hasReadyProduct: boolean;
+  productNames: string[];
 };
 
 export type MarketListItem = {
@@ -43,20 +46,13 @@ type Row = {
   categories: string[];
   status: Status;
   hasReadyProduct: boolean;
+  productNames: string[];
   // Market only — the owner's own "Saturdays, 8am – 1pm"-style free text,
   // shown beside the status dot/label (same position as a farm's status
   // note) instead of up in the meta line, so a market card has the same
   // two-line shape as a farm card: name+meta, then status+hours.
   scheduleText?: string | null;
 };
-
-// Matches the tested prototype's matchesSearch(): name only, case-insensitive
-// substring — not products, categories or addresses.
-function matchesSearch(name: string, query: string) {
-  const q = query.trim().toLowerCase();
-  if (!q) return true;
-  return name.toLowerCase().includes(q);
-}
 
 export default function FarmList({
   farms,
@@ -85,6 +81,7 @@ export default function FarmList({
         categories: f.categories,
         status,
         hasReadyProduct: f.hasReadyProduct,
+        productNames: f.productNames,
       };
     }),
     ...markets.map((m) => ({
@@ -98,18 +95,24 @@ export default function FarmList({
       categories: [] as string[],
       status: marketStatus(m.day_of_week, m.open_time, m.close_time, m.timezone),
       hasReadyProduct: false,
+      productNames: [] as string[],
       scheduleText: m.schedule_text,
     })),
   ];
 
   const byFilters = rows.filter((r) => matchesBrowseFilters({ ...r, open: r.status.open }, filters));
-  const visible = byFilters.filter((r) => matchesSearch(r.name, query));
+  const visible = byFilters.filter((r) => matchesSearch(r.name, r.productNames, query));
 
-  // Autocomplete: names starting with what's typed so far, within whatever
-  // filters are already active — narrower than matchesSearch's "contains
-  // anywhere", since suggestions complete what's being typed.
+  // Autocomplete: names/products starting with what's typed so far, within
+  // whatever filters are already active — narrower than matchesSearch's
+  // "contains anywhere", since suggestions complete what's being typed.
   const q = query.trim().toLowerCase();
-  const suggestions = q ? byFilters.filter((r) => r.name.toLowerCase().startsWith(q)).slice(0, 6) : [];
+  const suggestions = q
+    ? byFilters
+        .map((r) => ({ row: r, match: suggestionMatch(r.name, r.productNames, q) }))
+        .filter((s): s is { row: Row; match: NonNullable<ReturnType<typeof suggestionMatch>> } => s.match !== null)
+        .slice(0, 6)
+    : [];
 
   const chips = activeFilterChips(filters);
   const filtered = chips.length > 0;
@@ -131,7 +134,7 @@ export default function FarmList({
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => setSuggestOpen(true)}
               onBlur={() => setTimeout(() => setSuggestOpen(false), 120)}
-              placeholder="Search a farm or market…"
+              placeholder="Search farms, markets, or products…"
               className="flex-1 min-w-0 bg-transparent outline-none body-s search-field-input"
               style={{ color: "var(--text-primary)" }}
             />
@@ -156,13 +159,13 @@ export default function FarmList({
                 zIndex: 6,
               }}
             >
-              {suggestions.map((r, i) => (
+              {suggestions.map(({ row: r, match }, i) => (
                 <div
                   key={r.id}
                   onMouseDown={(e) => {
                     e.preventDefault();
                     setSuggestOpen(false);
-                    setQuery(r.name);
+                    setQuery(match.matchedProduct ?? r.name);
                   }}
                   style={{
                     padding: "10px 12px",
@@ -170,10 +173,21 @@ export default function FarmList({
                     borderBottom: i < suggestions.length - 1 ? "1px solid var(--border-subtle)" : "none",
                   }}
                 >
-                  <span className="body-s-strong">{r.name}</span>
-                  <span className="caption" style={{ marginLeft: 6, color: "var(--text-tertiary)" }}>
-                    {r.kind === "market" ? "Market" : "Farm"}
-                  </span>
+                  {match.matchedProduct ? (
+                    <>
+                      <span className="body-s-strong">{match.matchedProduct}</span>
+                      <span className="caption" style={{ marginLeft: 6, color: "var(--text-tertiary)" }}>
+                        at {r.name}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="body-s-strong">{r.name}</span>
+                      <span className="caption" style={{ marginLeft: 6, color: "var(--text-tertiary)" }}>
+                        {r.kind === "market" ? "Market" : "Farm"}
+                      </span>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
@@ -195,24 +209,7 @@ export default function FarmList({
         <div className="flex-1 px-4 pb-6 flex flex-col gap-1">
           {filtered && (
             <>
-              <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                {chips.map((c) => (
-                  <span
-                    key={c}
-                    style={{
-                      background: "var(--interactive-primary)",
-                      color: "var(--text-on-brand)",
-                      padding: "8px 12px",
-                      borderRadius: 999,
-                      fontFamily: "var(--font-body)",
-                      fontWeight: 500,
-                      fontSize: 14,
-                    }}
-                  >
-                    {c}
-                  </span>
-                ))}
-              </div>
+              <FilterChips chips={chips} basePath="/" />
               <div style={{ height: 10 }} />
             </>
           )}

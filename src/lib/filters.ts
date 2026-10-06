@@ -67,14 +67,21 @@ export function buildBrowseQuery(filters: BrowseFilters): string {
 // badge count on mapControls(). The "How far" distance chip is included for
 // display parity even though distance itself isn't filtered yet (see
 // matchesBrowseFilters below) — it's still part of what the visitor chose
-// and chips are how the Filters screen round-trips that choice.
-export function activeFilterChips(filters: BrowseFilters): string[] {
-  const chips: string[] = [];
-  if (filters.kind) chips.push(filters.kind);
-  chips.push(...filters.categories);
-  if (filters.distance !== "30 mi") chips.push(filters.distance);
-  if (filters.readyOnly) chips.push("Ready now");
-  if (filters.openOnly) chips.push("Open now");
+// and chips are how the Filters screen round-trips that choice. Each chip
+// carries `cleared` — the filters with just that one chip's value removed
+// — so the chip row (FarmList, MapView) can offer a per-chip × alongside
+// "Clear all", not just a read-only summary.
+export type FilterChip = { label: string; cleared: BrowseFilters };
+
+export function activeFilterChips(filters: BrowseFilters): FilterChip[] {
+  const chips: FilterChip[] = [];
+  if (filters.kind) chips.push({ label: filters.kind, cleared: { ...filters, kind: null } });
+  filters.categories.forEach((c) => {
+    chips.push({ label: c, cleared: { ...filters, categories: filters.categories.filter((x) => x !== c) } });
+  });
+  if (filters.distance !== "30 mi") chips.push({ label: filters.distance, cleared: { ...filters, distance: "30 mi" } });
+  if (filters.readyOnly) chips.push({ label: "Ready now", cleared: { ...filters, readyOnly: false } });
+  if (filters.openOnly) chips.push({ label: "Open now", cleared: { ...filters, openOnly: false } });
   return chips;
 }
 

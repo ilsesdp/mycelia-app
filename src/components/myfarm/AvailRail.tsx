@@ -52,12 +52,15 @@ function ProductCard({ p }: { p: ProductRow }) {
   );
 }
 
-// Ports availSection()/farmOwnerBody() — "Our products" on 4.1 (owner).
-// Read-only display; the owner edits products from Manage (4.3), not from
-// here. A row of All/Ready now/Producing/Planning filter pills replaces
-// the old per-availability horizontal-scrolling rails, so the tab scrolls
-// only vertically and products show in a fixed two-column grid.
-export function AvailRail({ products }: { products: ProductRow[] }) {
+// Ports availSection()/farmOwnerBody()/farmProductsTab() — "Our products"
+// on both 4.1 (owner, My Farm) and 2.3 (visitor, public farm profile), so
+// the two match exactly except for the "Manage" link, which only the
+// owner's own farm shows. Read-only display either way; the owner edits
+// products from Manage (4.3), not from here. A row of All/Ready
+// now/Producing/Planning filter pills replaces the old per-availability
+// horizontal-scrolling rails, so the tab scrolls only vertically and
+// products show in a fixed two-column grid.
+export function AvailRail({ products, showManage = true }: { products: ProductRow[]; showManage?: boolean }) {
   const [filter, setFilter] = useState<FilterKey>("all");
 
   if (!products.length) {
@@ -78,9 +81,11 @@ export function AvailRail({ products }: { products: ProductRow[] }) {
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <div className="label-caps">Our products</div>
-        <Link href="/my-farm/products" style={{ cursor: "pointer", textDecoration: "none", color: "var(--text-link)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14 }}>
-          Manage
-        </Link>
+        {showManage && (
+          <Link href="/my-farm/products" style={{ cursor: "pointer", textDecoration: "none", color: "var(--text-link)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14 }}>
+            Manage
+          </Link>
+        )}
       </div>
       <div style={{ height: 14 }} />
       <div className="product-filter-row">

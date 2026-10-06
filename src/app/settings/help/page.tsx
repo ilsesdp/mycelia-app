@@ -14,7 +14,7 @@ export default async function HelpPage() {
 
   return (
     <main className="flex flex-col min-h-screen">
-      <AppBar backHref="/settings" title="Help" />
+      <AppBar backHref="/settings" title="Help center" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
         <div className="label-caps">Common questions</div>
         <div style={{ height: 4 }} />

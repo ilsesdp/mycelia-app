@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Icon } from "@/components/ui/Icon";
 import { createClient } from "@/lib/supabase/client";
-import { relativeWhen, type MessageRow } from "@/lib/messages";
+import { relativeWhen, type MessageRow, type ThreadStartCheck } from "@/lib/messages";
 
 // Ports SCREENS['3.3'] — a conversation thread with its composer. Works in
 // two modes: an existing thread (threadId set, messages already loaded) or
@@ -20,6 +20,7 @@ export function ThreadView({
   title,
   initialMessages,
   backHref,
+  threadStartCheck = "allowed",
 }: {
   myId: string;
   threadId: string | null;
@@ -27,6 +28,13 @@ export function ThreadView({
   title: string;
   initialMessages: MessageRow[];
   backHref: string;
+  // Only meaningful for a brand-new thread (no messages yet): whether this
+  // farm's "Who can message you" (Privacy & visibility) lets this visitor
+  // start one — "growers_only" means they'd need a published farm of their
+  // own, "nobody" means the owner has turned messaging off entirely. An
+  // already-started conversation is always "allowed", however the setting
+  // reads now (see canStartThread in lib/messages.ts).
+  threadStartCheck?: ThreadStartCheck;
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -35,10 +43,11 @@ export function ThreadView({
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const canMessage = threadStartCheck === "allowed";
 
   async function send() {
     const text = draft.trim();
-    if (!text || sending) return;
+    if (!text || sending || !canMessage) return;
     setSending(true);
 
     let tid = threadId;
@@ -86,8 +95,14 @@ export function ThreadView({
           </div>
           <div style={{ height: 20 }} />
           {messages.length === 0 ? (
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 40 }}>
-              <span className="caption">Send the first message to start the conversation.</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 40, textAlign: "center" }}>
+              <span className="caption">
+                {threadStartCheck === "allowed"
+                  ? "Send the first message to start the conversation."
+                  : threadStartCheck === "growers_only"
+                    ? `${title} only accepts messages from growers with a published farm.`
+                    : `${title} isn't accepting messages right now.`}
+              </span>
             </div>
           ) : (
             messages.map((m) => {
@@ -120,59 +135,77 @@ export function ThreadView({
           )}
         </div>
       </div>
-      <div
-        style={{
-          flexShrink: 0,
-          display: "flex",
-          gap: 8,
-          alignItems: "center",
-          padding: "12px 16px",
-          borderTop: "1px solid var(--border-subtle)",
-          background: "var(--bg-raised)",
-        }}
-      >
-        <input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && send()}
-          type="text"
-          placeholder="Write a message"
-          className="search-field-input"
+      {canMessage ? (
+        <div
           style={{
-            flex: 1,
-            height: 48,
-            border: "1px solid var(--border-default)",
-            borderRadius: "var(--radius-sm)",
-            background: "var(--bg-canvas)",
-            padding: "0 12px",
-            fontFamily: "var(--font-body)",
-            fontSize: 16,
-            color: "var(--text-primary)",
-          }}
-        />
-        <button
-          onClick={send}
-          disabled={sending || !draft.trim()}
-          style={{
-            height: 48,
-            padding: "12px 16px",
-            border: "none",
-            borderRadius: "var(--radius-md)",
-            background: "var(--interactive-primary)",
-            color: "var(--text-on-brand)",
-            fontFamily: "var(--font-body)",
-            fontWeight: 700,
-            fontSize: 16,
+            flexShrink: 0,
             display: "flex",
-            alignItems: "center",
             gap: 8,
-            cursor: "pointer",
-            opacity: sending || !draft.trim() ? 0.6 : 1,
+            alignItems: "center",
+            padding: "12px 16px",
+            borderTop: "1px solid var(--border-subtle)",
+            background: "var(--bg-raised)",
           }}
         >
-          Send
-        </button>
-      </div>
+          <input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            type="text"
+            placeholder="Write a message"
+            className="search-field-input"
+            style={{
+              flex: 1,
+              height: 48,
+              border: "1px solid var(--border-default)",
+              borderRadius: "var(--radius-sm)",
+              background: "var(--bg-canvas)",
+              padding: "0 12px",
+              fontFamily: "var(--font-body)",
+              fontSize: 16,
+              color: "var(--text-primary)",
+            }}
+          />
+          <button
+            onClick={send}
+            disabled={sending || !draft.trim()}
+            style={{
+              height: 48,
+              padding: "12px 16px",
+              border: "none",
+              borderRadius: "var(--radius-md)",
+              background: "var(--interactive-primary)",
+              color: "var(--text-on-brand)",
+              fontFamily: "var(--font-body)",
+              fontWeight: 700,
+              fontSize: 16,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              cursor: "pointer",
+              opacity: sending || !draft.trim() ? 0.6 : 1,
+            }}
+          >
+            Send
+          </button>
+        </div>
+      ) : (
+        <div
+          style={{
+            flexShrink: 0,
+            padding: "14px 16px",
+            borderTop: "1px solid var(--border-subtle)",
+            background: "var(--bg-raised)",
+            textAlign: "center",
+          }}
+        >
+          <span className="caption">
+            {threadStartCheck === "growers_only"
+              ? `${title} only accepts messages from growers with a published farm.`
+              : `${title} isn't accepting messages right now.`}
+          </span>
+        </div>
+      )}
     </main>
   );
 }

@@ -550,6 +550,7 @@ export type Database = {
           full_name: string | null
           id: string
           message_channel: Database["public"]["Enums"]["message_channel_t"]
+          message_visibility: Database["public"]["Enums"]["visibility_t"]
           notif_event_on: boolean
           notif_market_on: boolean
           notif_msg_on: boolean
@@ -566,6 +567,7 @@ export type Database = {
           full_name?: string | null
           id: string
           message_channel?: Database["public"]["Enums"]["message_channel_t"]
+          message_visibility?: Database["public"]["Enums"]["visibility_t"]
           notif_event_on?: boolean
           notif_market_on?: boolean
           notif_msg_on?: boolean
@@ -582,6 +584,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           message_channel?: Database["public"]["Enums"]["message_channel_t"]
+          message_visibility?: Database["public"]["Enums"]["visibility_t"]
           notif_event_on?: boolean
           notif_market_on?: boolean
           notif_msg_on?: boolean

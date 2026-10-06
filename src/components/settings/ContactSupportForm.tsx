@@ -7,16 +7,19 @@ import { PhotoWell } from "@/components/ui/PhotoWell";
 import { ToggleRow } from "@/components/settings/ToggleRow";
 import { SUPPORT_TOPICS } from "@/lib/settings";
 
-const SUPPORT_EMAIL = "support@mycelia.app";
+// Standing in for a real support inbox until one exists — update this when
+// that changes.
+const SUPPORT_EMAIL = "icastel5@depaul.edu";
 
 // Ports SCREENS['5.8']. There's no support-ticket table in the schema (the
 // closest candidate, notification_log, tracks outbound notification
 // delivery, not inbound tickets), so "Send to support" is a real mailto:
 // draft to SUPPORT_EMAIL opened in the visitor's own mail client — honest
 // given what's actually wired up, at the cost of the in-app "sent"
-// confirmation the prototype mocks. A photo can be previewed here but
-// mailto: can't attach files, so it's noted in the body instead rather than
-// silently dropped.
+// confirmation the prototype mocks (and of a guaranteed delivery: nothing
+// actually sends until the visitor's own mail app has one and they hit
+// send there). A photo can be previewed here but mailto: can't attach
+// files, so it's noted in the body instead rather than silently dropped.
 export function ContactSupportForm({ userEmail, farmName }: { userEmail: string; farmName: string | null }) {
   const router = useRouter();
   const [topic, setTopic] = useState<(typeof SUPPORT_TOPICS)[number]>(SUPPORT_TOPICS[0]);
@@ -47,7 +50,7 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
   return (
     <main className="flex flex-col min-h-screen">
       <AppBar backHref="/settings" title="Contact support" />
-      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, display: "flex", flexDirection: "column" }}>
+      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, flex: 1, display: "flex", flexDirection: "column" }}>
         <div className="label-caps">What&apos;s it about?</div>
         <div style={{ height: 8 }} />
         <div style={{ position: "relative" }}>
@@ -149,12 +152,12 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
           }}
         />
 
-        <div style={{ height: 20 }} />
+        <div style={{ flex: 1, minHeight: 20 }} />
         {/* "Send to support" opens a mailto: draft (see the file comment),
             so the reply always comes back by email regardless of the
             Notifications channel someone's picked — this doesn't promise
             otherwise. */}
-        <p className="caption">We usually reply within two working days, by email.</p>
+        <p className="caption">We usually reply within three working days, by email.</p>
         <div style={{ height: 12 }} />
         <button className="btn btn-primary" disabled={!canSend} onClick={send}>
           Send to support

@@ -96,3 +96,23 @@ export async function findThreadForFarm(supabase: Client, farmId: string, myId: 
     .maybeSingle();
   return data?.id ?? null;
 }
+
+export type ThreadStartCheck = "allowed" | "growers_only" | "nobody";
+
+// Mirrors message_threads_insert's RLS check (see Supabase migration
+// add_message_visibility_and_enforce / enforce_message_visibility_on_insert)
+// so a visitor who can't actually start a new thread sees why instead of a
+// composer whose first send silently fails. Only gates a brand-new
+// thread — Privacy & visibility's "Who can message you" only has to answer
+// "can a new conversation start", not retroactively cut off one already
+// underway, so an existing thread (threadId already found) is never
+// checked against this.
+export async function canStartThread(supabase: Client, farmOwnerId: string, myId: string): Promise<ThreadStartCheck> {
+  if (farmOwnerId === myId) return "allowed";
+  const { data: owner } = await supabase.from("profiles").select("message_visibility").eq("id", farmOwnerId).maybeSingle();
+  const visibility = owner?.message_visibility ?? "growers_only";
+  if (visibility === "nobody") return "nobody";
+  if (visibility === "everyone") return "allowed";
+  const { data: myFarm } = await supabase.from("farms").select("id").eq("owner_id", myId).eq("published", true).maybeSingle();
+  return myFarm ? "allowed" : "growers_only";
+}

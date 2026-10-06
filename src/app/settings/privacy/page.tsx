@@ -13,5 +13,11 @@ export default async function PrivacyPage() {
 
   const { profile } = await getSettingsContext(supabase, user.id);
 
-  return <PrivacyForm initialEmailVisibility={profile.emailVisibility} initialPhoneVisibility={profile.phoneVisibility} />;
+  return (
+    <PrivacyForm
+      initialEmailVisibility={profile.emailVisibility}
+      initialPhoneVisibility={profile.phoneVisibility}
+      initialMessageVisibility={profile.messageVisibility}
+    />
+  );
 }

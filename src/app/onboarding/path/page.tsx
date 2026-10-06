@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { AppBar } from "@/components/ui/AppBar";
@@ -11,10 +12,16 @@ import { useOnboarding } from "@/lib/onboarding/context";
 export default function ChoosePathPage() {
   const router = useRouter();
   const { update } = useOnboarding();
+  // Default (unselected) card uses the neutral bg-raised/border-subtle fill,
+  // same as .cat-row/.qs-card before selection; tapping it flips to the
+  // harvest-green-100/border-brand "selected" treatment (same tokens those
+  // components use) for a beat before moving on, so the choice is visible.
+  const [selected, setSelected] = useState(false);
 
   function choosePath() {
+    setSelected(true);
     update({ path: "grower" });
-    router.push("/onboarding/address");
+    setTimeout(() => router.push("/onboarding/address"), 150);
   }
 
   return (
@@ -31,12 +38,13 @@ export default function ChoosePathPage() {
           className="w-full flex flex-col items-center gap-2 text-left"
           style={{
             cursor: "pointer",
-            background: "var(--harvest-green-100)",
-            border: "1px solid var(--border-default)",
+            background: selected ? "var(--harvest-green-100)" : "var(--bg-raised)",
+            border: `1px solid ${selected ? "var(--border-brand)" : "var(--border-subtle)"}`,
             borderRadius: 16,
             padding: 16,
             position: "relative",
             boxSizing: "border-box",
+            transition: "background 150ms ease, border-color 150ms ease",
           }}
         >
           <div style={{ width: "100%", height: 126, borderRadius: 8, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>

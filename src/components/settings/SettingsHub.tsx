@@ -33,26 +33,49 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
               title="Farm information"
               sub="Name, location, description, photos and links"
               href="/settings/profile"
-              color="var(--text-brand)"
+              titleColor="var(--text-brand)"
+              iconColor="var(--text-tertiary)"
             />
             <div style={{ height: 26 }} />
             <div className="label-caps">Preferences</div>
             <div style={{ height: 8 }} />
-            <SettingsRow icon="bell" title="Notifications" sub="How and when we notify you" href="/settings/notifications" color="var(--text-brand)" />
+            <SettingsRow
+              icon="bell"
+              title="Notifications"
+              sub="How and when we notify you"
+              href="/settings/notifications"
+              titleColor="var(--text-brand)"
+              iconColor="var(--text-tertiary)"
+            />
             <div style={{ height: 26 }} />
           </>
         )}
         <div className="label-caps">Account & privacy</div>
         <div style={{ height: 8 }} />
-        <SettingsRow icon="user" title="Contact information" sub="Email and phone number" href="/settings/account" color="var(--text-brand)" />
+        <SettingsRow
+          icon="user"
+          title="Contact information"
+          sub="Email and phone number"
+          href="/settings/account"
+          titleColor="var(--text-brand)"
+          iconColor="var(--text-tertiary)"
+        />
         <SettingsRow
           icon="lock"
           title="Privacy & visibility"
           sub="Choose who can see your information"
           href="/settings/privacy"
-          color="var(--text-brand)"
+          titleColor="var(--text-brand)"
+          iconColor="var(--text-tertiary)"
         />
-        <SettingsRow icon="shield" title="Security" sub="Change your password" href="/settings/security" color="var(--text-brand)" />
+        <SettingsRow
+          icon="shield"
+          title="Security"
+          sub="Change your password"
+          href="/settings/security"
+          titleColor="var(--text-brand)"
+          iconColor="var(--text-tertiary)"
+        />
         <div style={{ height: 26 }} />
         <div className="label-caps">Support</div>
         <div style={{ height: 8 }} />
@@ -61,9 +84,17 @@ export function SettingsHub({ hasFarm }: { hasFarm: boolean }) {
           title="Help center"
           sub="Find answers to common questions"
           href="/settings/help"
-          color="var(--text-brand)"
+          titleColor="var(--text-brand)"
+          iconColor="var(--text-tertiary)"
         />
-        <SettingsRow icon="msg" title="Contact support" sub="Get help from our team" href="/settings/support" color="var(--text-brand)" />
+        <SettingsRow
+          icon="msg"
+          title="Contact support"
+          sub="Get help from our team"
+          href="/settings/support"
+          titleColor="var(--text-brand)"
+          iconColor="var(--text-tertiary)"
+        />
         <div style={{ flex: 1, minHeight: 20 }} />
         <div style={{ paddingBottom: 24 }}>
           <button className="btn btn-ghost" style={{ color: "var(--text-danger)" }} onClick={() => setShowLogOut(true)}>

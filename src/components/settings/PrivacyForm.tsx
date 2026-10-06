@@ -35,20 +35,24 @@ function FixedRow({ label, icon }: { label: string; icon: IconName }) {
   );
 }
 
-function Row({ label, value, onChange }: { label: string; value: Visibility; onChange: (v: Visibility) => void }) {
+function Row({
+  label,
+  icon,
+  value,
+  onChange,
+}: {
+  label: string;
+  icon: IconName;
+  value: Visibility;
+  onChange: (v: Visibility) => void;
+}) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-        padding: "8px 0",
-        borderBottom: "1px solid var(--border-subtle)",
-      }}
-    >
-      <span className="body-m" style={{ flex: 1 }}>
-        {label}
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "8px 0" }}>
+      <span style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 0 }}>
+        <span style={{ flexShrink: 0, display: "flex", width: 20, height: 20, color: "var(--text-tertiary)" }}>
+          <Icon name={icon} size={20} />
+        </span>
+        <span className="body-m">{label}</span>
       </span>
       <VisibilityPill value={value} onChange={onChange} />
     </div>
@@ -96,9 +100,10 @@ export function PrivacyForm({
 
         <div style={{ height: 20 }} />
         <div className="label-caps">Contact & messaging</div>
-        <div style={{ height: 4 }} />
+        <div style={{ height: 8 }} />
         <Row
           label="Email address"
+          icon="mail"
           value={emailVis}
           onChange={(v) => {
             setEmailVis(v);
@@ -107,6 +112,7 @@ export function PrivacyForm({
         />
         <Row
           label="Phone number"
+          icon="phone"
           value={phoneVis}
           onChange={(v) => {
             setPhoneVis(v);
@@ -115,6 +121,7 @@ export function PrivacyForm({
         />
         <Row
           label="Who can message you"
+          icon="msg"
           value={messageVis}
           onChange={(v) => {
             setMessageVis(v);

@@ -39,7 +39,9 @@ export type IconName =
   | "menu"
   | "map"
   | "check"
-  | "store";
+  | "store"
+  | "mail"
+  | "phone";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const props = { ...SHARED, width: size, height: size };
@@ -236,6 +238,19 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
         <svg {...props}>
           <path d="M4 4.5h16l1.5 5a2.2 2.2 0 0 1-4.3.8 2.2 2.2 0 0 1-4.2 0 2.2 2.2 0 0 1-4.2 0 2.2 2.2 0 0 1-4.3-.8Z" />
           <path d="M5.5 10.3V19a1 1 0 0 0 1 1H10v-5.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V20h3.5a1 1 0 0 0 1-1v-8.7" />
+        </svg>
+      );
+    case "mail":
+      return (
+        <svg {...props}>
+          <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+          <path d="m4.5 7 7.5 6 7.5-6" />
+        </svg>
+      );
+    case "phone":
+      return (
+        <svg {...props}>
+          <path d="M6.6 3.5h3l1.4 4.2-2 1.6a13 13 0 0 0 5.7 5.7l1.6-2 4.2 1.4v3a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 5.1 5.1a1.5 1.5 0 0 1 1.5-1.6Z" />
         </svg>
       );
   }

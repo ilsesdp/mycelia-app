@@ -39,6 +39,7 @@ export type SettingsProfile = {
   phoneVisibility: Database["public"]["Enums"]["visibility_t"];
   notifMsgOn: boolean;
   notifMarketOn: boolean;
+  notifEventOn: boolean;
   notifPause: boolean;
 };
 
@@ -54,7 +55,7 @@ export async function getSettingsContext(supabase: Client, userId: string): Prom
     supabase
       .from("profiles")
       .select(
-        "full_name, contact_name, contact_email, contact_phone, message_channel, email_visibility, phone_visibility, notif_msg_on, notif_market_on, notif_pause"
+        "full_name, contact_name, contact_email, contact_phone, message_channel, email_visibility, phone_visibility, notif_msg_on, notif_market_on, notif_event_on, notif_pause"
       )
       .eq("id", userId)
       .maybeSingle(),
@@ -72,6 +73,7 @@ export async function getSettingsContext(supabase: Client, userId: string): Prom
       phoneVisibility: profile?.phone_visibility ?? "nobody",
       notifMsgOn: profile?.notif_msg_on ?? true,
       notifMarketOn: profile?.notif_market_on ?? true,
+      notifEventOn: profile?.notif_event_on ?? true,
       notifPause: profile?.notif_pause ?? false,
     },
     farm,

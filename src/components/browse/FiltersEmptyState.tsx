@@ -10,7 +10,13 @@ import type { FilterChip } from "@/lib/filters";
 // (list or map) the visitor is on — matching the prototype's own choice to
 // land on this screen rather than an empty map or an empty list, since
 // either one would look broken with zero results.
-export function FiltersEmptyState({ chips, view }: { chips: FilterChip[]; view: "list" | "map" }) {
+//
+// `chips` isn't rendered here anymore — both FarmList and MapView already
+// render the removable FilterChips row right above wherever this component
+// shows up, so repeating the chips here (as a second, non-removable copy)
+// was a duplicate. Kept in the prop signature since callers still pass it
+// and `view` still needs to live beside it.
+export function FiltersEmptyState({ view }: { chips: FilterChip[]; view: "list" | "map" }) {
   const router = useRouter();
 
   function clearAll() {
@@ -19,25 +25,7 @@ export function FiltersEmptyState({ chips, view }: { chips: FilterChip[]; view: 
 
   return (
     <div className="flex-1 flex flex-col px-4" style={{ paddingBottom: 24 }}>
-      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-        {chips.map((c) => (
-          <span
-            key={c.label}
-            style={{
-              background: "var(--interactive-primary)",
-              color: "var(--text-on-brand)",
-              padding: "8px 12px",
-              borderRadius: 999,
-              fontFamily: "var(--font-body)",
-              fontWeight: 500,
-              fontSize: 14,
-            }}
-          >
-            {c.label}
-          </span>
-        ))}
-      </div>
-      <div style={{ height: 60 }} />
+      <div style={{ height: 24 }} />
       <div className="flex flex-col items-center gap-3" style={{ padding: "24px 16px" }}>
         <div
           style={{

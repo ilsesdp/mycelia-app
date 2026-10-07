@@ -65,7 +65,6 @@ export default async function MessagesPage() {
                     key={t.id}
                     href={`/messages/${t.id}`}
                     style={{
-                      position: "relative",
                       display: "flex",
                       gap: 12,
                       alignItems: "flex-start",
@@ -100,27 +99,28 @@ export default async function MessagesPage() {
                         <div className="body-m-strong" style={{ flex: 1, minWidth: 0 }}>
                           {t.displayName}
                         </div>
-                        <div className="caption" style={{ whiteSpace: "nowrap" }}>
-                          {t.when}
-                        </div>
+                        {t.unread && (
+                          <span
+                            aria-label="Unread"
+                            style={{
+                              flexShrink: 0,
+                              width: 10,
+                              height: 10,
+                              borderRadius: "50%",
+                              background: "var(--text-brand)",
+                            }}
+                          />
+                        )}
                       </div>
-                      <p className="body-s">{t.preview}</p>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                        <p className="body-s" style={{ flex: 1, minWidth: 0 }}>
+                          {t.preview}
+                        </p>
+                        <span className="caption" style={{ whiteSpace: "nowrap" }}>
+                          {t.when}
+                        </span>
+                      </div>
                     </div>
-                    {t.unread && (
-                      <span
-                        aria-label="Unread"
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          right: 0,
-                          transform: "translateY(-50%)",
-                          width: 10,
-                          height: 10,
-                          borderRadius: "50%",
-                          background: "var(--text-brand)",
-                        }}
-                      />
-                    )}
                   </Link>
                 ))}
               </div>

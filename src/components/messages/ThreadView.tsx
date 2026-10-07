@@ -45,6 +45,15 @@ export function ThreadView({
   const scrollRef = useRef<HTMLDivElement>(null);
   const canMessage = threadStartCheck === "allowed";
 
+  // Jump to the newest message on first load, once — the inner wrapper's
+  // justify-content: flex-end (below) already visually bottom-anchors a
+  // short thread that doesn't fill the viewport, but a long one needs an
+  // actual scroll, same as the scrollTo calls below do after sending/
+  // receiving a message.
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+  }, []);
+
   // Live-append messages the other side sends while this conversation is
   // open, and keep read_at current so the inbox dot and nav badge clear —
   // both read the same column, so marking read here is all either needs.
@@ -123,54 +132,64 @@ export function ThreadView({
     // drift off-screen).
     <main className="flex flex-col" style={{ height: "100dvh", overflow: "hidden" }}>
       <AppBar backHref={backHref} title={title} />
-      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-        <div className="col" style={{ padding: "16px 16px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-            <span style={{ color: "var(--text-brand)" }}>
-              <Icon name="lock" size={16} />
-            </span>
-            <span className="caption">Messages stay inside Mycelia.</span>
-          </div>
-          <div style={{ height: 20 }} />
-          {messages.length === 0 ? (
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 40, textAlign: "center" }}>
-              <span className="caption">
-                {threadStartCheck === "allowed"
-                  ? "Send the first message to start the conversation."
-                  : threadStartCheck === "growers_only"
-                    ? `${title} only accepts messages from growers with a published farm.`
-                    : `${title} isn't accepting messages right now.`}
+      {/* overflow-y:auto lives on this plain block element only — putting
+          display:flex + justify-content:flex-end directly on the same
+          element that scrolls breaks scrollHeight in every browser (it
+          stops counting the content pushed past the flex line as
+          overflow), which is what made this unscrollable. The flex/
+          flex-end wrapper that bottom-anchors a short thread goes one
+          level in instead, on minHeight:100% rather than the scrolling
+          element itself. */}
+      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+        <div style={{ minHeight: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+          <div className="col" style={{ padding: "16px 16px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <span style={{ color: "var(--text-brand)" }}>
+                <Icon name="lock" size={16} />
               </span>
+              <span className="caption">Messages stay inside Mycelia.</span>
             </div>
-          ) : (
-            messages.map((m) => {
-              const mine = m.senderId === myId;
-              return (
-                <div key={m.id}>
-                  <div style={{ display: "flex", justifyContent: mine ? "flex-end" : "flex-start" }}>
-                    <div
-                      style={{
-                        maxWidth: 272,
-                        background: mine ? "var(--interactive-primary)" : "var(--bg-raised)",
-                        border: mine ? undefined : "1px solid var(--border-default)",
-                        borderRadius: mine ? "20px 20px 4px 20px" : "20px 20px 20px 4px",
-                        padding: 12,
-                      }}
-                    >
-                      <p className="body-m" style={{ color: mine ? "var(--text-on-brand)" : "var(--text-primary)" }}>
-                        {m.body}
-                      </p>
+            <div style={{ height: 20 }} />
+            {messages.length === 0 ? (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: 40, textAlign: "center" }}>
+                <span className="caption">
+                  {threadStartCheck === "allowed"
+                    ? "Send the first message to start the conversation."
+                    : threadStartCheck === "growers_only"
+                      ? `${title} only accepts messages from growers with a published farm.`
+                      : `${title} isn't accepting messages right now.`}
+                </span>
+              </div>
+            ) : (
+              messages.map((m) => {
+                const mine = m.senderId === myId;
+                return (
+                  <div key={m.id}>
+                    <div style={{ display: "flex", justifyContent: mine ? "flex-end" : "flex-start" }}>
+                      <div
+                        style={{
+                          maxWidth: 272,
+                          background: mine ? "var(--interactive-primary)" : "var(--bg-raised)",
+                          border: mine ? undefined : "1px solid var(--border-default)",
+                          borderRadius: mine ? "20px 20px 4px 20px" : "20px 20px 20px 4px",
+                          padding: 12,
+                        }}
+                      >
+                        <p className="body-m" style={{ color: mine ? "var(--text-on-brand)" : "var(--text-primary)" }}>
+                          {m.body}
+                        </p>
+                      </div>
                     </div>
+                    <div style={{ height: 4 }} />
+                    <div style={{ display: "flex", justifyContent: mine ? "flex-end" : "flex-start" }}>
+                      <span className="caption">{m.when}</span>
+                    </div>
+                    <div style={{ height: 8 }} />
                   </div>
-                  <div style={{ height: 4 }} />
-                  <div style={{ display: "flex", justifyContent: mine ? "flex-end" : "flex-start" }}>
-                    <span className="caption">{m.when}</span>
-                  </div>
-                  <div style={{ height: 8 }} />
-                </div>
-              );
-            })
-          )}
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
       {canMessage ? (

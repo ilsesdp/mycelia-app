@@ -19,14 +19,18 @@ export default async function ThreadPage({ params }: PageProps<"/messages/[threa
 
   const { data: thread } = await supabase
     .from("message_threads")
-    .select("id, farm_id, counterpart_id, farms ( name, owner_id ), profiles!message_threads_counterpart_id_fkey ( full_name, contact_name )")
+    .select("id, farm_id, counterpart_id, farms ( name, owner_id )")
     .eq("id", threadId)
     .maybeSingle();
 
   if (!thread) notFound();
 
   const amOwner = thread.farms?.owner_id === user.id;
-  const title = amOwner ? thread.profiles?.contact_name || thread.profiles?.full_name || "A visitor" : thread.farms?.name || "A farm";
+  // See lib/messages.ts's getMyThreads for why this reads
+  // profile_display_names rather than embedding profiles directly —
+  // profiles RLS blocks that embed for anyone but the row's own owner.
+  const { data: counterpart } = await supabase.from("profile_display_names").select("contact_name, full_name").eq("id", thread.counterpart_id).maybeSingle();
+  const title = amOwner ? counterpart?.contact_name || counterpart?.full_name || "A visitor" : thread.farms?.name || "A farm";
 
   const messages = await getThreadMessages(supabase, thread.id);
 

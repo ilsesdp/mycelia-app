@@ -683,7 +683,26 @@ export type Database = {
           message_channel:
             | Database["public"]["Enums"]["message_channel_t"]
             | null
+          message_visibility: Database["public"]["Enums"]["visibility_t"] | null
           phone_visibility: Database["public"]["Enums"]["visibility_t"] | null
+        }
+        Relationships: []
+      }
+      profile_display_names: {
+        Row: {
+          contact_name: string | null
+          full_name: string | null
+          id: string | null
+        }
+        Insert: {
+          contact_name?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Update: {
+          contact_name?: string | null
+          full_name?: string | null
+          id?: string | null
         }
         Relationships: []
       }

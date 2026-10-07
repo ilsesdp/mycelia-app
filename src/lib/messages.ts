@@ -46,10 +46,26 @@ export function relativeWhen(iso: string): string {
 export async function getMyThreads(supabase: Client, myId: string): Promise<ThreadSummary[]> {
   const { data: threads } = await supabase
     .from("message_threads")
-    .select("id, farm_id, counterpart_id, last_message_at, farms ( name, owner_id ), profiles!message_threads_counterpart_id_fkey ( full_name, contact_name )")
+    .select("id, farm_id, counterpart_id, last_message_at, farms ( name, owner_id )")
     .order("last_message_at", { ascending: false });
 
   if (!threads || threads.length === 0) return [];
+
+  // profiles RLS only allows reading your own row, so embedding
+  // profiles!message_threads_counterpart_id_fkey here silently comes back
+  // null for every thread where you're not that counterpart yourself (the
+  // common case: a farm owner viewing a visitor's name). contact_name/
+  // full_name aren't sensitive — profile_display_names exposes just those
+  // two columns for any profile, the same deliberate RLS bypass
+  // farm_public_contact already uses for contact_name.
+  const { data: names } = await supabase
+    .from("profile_display_names")
+    .select("id, contact_name, full_name")
+    .in(
+      "id",
+      threads.map((t) => t.counterpart_id)
+    );
+  const nameById = new Map((names ?? []).map((n) => [n.id, n]));
 
   const { data: messages } = await supabase
     .from("messages")
@@ -69,7 +85,8 @@ export async function getMyThreads(supabase: Client, myId: string): Promise<Thre
 
   return threads.map((t) => {
     const amOwner = t.farms?.owner_id === myId;
-    const displayName = amOwner ? t.profiles?.contact_name || t.profiles?.full_name || "A visitor" : t.farms?.name || "A farm";
+    const counterpart = nameById.get(t.counterpart_id);
+    const displayName = amOwner ? counterpart?.contact_name || counterpart?.full_name || "A visitor" : t.farms?.name || "A farm";
     const latest = latestByThread.get(t.id);
     return {
       id: t.id,
@@ -112,17 +129,23 @@ export async function findThreadForFarm(supabase: Client, farmId: string, myId: 
 
 export type ThreadStartCheck = "allowed" | "growers_only" | "nobody";
 
-// Mirrors message_threads_insert's RLS check (see Supabase migration
-// add_message_visibility_and_enforce / enforce_message_visibility_on_insert)
+// Mirrors message_threads_insert's RLS check (see Supabase migrations
+// fix_message_threads_insert_policy_alter / fix_farm_public_contact_add_visibility)
 // so a visitor who can't actually start a new thread sees why instead of a
 // composer whose first send silently fails. Only gates a brand-new
 // thread — Privacy & visibility's "Who can message you" only has to answer
 // "can a new conversation start", not retroactively cut off one already
 // underway, so an existing thread (threadId already found) is never
 // checked against this.
-export async function canStartThread(supabase: Client, farmOwnerId: string, myId: string): Promise<ThreadStartCheck> {
+//
+// Reads through farm_public_contact (keyed by farmId, not ownerId) rather
+// than profiles directly — profiles RLS only allows reading your own row,
+// so a plain `profiles.select(...).eq("id", farmOwnerId)` from anyone else
+// silently returns nothing and this would always fall through to the
+// growers_only default, even for farms set to "everyone" or "nobody".
+export async function canStartThread(supabase: Client, farmId: string, farmOwnerId: string, myId: string): Promise<ThreadStartCheck> {
   if (farmOwnerId === myId) return "allowed";
-  const { data: owner } = await supabase.from("profiles").select("message_visibility").eq("id", farmOwnerId).maybeSingle();
+  const { data: owner } = await supabase.from("farm_public_contact").select("message_visibility").eq("farm_id", farmId).maybeSingle();
   const visibility = owner?.message_visibility ?? "growers_only";
   if (visibility === "nobody") return "nobody";
   if (visibility === "everyone") return "allowed";

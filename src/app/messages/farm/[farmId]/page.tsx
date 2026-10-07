@@ -27,7 +27,7 @@ export default async function MessageFarmPage({ params }: PageProps<"/messages/f
 
   const threadId = await findThreadForFarm(supabase, farmId, user.id);
   const initialMessages = threadId ? await getThreadMessages(supabase, threadId) : [];
-  const threadStartCheck = threadId ? "allowed" : await canStartThread(supabase, farm.owner_id, user.id);
+  const threadStartCheck = threadId ? "allowed" : await canStartThread(supabase, farm.id, farm.owner_id, user.id);
 
   return (
     <ThreadView

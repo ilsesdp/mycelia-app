@@ -55,10 +55,6 @@ export function MarketsPicker({ markets }: { markets: Market[] }) {
           <Button variant="primary" onClick={() => router.push("/onboarding/contact")}>
             Continue
           </Button>
-          <div style={{ height: 12 }} />
-          <Button variant="ghost" onClick={() => router.push("/onboarding/contact")}>
-            Skip
-          </Button>
         </div>
       </div>
     </main>

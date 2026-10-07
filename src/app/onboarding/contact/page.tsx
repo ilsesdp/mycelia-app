@@ -38,8 +38,6 @@ export default function ContactPage() {
           value={state.contactName}
           onChange={(e) => update({ contactName: capitalizeFirst(e.target.value) })}
         />
-        <div style={{ height: 8 }} />
-        <p className="caption">Shown next to your farm name, so people know who they&apos;re asking for.</p>
         <div style={{ height: 16 }} />
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

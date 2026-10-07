@@ -28,7 +28,7 @@ export default function ProductsPage() {
         <AppBar backHref="/onboarding/categories" />
         <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
           <StepHeader step={3} title="Your products" subtitle="Let people know what you have available. You can update products anytime." />
-          <p className="caption">Based on your choices</p>
+          <p className="label-caps">Based on what you selected</p>
           <div style={{ height: 8 }} />
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {chosen.length ? (
@@ -44,7 +44,7 @@ export default function ProductsPage() {
           <div style={{ height: 30 }} />
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
             <div style={{ width: 276, height: 234, borderRadius: 16, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Image src="/sprouts.png" alt="" width={276} height={234} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              <Image src="/basket-vegetables.png" alt="" width={276} height={234} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
             </div>
             <p className="body-m" style={{ textAlign: "center", color: "var(--text-tertiary)" }}>
               You haven&apos;t added any products yet.
@@ -55,22 +55,6 @@ export default function ProductsPage() {
             <Button variant="primary" onClick={() => router.push("/onboarding/products/new")}>
               Add your first product
             </Button>
-            <div style={{ height: 10 }} />
-            <a
-              style={{
-                display: "block",
-                textAlign: "center",
-                color: "var(--text-secondary)",
-                fontFamily: "var(--font-body)",
-                fontWeight: 600,
-                fontSize: 14,
-                textDecoration: "none",
-                cursor: "pointer",
-              }}
-              onClick={() => router.push("/onboarding/hours")}
-            >
-              I&apos;ll do this later
-            </a>
           </div>
         </div>
       </main>
@@ -124,10 +108,6 @@ export default function ProductsPage() {
         <div className="pb-6 pt-6">
           <Button variant="primary" onClick={() => router.push("/onboarding/hours")}>
             Continue
-          </Button>
-          <div style={{ height: 10 }} />
-          <Button variant="ghost" onClick={() => router.push("/onboarding/hours")}>
-            I&apos;ll do this later
           </Button>
         </div>
       </div>

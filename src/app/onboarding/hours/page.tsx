@@ -122,10 +122,6 @@ export default function HoursPage() {
         <Button variant="primary" onClick={() => router.push("/onboarding/markets")}>
           Continue
         </Button>
-        <div style={{ height: 12 }} />
-        <Button variant="ghost" onClick={() => router.push("/onboarding/markets")}>
-          Skip
-        </Button>
       </div>
     </main>
   );

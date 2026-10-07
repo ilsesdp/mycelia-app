@@ -115,9 +115,15 @@ export function ThreadView({
   }
 
   return (
-    <main className="flex flex-col min-h-screen">
+    // Fixed to the viewport height and non-scrolling, not min-h-screen: the
+    // header and composer below are meant to stay put while only the
+    // message list in between scrolls, not ride along with a page scroll
+    // (same 100vh-vs-visual-viewport quirk as MapView — min-h-screen left
+    // enough rubber-band scroll on mobile Safari for the header/composer to
+    // drift off-screen).
+    <main className="flex flex-col" style={{ height: "100dvh", overflow: "hidden" }}>
       <AppBar backHref={backHref} title={title} />
-      <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+      <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
         <div className="col" style={{ padding: "16px 16px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <span style={{ color: "var(--text-brand)" }}>

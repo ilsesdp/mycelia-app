@@ -21,7 +21,7 @@ export default function ChoosePathPage() {
   function choosePath() {
     setSelected(true);
     update({ path: "grower" });
-    setTimeout(() => router.push("/onboarding/address"), 150);
+    setTimeout(() => router.push("/onboarding/farm"), 150);
   }
 
   return (

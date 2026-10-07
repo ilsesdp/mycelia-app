@@ -51,7 +51,7 @@ export default function HoursPage() {
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/products" />
       <div className="px-4 pt-4">
-        <StepHeader step={5} title="When are you open?" subtitle="Set your regular hours so growers and customers know when they can reach you" />
+        <StepHeader step={4} title="When can people visit?" subtitle="Add your usual hours so people know when to stop by." />
         <div className="label-caps">Quick setup</div>
         <div style={{ height: 10 }} />
         <div style={{ display: "flex", gap: 8 }}>

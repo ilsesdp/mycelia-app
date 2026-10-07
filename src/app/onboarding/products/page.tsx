@@ -27,7 +27,7 @@ export default function ProductsPage() {
       <main className="min-h-screen flex flex-col">
         <AppBar backHref="/onboarding/categories" />
         <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
-          <StepHeader step={4} title="Add your products" subtitle="Add the specific products you offer. You can edit or add more anytime." />
+          <StepHeader step={3} title="Your products" subtitle="Let people know what you have available. You can update products anytime." />
           <p className="caption">Based on your choices</p>
           <div style={{ height: 8 }} />
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -84,7 +84,7 @@ export default function ProductsPage() {
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/categories" />
       <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
-        <StepHeader step={4} title="Your products" subtitle="Review what you've added. You can add more or continue." />
+        <StepHeader step={3} title="Your products" subtitle="Let people know what you have available. You can update products anytime." />
         {Object.entries(grouped).map(([cat, items]) => (
           <div key={cat}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

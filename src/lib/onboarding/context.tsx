@@ -32,25 +32,21 @@ export type TimeRange = { open: string; close: string };
 // ignored; otherwise ranges holds 1+ open/close pairs.
 export type DayHours = { ranges: TimeRange[]; closed: boolean };
 
-// The full shape of what onboarding collects across all ~10 prototype
-// screens (1.2, 1.4–1.13). 2a only uses the first few fields; the rest are
-// declared now so 2b/2c slot in without reshaping this type again.
+// The full shape of what onboarding collects across its screens (1.2,
+// 1.6–1.13 — 1.4/1.5's address lookup was dropped, see 1.6 below). 2a only
+// uses the first few fields; the rest are declared now so 2b/2c slot in
+// without reshaping this type again.
 export type OnboardingState = {
   // 1.2 — choose your path
   path: "grower" | null;
 
-  // 1.4 / 1.5 — address lookup
+  // 1.6 — farm details (address lookup/confirm, formerly 1.4/1.5, is gone —
+  // this phase isn't paying for Google's geocoding API, so the address is
+  // just another field here; farmLat/farmLng stay null from onboarding,
+  // same as every real farm today — see mapPins.ts's own comment).
   farmAddress: string;
-  farmAddressVerified: boolean;
-  addressSearching: boolean;
-  // Real coordinates from Google's Geocoding API when the address resolves
-  // (null otherwise — no API key configured, or the address didn't match).
-  // This is what makes the map's "2.1 mi" a real computed distance instead
-  // of nothing; see geo.ts/DistanceLabel.tsx.
   farmLat: number | null;
   farmLng: number | null;
-
-  // 1.6 — farm details
   farmName: string;
   farmDirections: string;
   farmAbout: string;
@@ -97,8 +93,6 @@ function initialState(): OnboardingState {
   return {
     path: null,
     farmAddress: "",
-    farmAddressVerified: false,
-    addressSearching: false,
     farmLat: null,
     farmLng: null,
     farmName: "",

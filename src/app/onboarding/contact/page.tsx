@@ -25,7 +25,7 @@ export default function ContactPage() {
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/markets" />
       <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
-        <StepHeader step={7} title="How should people reach you?" />
+        <StepHeader step={6} title="How should people reach you?" />
 
         <label className="label-caps" htmlFor="contact-name">
           Who to ask for (optional)

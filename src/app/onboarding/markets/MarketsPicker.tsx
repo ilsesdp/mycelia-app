@@ -23,7 +23,7 @@ export function MarketsPicker({ markets }: { markets: Market[] }) {
     <main className="min-h-screen flex flex-col">
       <AppBar backHref="/onboarding/hours" />
       <div className="px-4 pt-4 pb-8 flex-1 flex flex-col">
-        <StepHeader step={6} title="Do you sell at any markets?" subtitle="Markets near you. If you pick one, people searching it will find your farm." />
+        <StepHeader step={5} title="Do you sell at any markets?" subtitle="Markets near you. If you pick one, people searching it will find your farm." />
         {markets.map((m) => {
           const sel = state.selectedMarketIds.includes(m.id);
           return (

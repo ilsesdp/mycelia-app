@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { createClient } from "@/lib/supabase/client";
 
 type TabLabel = "Map" | "Messages" | "Profile";
 const TABS: readonly [TabLabel, IconName][] = [
@@ -20,6 +22,43 @@ const TABS: readonly [TabLabel, IconName][] = [
 // Settings, since there's nothing of theirs to manage there.
 export function BottomNav({ active, loggedIn }: { active: TabLabel; loggedIn: boolean }) {
   const router = useRouter();
+  const [hasUnread, setHasUnread] = useState(false);
+
+  // BottomNav gets no userId prop (it's used from 8 places, none of which
+  // have one handy), so it resolves the current user itself. Realtime is
+  // already scoped to messages visible under this user's own RLS (see
+  // getMyThreads), so a plain count-of-unread works without filtering by
+  // participant explicitly.
+  useEffect(() => {
+    if (!loggedIn) return;
+    const supabase = createClient();
+    let myId: string | null = null;
+
+    async function refresh() {
+      if (!myId) return;
+      const { count } = await supabase
+        .from("messages")
+        .select("id", { count: "exact", head: true })
+        .neq("sender_id", myId)
+        .is("read_at", null);
+      setHasUnread(!!count && count > 0);
+    }
+
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      myId = user.id;
+      refresh();
+      channel = supabase
+        .channel("bottomnav-unread")
+        .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, refresh)
+        .subscribe();
+    });
+
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, [loggedIn]);
 
   function tap(label: TabLabel) {
     if (label === "Map") {
@@ -41,7 +80,24 @@ export function BottomNav({ active, loggedIn }: { active: TabLabel; loggedIn: bo
     <div className="navbar3">
       {TABS.map(([label, icon]) => (
         <a key={label} className={active === label ? "active" : ""} onClick={() => tap(label)}>
-          <Icon name={icon} size={20} />
+          <span style={{ position: "relative", display: "inline-flex" }}>
+            <Icon name={icon} size={20} />
+            {label === "Messages" && hasUnread && (
+              <span
+                aria-label="Unread messages"
+                style={{
+                  position: "absolute",
+                  top: -2,
+                  right: -2,
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: "var(--text-brand)",
+                  border: "1.5px solid var(--bg-canvas)",
+                }}
+              />
+            )}
+          </span>
           {label}
         </a>
       ))}

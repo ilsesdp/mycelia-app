@@ -1,12 +1,93 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppBar } from "@/components/ui/AppBar";
 import { Icon } from "@/components/ui/Icon";
 import { ToggleRow } from "@/components/settings/ToggleRow";
 import { createClient } from "@/lib/supabase/client";
 import { CHANNEL_DB, CHANNEL_DISPLAY } from "@/lib/settings";
+import { isPushSupported, getCurrentPushSubscription, enablePush, disablePush } from "@/lib/push";
 import type { Database } from "@/lib/types/database";
+
+// A new, independent channel alongside Text/Email below — not a
+// replacement for either. Push subscription state lives entirely in this
+// browser (service worker + Push API), so unlike every other control on
+// this page it can't come from a server prop: it checks itself on mount,
+// and the toggle it renders can legitimately differ from one device to the
+// next for the same account.
+function PushToggleRow() {
+  const supabase = createClient();
+  // Lazy initializers run during render, not as a setState-in-effect, so
+  // the support check itself doesn't need an effect at all — only the
+  // async subscription lookup below does.
+  const [supported] = useState(() => isPushSupported());
+  const [on, setOn] = useState(false);
+  const [checking, setChecking] = useState(supported);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!supported) return;
+    getCurrentPushSubscription()
+      .then((sub) => setOn(!!sub))
+      .finally(() => setChecking(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function toggle() {
+    if (busy || checking) return;
+    setBusy(true);
+    setError(null);
+    try {
+      if (on) {
+        await disablePush(supabase);
+        setOn(false);
+      } else {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) throw new Error("Sign in to turn this on.");
+        await enablePush(supabase, user.id);
+        setOn(true);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Couldn't update push notifications.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!supported) {
+    return (
+      <div className="flex flex-col gap-1">
+        <div className="body-m-strong" style={{ color: "var(--text-tertiary)" }}>
+          Push notifications
+        </div>
+        <p className="caption">This browser doesn&apos;t support push notifications.</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <ToggleRow
+        title="Push notifications"
+        sub="A notification on this device when someone messages you"
+        on={on}
+        disabled={checking || busy}
+        onToggle={toggle}
+      />
+      {error && (
+        <>
+          <div style={{ height: 4 }} />
+          <p className="caption" style={{ color: "var(--text-danger)" }}>
+            {error}
+          </p>
+        </>
+      )}
+    </>
+  );
+}
 
 const CHANNELS = ["Text", "Email", "Text & Email"] as const;
 const MSG_CHANNEL_CAPTION: Record<string, string> = {
@@ -101,6 +182,11 @@ export function NotificationsForm({
             </p>
           </>
         )}
+
+        <div style={{ height: 28 }} />
+        <div className="label-caps">Push notifications</div>
+        <div style={{ height: 8 }} />
+        <PushToggleRow />
 
         <div style={{ height: 28 }} />
         <div className="label-caps">Notify me about</div>

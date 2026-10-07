@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Icon } from "@/components/ui/Icon";
 import { createClient } from "@/lib/supabase/client";
-import { relativeWhen, type MessageRow, type ThreadStartCheck } from "@/lib/messages";
+import { relativeWhen, markThreadRead, type MessageRow, type ThreadStartCheck } from "@/lib/messages";
 
 // Ports SCREENS['3.3'] — a conversation thread with its composer. Works in
 // two modes: an existing thread (threadId set, messages already loaded) or
@@ -44,6 +44,38 @@ export function ThreadView({
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const canMessage = threadStartCheck === "allowed";
+
+  // Live-append messages the other side sends while this conversation is
+  // open, and keep read_at current so the inbox dot and nav badge clear —
+  // both read the same column, so marking read here is all either needs.
+  // A brand-new thread (threadId null) has nothing to subscribe to yet;
+  // sending the first message re-renders with a real id, which re-runs
+  // this effect and subscribes from then on.
+  useEffect(() => {
+    if (!threadId) return;
+    markThreadRead(supabase, threadId, myId);
+
+    const channel = supabase
+      .channel(`thread-${threadId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages", filter: `thread_id=eq.${threadId}` },
+        (payload) => {
+          const row = payload.new as { id: string; sender_id: string; body: string; created_at: string };
+          setMessages((m) => (m.some((existing) => existing.id === row.id) ? m : [...m, { id: row.id, senderId: row.sender_id, body: row.body, when: relativeWhen(row.created_at) }]));
+          if (row.sender_id !== myId) markThreadRead(supabase, threadId, myId);
+          requestAnimationFrame(() => {
+            scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [threadId]);
 
   async function send() {
     const text = draft.trim();

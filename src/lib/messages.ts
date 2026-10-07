@@ -9,6 +9,7 @@ export type ThreadSummary = {
   displayName: string;
   preview: string;
   when: string;
+  unread: boolean;
 };
 
 export type MessageRow = {
@@ -52,7 +53,7 @@ export async function getMyThreads(supabase: Client, myId: string): Promise<Thre
 
   const { data: messages } = await supabase
     .from("messages")
-    .select("thread_id, body, created_at")
+    .select("thread_id, sender_id, body, created_at, read_at")
     .in(
       "thread_id",
       threads.map((t) => t.id)
@@ -60,7 +61,11 @@ export async function getMyThreads(supabase: Client, myId: string): Promise<Thre
     .order("created_at", { ascending: true });
 
   const latestByThread = new Map<string, { body: string; created_at: string }>();
-  (messages ?? []).forEach((m) => latestByThread.set(m.thread_id, m));
+  const unreadByThread = new Set<string>();
+  (messages ?? []).forEach((m) => {
+    latestByThread.set(m.thread_id, m);
+    if (m.sender_id !== myId && !m.read_at) unreadByThread.add(m.thread_id);
+  });
 
   return threads.map((t) => {
     const amOwner = t.farms?.owner_id === myId;
@@ -72,6 +77,7 @@ export async function getMyThreads(supabase: Client, myId: string): Promise<Thre
       displayName,
       preview: latest?.body ?? "",
       when: latest ? relativeWhen(latest.created_at) : relativeWhen(t.last_message_at),
+      unread: unreadByThread.has(t.id),
     };
   });
 }
@@ -83,6 +89,13 @@ export async function getThreadMessages(supabase: Client, threadId: string): Pro
     .eq("thread_id", threadId)
     .order("created_at", { ascending: true });
   return (data ?? []).map((m) => ({ id: m.id, senderId: m.sender_id, body: m.body, when: relativeWhen(m.created_at) }));
+}
+
+// Marks every message in this thread that wasn't sent by me as read. Safe to
+// call repeatedly (on mount and on each live-received message) — the
+// read_at IS NULL filter means an already-read message is just skipped.
+export async function markThreadRead(supabase: Client, threadId: string, myId: string): Promise<void> {
+  await supabase.from("messages").update({ read_at: new Date().toISOString() }).eq("thread_id", threadId).neq("sender_id", myId).is("read_at", null);
 }
 
 // Finds the one thread (unique on farm_id+counterpart_id) between this

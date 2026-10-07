@@ -7,6 +7,7 @@ import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { PasswordField } from "@/components/ui/PasswordField";
 import { createClient } from "@/lib/supabase/client";
+import { capitalizeFirst } from "@/lib/text";
 
 // Ports SCREENS['1.3'] (signupScreen) — real Supabase signUp instead of
 // trySignup()'s fake email-format-only check. "Choose your path" (1.2) and
@@ -88,7 +89,7 @@ export default function SignupPage() {
           className="field"
           placeholder="Jane Miller"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setName(capitalizeFirst(e.target.value))}
         />
         <div style={{ height: 16 }} />
 

@@ -6,6 +6,7 @@ import { AppBar } from "@/components/ui/AppBar";
 import { PhotoWell } from "@/components/ui/PhotoWell";
 import { ToggleRow } from "@/components/settings/ToggleRow";
 import { SUPPORT_TOPICS } from "@/lib/settings";
+import { capitalizeFirst } from "@/lib/text";
 
 // Standing in for a real support inbox until one exists — update this when
 // that changes.
@@ -122,7 +123,7 @@ export function ContactSupportForm({ userEmail, farmName }: { userEmail: string;
           style={{ height: 120 }}
           placeholder="Describe what happened and what you were trying to do."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => setMessage(capitalizeFirst(e.target.value))}
         />
 
         <div style={{ height: 20 }} />

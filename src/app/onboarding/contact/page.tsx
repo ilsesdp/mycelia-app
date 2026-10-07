@@ -7,6 +7,7 @@ import { StepHeader } from "@/components/ui/StepHeader";
 import { useOnboarding } from "@/lib/onboarding/context";
 import { VisibilityPill } from "@/components/ui/VisibilityPill";
 import { SocialLinksFields } from "@/components/forms/SocialLinksFields";
+import { capitalizeFirst } from "@/lib/text";
 
 const MSG_CHANNELS = ["Text me", "Email me", "Both"] as const;
 const MSG_CHANNEL_CAPTION: Record<string, string> = {
@@ -30,7 +31,13 @@ export default function ContactPage() {
           Who to ask for (optional)
         </label>
         <div style={{ height: 4 }} />
-        <input id="contact-name" className="field" placeholder="Jane" value={state.contactName} onChange={(e) => update({ contactName: e.target.value })} />
+        <input
+          id="contact-name"
+          className="field"
+          placeholder="Jane"
+          value={state.contactName}
+          onChange={(e) => update({ contactName: capitalizeFirst(e.target.value) })}
+        />
         <div style={{ height: 8 }} />
         <p className="caption">Shown next to your farm name, so people know who they&apos;re asking for.</p>
         <div style={{ height: 16 }} />

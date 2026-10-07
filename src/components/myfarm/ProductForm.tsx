@@ -7,6 +7,7 @@ import { ConfirmSheet } from "@/components/settings/ConfirmSheet";
 import { createClient } from "@/lib/supabase/client";
 import { CATEGORIES, UNITS, AVAILABILITY_DB, AVAILABILITY_DISPLAY, type ProductRow } from "@/lib/myFarm";
 import type { Database } from "@/lib/types/database";
+import { capitalizeFirst } from "@/lib/text";
 
 type Availability = "Ready now" | "Producing" | "Planning";
 
@@ -113,7 +114,13 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
           What is your product?
         </label>
         <div style={{ height: 8 }} />
-        <input id="my-product-name" className="field" placeholder="e.g. Heirloom tomatoes" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+        <input
+          id="my-product-name"
+          className="field"
+          placeholder="e.g. Heirloom tomatoes"
+          value={draft.name}
+          onChange={(e) => patch({ name: capitalizeFirst(e.target.value) })}
+        />
 
         <div style={{ height: 20 }} />
         <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="my-product-category">
@@ -193,7 +200,7 @@ export function ProductForm({ farmId, product }: { farmId: string; product: Prod
               className="field"
               placeholder={draft.availability === "Planning" ? "next spring" : "about 3 weeks"}
               value={draft.roughlyWhen}
-              onChange={(e) => patch({ roughlyWhen: e.target.value })}
+              onChange={(e) => patch({ roughlyWhen: capitalizeFirst(e.target.value) })}
             />
           </>
         )}

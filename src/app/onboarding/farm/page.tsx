@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { StepHeader } from "@/components/ui/StepHeader";
 import { PhotoWell } from "@/components/ui/PhotoWell";
 import { useOnboarding } from "@/lib/onboarding/context";
+import { capitalizeFirst } from "@/lib/text";
 
 // Ports SCREENS['1.6'] — last screen in onboarding sub-batch 2a. "Continue"
 // goes to /onboarding/categories (1.7), which is 2b and doesn't exist yet;
@@ -34,7 +35,7 @@ export default function FarmDetailsPage() {
           className="field"
           placeholder="Willow Creek Farm"
           value={state.farmName}
-          onChange={(e) => update({ farmName: e.target.value })}
+          onChange={(e) => update({ farmName: capitalizeFirst(e.target.value) })}
         />
         <div style={{ height: 16 }} />
 
@@ -61,7 +62,7 @@ export default function FarmDetailsPage() {
           style={{ height: 60, resize: "none" }}
           placeholder="Where to park, any other signal to let people know how to get there"
           value={state.farmDirections}
-          onChange={(e) => update({ farmDirections: e.target.value })}
+          onChange={(e) => update({ farmDirections: capitalizeFirst(e.target.value) })}
         />
         <div style={{ height: 12 }} />
 
@@ -75,7 +76,7 @@ export default function FarmDetailsPage() {
           style={{ height: 60, resize: "none" }}
           placeholder="About your farm"
           value={state.farmAbout}
-          onChange={(e) => update({ farmAbout: e.target.value })}
+          onChange={(e) => update({ farmAbout: capitalizeFirst(e.target.value) })}
         />
         <div style={{ height: 12 }} />
 

@@ -6,6 +6,7 @@ import { AppBar } from "@/components/ui/AppBar";
 import { PhotoWell } from "@/components/ui/PhotoWell";
 import { SocialLinksFields } from "@/components/forms/SocialLinksFields";
 import { createClient } from "@/lib/supabase/client";
+import { capitalizeFirst } from "@/lib/text";
 
 async function uploadCoverPhoto(supabase: ReturnType<typeof createClient>, farmId: string, file: File): Promise<string | null> {
   const ext = file.name.split(".").pop() || "jpg";
@@ -117,7 +118,7 @@ export function EditProfileForm({
           Farm name
         </label>
         <div style={{ height: 6 }} />
-        <input id="profile-name" className="field" value={name} onChange={(e) => setName(e.target.value)} />
+        <input id="profile-name" className="field" value={name} onChange={(e) => setName(capitalizeFirst(e.target.value))} />
         <div style={{ height: 18 }} />
 
         <label className="label-caps" htmlFor="profile-address">
@@ -137,7 +138,7 @@ export function EditProfileForm({
           style={{ height: 88, resize: "vertical", paddingTop: 10 }}
           placeholder="A sentence or two about your farm"
           value={about}
-          onChange={(e) => setAbout(e.target.value)}
+          onChange={(e) => setAbout(capitalizeFirst(e.target.value))}
         />
         <div style={{ height: 18 }} />
 
@@ -151,7 +152,7 @@ export function EditProfileForm({
           style={{ height: 88, resize: "vertical", paddingTop: 10 }}
           placeholder="Help people find you — e.g. gravel driveway on the left, past the red barn"
           value={directions}
-          onChange={(e) => setDirections(e.target.value)}
+          onChange={(e) => setDirections(capitalizeFirst(e.target.value))}
         />
         <div style={{ height: 18 }} />
 
@@ -173,7 +174,7 @@ export function EditProfileForm({
           Who to ask for
         </label>
         <div style={{ height: 6 }} />
-        <input id="profile-contact-name" className="field" value={contactName} onChange={(e) => setContactName(e.target.value)} />
+        <input id="profile-contact-name" className="field" value={contactName} onChange={(e) => setContactName(capitalizeFirst(e.target.value))} />
         <div style={{ height: 18 }} />
 
         <label className="label-caps" htmlFor="profile-cover-photo">

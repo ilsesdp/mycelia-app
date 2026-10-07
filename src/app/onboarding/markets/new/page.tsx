@@ -9,6 +9,7 @@ import { ComboField } from "@/components/ui/ComboField";
 import { useOnboarding, type MarketDraft } from "@/lib/onboarding/context";
 import { createClient } from "@/lib/supabase/client";
 import { DAY_OPTIONS, HOURS_OPTIONS, dayOfWeekFromLabel, parseHoursRange } from "@/lib/marketSchedule";
+import { capitalizeFirst } from "@/lib/text";
 
 function emptyDraft(): MarketDraft {
   return { name: "", location: "", day: "", hours: "" };
@@ -98,7 +99,13 @@ export default function NewMarketPage() {
           What is the market called?
         </label>
         <div style={{ height: 8 }} />
-        <input id="market-name" className="field" placeholder="Stephenson County Market" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+        <input
+          id="market-name"
+          className="field"
+          placeholder="Stephenson County Market"
+          value={draft.name}
+          onChange={(e) => patch({ name: capitalizeFirst(e.target.value) })}
+        />
         <div style={{ height: 20 }} />
 
         <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="market-location">
@@ -110,7 +117,7 @@ export default function NewMarketPage() {
           className="field"
           placeholder="123 Main St, Freeport, IL 61032"
           value={draft.location}
-          onChange={(e) => patch({ location: e.target.value })}
+          onChange={(e) => patch({ location: capitalizeFirst(e.target.value) })}
         />
         <div style={{ height: 20 }} />
 

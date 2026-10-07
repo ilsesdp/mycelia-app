@@ -7,6 +7,7 @@ import { PhotoWellMulti } from "@/components/ui/PhotoWellMulti";
 import { ComboField } from "@/components/ui/ComboField";
 import { createClient } from "@/lib/supabase/client";
 import { DAY_OPTIONS, HOURS_OPTIONS, dayOfWeekFromLabel, parseHoursRange } from "@/lib/marketSchedule";
+import { capitalizeFirst } from "@/lib/text";
 
 type NewPhoto = { key: string; file: File; preview: string };
 
@@ -95,14 +96,26 @@ export function AddMarketForm({ farmId }: { farmId: string }) {
           What is the market called?
         </label>
         <div style={{ height: 8 }} />
-        <input id="my-market-name" className="field" placeholder="Stephenson County Market" value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          id="my-market-name"
+          className="field"
+          placeholder="Stephenson County Market"
+          value={name}
+          onChange={(e) => setName(capitalizeFirst(e.target.value))}
+        />
 
         <div style={{ height: 20 }} />
         <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="my-market-location">
           Where is it?
         </label>
         <div style={{ height: 8 }} />
-        <input id="my-market-location" className="field" placeholder="Chicago Ave & Spring St, Freeport IL" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <input
+          id="my-market-location"
+          className="field"
+          placeholder="Chicago Ave & Spring St, Freeport IL"
+          value={location}
+          onChange={(e) => setLocation(capitalizeFirst(e.target.value))}
+        />
 
         <div style={{ height: 20 }} />
         <div className="body-s-strong" style={{ color: "var(--text-tertiary)" }}>

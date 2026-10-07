@@ -8,6 +8,7 @@ import { PhotoWell } from "@/components/ui/PhotoWell";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { CATEGORIES, UNITS } from "@/lib/myFarm";
 import type { Database } from "@/lib/types/database";
+import { capitalizeFirst } from "@/lib/text";
 
 type Category = Database["public"]["Enums"]["category_t"];
 type Unit = Database["public"]["Enums"]["unit_t"];
@@ -60,7 +61,13 @@ export default function NewProductPage() {
           What is your product?
         </label>
         <div style={{ height: 8 }} />
-        <input id="product-name" className="field" placeholder="Heirloom tomatoes" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+        <input
+          id="product-name"
+          className="field"
+          placeholder="Heirloom tomatoes"
+          value={draft.name}
+          onChange={(e) => patch({ name: capitalizeFirst(e.target.value) })}
+        />
         <div style={{ height: 20 }} />
 
         <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="product-category">
@@ -124,7 +131,7 @@ export default function NewProductPage() {
               className="field"
               placeholder={draft.availability === "Planning" ? "next spring" : "about 3 weeks"}
               value={draft.roughlyWhen}
-              onChange={(e) => patch({ roughlyWhen: e.target.value })}
+              onChange={(e) => patch({ roughlyWhen: capitalizeFirst(e.target.value) })}
             />
           </>
         )}

@@ -10,6 +10,7 @@ import { ToggleRow } from "@/components/settings/ToggleRow";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { createClient } from "@/lib/supabase/client";
 import { fmtEventDateShort, type EventDateMode, type EventRow } from "@/lib/myFarm";
+import { capitalizeFirst } from "@/lib/text";
 
 type DateEntryDraft = { id: string; date: string; startsAt: string; endsAt: string };
 type Draft = {
@@ -268,7 +269,13 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
           Event name
         </label>
         <div style={{ height: 8 }} />
-        <input id="event-name" className="field" placeholder="e.g. Apple Pressing Day" value={draft.name} onChange={(e) => patch({ name: e.target.value })} />
+        <input
+          id="event-name"
+          className="field"
+          placeholder="e.g. Apple Pressing Day"
+          value={draft.name}
+          onChange={(e) => patch({ name: capitalizeFirst(e.target.value) })}
+        />
 
         <div style={{ height: 20 }} />
         <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="event-notes">
@@ -282,7 +289,7 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
           maxLength={500}
           placeholder="Share what to expect, what to bring, activities, parking info, etc."
           value={draft.notes}
-          onChange={(e) => patch({ notes: e.target.value })}
+          onChange={(e) => patch({ notes: capitalizeFirst(e.target.value) })}
         />
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 4 }}>
           <span className="caption" style={{ color: "var(--text-tertiary)" }}>

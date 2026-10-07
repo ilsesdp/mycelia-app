@@ -6,6 +6,7 @@ import { HoursBox } from "@/components/farm/HoursBox";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { MessageAction } from "@/components/farm/MessageAction";
 import { ConnectOnline } from "@/components/farm/ConnectOnline";
+import { ContactBox } from "@/components/farm/ContactBox";
 
 // Ports SCREENS['2.4'] — the farm profile's About tab. Contact info comes
 // from farm_public_contact, the view that already nulls out email/phone per
@@ -60,9 +61,15 @@ export default async function FarmAboutPage({ params, searchParams }: PageProps<
       )}
       <div style={{ height: 24 }} />
       <div className="label-caps">Contact</div>
-      {contact?.contact_email && <p className="body-s">{contact.contact_email}</p>}
-      {contact?.contact_phone && <p className="body-s">{contact.contact_phone}</p>}
-      {!contact?.contact_email && !contact?.contact_phone && (
+      <div style={{ height: 8 }} />
+      {contact?.contact_email || contact?.contact_phone ? (
+        <ContactBox
+          rows={[
+            ...(contact?.contact_email ? [{ icon: "mail" as const, label: contact.contact_email }] : []),
+            ...(contact?.contact_phone ? [{ icon: "phone" as const, label: contact.contact_phone }] : []),
+          ]}
+        />
+      ) : (
         <p className="body-s" style={{ color: "var(--text-tertiary)" }}>
           This farm hasn&apos;t shared contact details here.
         </p>

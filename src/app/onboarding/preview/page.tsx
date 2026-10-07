@@ -6,6 +6,7 @@ import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
+import { ContactBox } from "@/components/farm/ContactBox";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { catBg, catFg } from "@/lib/categoryStyle";
 import { STATUS_TONE_COLOR } from "@/lib/farmStatus";
@@ -291,6 +292,7 @@ export default function PreviewPage() {
             <DirectionsButton address={state.farmAddress || null} disabled />
             <div style={{ height: 24 }} />
             <div className="label-caps">Contact</div>
+            <div style={{ height: 8 }} />
             {(() => {
               // "Growers only" is visible to any signed-in visitor — the
               // realistic case for who views a published farm page, same as
@@ -306,10 +308,12 @@ export default function PreviewPage() {
                 );
               }
               return (
-                <>
-                  {showEmail && <p className="body-s">{state.contactEmail}</p>}
-                  {showPhone && <p className="body-s">{state.contactPhone}</p>}
-                </>
+                <ContactBox
+                  rows={[
+                    ...(showEmail ? [{ icon: "mail" as const, label: state.contactEmail }] : []),
+                    ...(showPhone ? [{ icon: "phone" as const, label: state.contactPhone }] : []),
+                  ]}
+                />
               );
             })()}
             <div style={{ height: 8 }} />

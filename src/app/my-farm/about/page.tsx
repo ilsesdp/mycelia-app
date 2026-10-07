@@ -5,6 +5,7 @@ import { OwnerShell } from "@/components/myfarm/OwnerShell";
 import { HoursBox } from "@/components/farm/HoursBox";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { ConnectOnline } from "@/components/farm/ConnectOnline";
+import { ContactBox } from "@/components/farm/ContactBox";
 import Link from "next/link";
 
 // Ports SCREENS['4.8'] (owner). The public-preview render (formerly
@@ -65,26 +66,28 @@ export default async function MyFarmAboutPage() {
       )}
       <div style={{ height: 24 }} />
       <div className="label-caps">Contact</div>
-      {showEmail && <p className="body-s">{email}</p>}
-      {showPhone && <p className="body-s">{phone}</p>}
-      {!showEmail && !showPhone && (
+      <div style={{ height: 8 }} />
+      {showEmail || showPhone ? (
+        <ContactBox
+          rows={[
+            ...(showEmail ? [{ icon: "mail" as const, label: email }] : []),
+            ...(showPhone ? [{ icon: "phone" as const, label: phone }] : []),
+          ]}
+        />
+      ) : email || phone ? (
         <>
-          {email || phone ? (
-            <>
-              <p className="body-s" style={{ color: "var(--text-tertiary)" }}>
-                Hidden from visitors.
-              </p>
-              <div style={{ height: 4 }} />
-              <Link href="/settings/privacy" style={{ cursor: "pointer", textDecoration: "none", color: "var(--text-link)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14 }}>
-                Change who can see this
-              </Link>
-            </>
-          ) : (
-            <p className="body-s" style={{ color: "var(--text-tertiary)" }}>
-              Add contact details from Account settings.
-            </p>
-          )}
+          <p className="body-s" style={{ color: "var(--text-tertiary)" }}>
+            Hidden from visitors.
+          </p>
+          <div style={{ height: 4 }} />
+          <Link href="/settings/privacy" style={{ cursor: "pointer", textDecoration: "none", color: "var(--text-link)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 14 }}>
+            Change who can see this
+          </Link>
         </>
+      ) : (
+        <p className="body-s" style={{ color: "var(--text-tertiary)" }}>
+          Add contact details from Account settings.
+        </p>
       )}
     </OwnerShell>
   );

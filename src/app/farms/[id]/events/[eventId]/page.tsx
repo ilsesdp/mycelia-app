@@ -6,22 +6,7 @@ import { Icon } from "@/components/ui/Icon";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
 import { AddToCalendarButton } from "@/components/farm/AddToCalendarButton";
 import { PhotoCarousel } from "@/components/ui/PhotoCarousel";
-
-function fmtEventDate(key: string): string {
-  const [y, m, d] = key.split("-").map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
-}
-
-function fmtTimeLabel(starts: string | null, ends: string | null): string {
-  const fmt = (t: string) => {
-    const [hStr, m] = t.split(":");
-    let h = parseInt(hStr, 10);
-    const mer = h >= 12 ? "pm" : "am";
-    h = h % 12 || 12;
-    return m === "00" ? `${h}${mer}` : `${h}:${m}${mer}`;
-  };
-  return [starts, ends].filter(Boolean).map((t) => fmt(t as string)).join(" – ");
-}
+import { fmtEventDateLabel, fmtEventTimeLabel, type EventRow } from "@/lib/myFarm";
 
 // Ports SCREENS['2.13'] — event detail, always reached from the farm's
 // Events tab (2.5) in this build, so the back arrow always returns there
@@ -35,15 +20,23 @@ export default async function EventDetailPage({ params }: PageProps<"/farms/[id]
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: farm }, { data: event }, { data: eventPhotos }] = await Promise.all([
+  const [{ data: farm }, { data: eventRaw }, { data: eventPhotos }] = await Promise.all([
     supabase.from("farms").select("name, address").eq("id", id).eq("published", true).maybeSingle(),
-    supabase.from("events").select("name, event_date, starts_at, ends_at, notes").eq("id", eventId).eq("farm_id", id).maybeSingle(),
+    supabase
+      .from("events")
+      .select(
+        "name, event_date, starts_at, ends_at, notes, date_mode, end_date, all_day, same_time_for_all_dates, datesList:event_dates(id, event_date, starts_at, ends_at)"
+      )
+      .eq("id", eventId)
+      .eq("farm_id", id)
+      .maybeSingle(),
     supabase.from("event_photos").select("id, url").eq("event_id", eventId).order("sort_order"),
   ]);
 
-  if (!farm || !event) notFound();
+  if (!farm || !eventRaw) notFound();
+  const event = eventRaw as unknown as EventRow;
 
-  const timeLabel = fmtTimeLabel(event.starts_at, event.ends_at);
+  const timeLabel = fmtEventTimeLabel(event);
 
   return (
     <main className="flex flex-col min-h-screen" style={{ paddingBottom: 70 }}>
@@ -63,7 +56,7 @@ export default async function EventDetailPage({ params }: PageProps<"/farms/[id]
         <div className="statuschip" style={{ padding: "0 12px" }}>
           <span className="dot" />
           <span className="body-s-strong" style={{ color: "var(--text-secondary)", fontWeight: 600 }}>
-            {fmtEventDate(event.event_date)}
+            {fmtEventDateLabel(event)}
             {timeLabel ? ` · ${timeLabel}` : ""}
           </span>
         </div>

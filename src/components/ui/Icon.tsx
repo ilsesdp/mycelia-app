@@ -41,7 +41,9 @@ export type IconName =
   | "check"
   | "store"
   | "mail"
-  | "phone";
+  | "phone"
+  | "calendar-range"
+  | "date-checklist";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const props = { ...SHARED, width: size, height: size };
@@ -251,6 +253,23 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
       return (
         <svg {...props}>
           <path d="M6.6 3.5h3l1.4 4.2-2 1.6a13 13 0 0 0 5.7 5.7l1.6-2 4.2 1.4v3a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 5.1 5.1a1.5 1.5 0 0 1 1.5-1.6Z" />
+        </svg>
+      );
+    case "calendar-range":
+      return (
+        <svg {...props}>
+          <rect x="3.5" y="5.5" width="17" height="15" rx="2" />
+          <path d="M3.5 10h17M8 3.5v4M16 3.5v4M7 15h3M14 15h3" />
+        </svg>
+      );
+    case "date-checklist":
+      return (
+        <svg {...props}>
+          <rect x="3.5" y="4" width="6" height="6" rx="1.5" />
+          <path d="m5 7 1 1 2-2" />
+          <rect x="3.5" y="14" width="6" height="6" rx="1.5" />
+          <path d="m5 17 1 1 2-2" />
+          <path d="M12.5 7h8M12.5 17h8" />
         </svg>
       );
   }

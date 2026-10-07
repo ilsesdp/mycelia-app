@@ -20,7 +20,9 @@ export default async function EditEventPage({ params, searchParams }: PageProps<
   const [{ data: event }, { data: eventPhotos }] = await Promise.all([
     supabase
       .from("events")
-      .select("id, name, event_date, starts_at, ends_at, notes, photo_url")
+      .select(
+        "id, name, event_date, starts_at, ends_at, notes, photo_url, date_mode, end_date, all_day, same_time_for_all_dates, datesList:event_dates(id, event_date, starts_at, ends_at)"
+      )
       .eq("id", id)
       .eq("farm_id", farmId)
       .maybeSingle(),

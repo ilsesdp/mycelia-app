@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      event_dates: {
+        Row: {
+          created_at: string
+          ends_at: string | null
+          event_date: string
+          event_id: string
+          id: string
+          sort_order: number
+          starts_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          ends_at?: string | null
+          event_date: string
+          event_id: string
+          id?: string
+          sort_order?: number
+          starts_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string | null
+          event_date?: string
+          event_id?: string
+          id?: string
+          sort_order?: number
+          starts_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_dates_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_photos: {
         Row: {
           created_at: string
@@ -48,7 +86,10 @@ export type Database = {
       }
       events: {
         Row: {
+          all_day: boolean
           created_at: string
+          date_mode: string
+          end_date: string | null
           ends_at: string | null
           event_date: string
           farm_id: string
@@ -56,10 +97,14 @@ export type Database = {
           name: string
           notes: string | null
           photo_url: string | null
+          same_time_for_all_dates: boolean
           starts_at: string | null
         }
         Insert: {
+          all_day?: boolean
           created_at?: string
+          date_mode?: string
+          end_date?: string | null
           ends_at?: string | null
           event_date: string
           farm_id: string
@@ -67,10 +112,14 @@ export type Database = {
           name: string
           notes?: string | null
           photo_url?: string | null
+          same_time_for_all_dates?: boolean
           starts_at?: string | null
         }
         Update: {
+          all_day?: boolean
           created_at?: string
+          date_mode?: string
+          end_date?: string | null
           ends_at?: string | null
           event_date?: string
           farm_id?: string
@@ -78,6 +127,7 @@ export type Database = {
           name?: string
           notes?: string | null
           photo_url?: string | null
+          same_time_for_all_dates?: boolean
           starts_at?: string | null
         }
         Relationships: [

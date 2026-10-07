@@ -16,7 +16,11 @@ export default async function ManageEventsPage() {
   const farmId = await getMyFarmId(supabase, user.id);
   if (!farmId) redirect("/settings");
 
-  const { data: events } = await supabase.from("events").select("id, name, event_date, starts_at, ends_at, notes, photo_url").eq("farm_id", farmId).order("event_date");
+  const { data: events } = await supabase
+    .from("events")
+    .select("id, name, event_date, starts_at, ends_at, notes, photo_url, date_mode, end_date, all_day, same_time_for_all_dates, datesList:event_dates(id, event_date, starts_at, ends_at)")
+    .eq("farm_id", farmId)
+    .order("event_date");
   const list = (events ?? []) as EventRow[];
 
   return (

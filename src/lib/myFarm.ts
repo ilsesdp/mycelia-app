@@ -131,6 +131,17 @@ export function productRailLabel(p: Pick<ProductRow, "qty" | "unit" | "roughly_w
   return [amount, p.roughly_when].filter(Boolean).join(" · ");
 }
 
+// An event's dates work one of three ways: a single day, a continuous
+// range of days (one shared start/end time each day), or a specific set
+// of individual dates — either all sharing one time, or each with its
+// own. `event_date`/`starts_at`/`ends_at` always carry the *primary*
+// (earliest) date/time regardless of mode, so every "upcoming" query
+// (gte/order on event_date) keeps working unchanged; `end_date` only
+// means something for "range", and `datesList` only exists for
+// "selected" (one row per chosen date, from the event_dates table).
+export type EventDateMode = "single" | "range" | "selected";
+export type EventDateEntry = { id: string; event_date: string; starts_at: string | null; ends_at: string | null };
+
 export type EventRow = {
   id: string;
   name: string;
@@ -139,11 +150,23 @@ export type EventRow = {
   ends_at: string | null;
   notes: string | null;
   photo_url: string | null;
+  date_mode: EventDateMode;
+  end_date: string | null;
+  all_day: boolean;
+  same_time_for_all_dates: boolean;
+  datesList?: EventDateEntry[];
 };
 
 export function fmtEventDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+}
+
+// A shorter form ("Sep 20, 2026", no weekday) for the two-date span a
+// range or a multi-date summary needs to fit on one line.
+export function fmtEventDateShort(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
 }
 
 // Was joining the raw DB time strings verbatim ("01:00:00 – 13:00:00"),
@@ -152,6 +175,63 @@ export function fmtEventDate(iso: string): string {
 // showing in 24-hour database form.
 export function fmtEventTimeRange(startsAt: string | null, endsAt: string | null): string {
   return [startsAt, endsAt].filter((t): t is string => !!t).map(fmtTime).join(" – ");
+}
+
+// The date line for a card/detail view, covering all three date modes.
+export function fmtEventDateLabel(ev: Pick<EventRow, "date_mode" | "event_date" | "end_date" | "datesList">): string {
+  if (ev.date_mode === "range" && ev.end_date) {
+    return `${fmtEventDateShort(ev.event_date)} – ${fmtEventDateShort(ev.end_date)}`;
+  }
+  if (ev.date_mode === "selected" && ev.datesList && ev.datesList.length > 0) {
+    const n = ev.datesList.length;
+    if (n === 1) return fmtEventDate(ev.datesList[0].event_date);
+    const sorted = [...ev.datesList].sort((a, b) => a.event_date.localeCompare(b.event_date));
+    return `${n} dates, ${fmtEventDateShort(sorted[0].event_date)} – ${fmtEventDateShort(sorted[n - 1].event_date)}`;
+  }
+  return ev.event_date ? fmtEventDate(ev.event_date) : "Date TBD";
+}
+
+// The time line for a card/detail view, covering all three date modes.
+export function fmtEventTimeLabel(ev: Pick<EventRow, "date_mode" | "starts_at" | "ends_at" | "all_day" | "same_time_for_all_dates">): string {
+  if (ev.date_mode === "single" && ev.all_day) return "All day";
+  if (ev.date_mode === "range") {
+    const range = fmtEventTimeRange(ev.starts_at, ev.ends_at);
+    return range ? `${range} each day` : "";
+  }
+  if (ev.date_mode === "selected" && !ev.same_time_for_all_dates) return "Times vary";
+  return fmtEventTimeRange(ev.starts_at, ev.ends_at);
+}
+
+// The resolved list of individual {date, starts_at, ends_at} occurrences
+// an event actually happens on, regardless of mode — what "Add to
+// calendar" needs to build one VEVENT per occurrence, and the one place
+// "range" ever gets expanded into real dates.
+export function getEventOccurrences(
+  ev: Pick<EventRow, "date_mode" | "event_date" | "end_date" | "starts_at" | "ends_at" | "same_time_for_all_dates" | "datesList">
+): { date: string; starts_at: string | null; ends_at: string | null }[] {
+  if (ev.date_mode === "range" && ev.end_date) {
+    const out: { date: string; starts_at: string | null; ends_at: string | null }[] = [];
+    const [y, m, d] = ev.event_date.split("-").map(Number);
+    const [ey, em, ed] = ev.end_date.split("-").map(Number);
+    const cur = new Date(y, m - 1, d);
+    const end = new Date(ey, em - 1, ed);
+    // Safety cap — a mistyped end date shouldn't generate thousands of rows.
+    for (let i = 0; i < 366 && cur <= end; i++) {
+      const iso = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, "0")}-${String(cur.getDate()).padStart(2, "0")}`;
+      out.push({ date: iso, starts_at: ev.starts_at, ends_at: ev.ends_at });
+      cur.setDate(cur.getDate() + 1);
+    }
+    return out;
+  }
+  if (ev.date_mode === "selected" && ev.datesList && ev.datesList.length > 0) {
+    const sorted = [...ev.datesList].sort((a, b) => a.event_date.localeCompare(b.event_date));
+    return sorted.map((d) => ({
+      date: d.event_date,
+      starts_at: ev.same_time_for_all_dates ? ev.starts_at : d.starts_at,
+      ends_at: ev.same_time_for_all_dates ? ev.ends_at : d.ends_at,
+    }));
+  }
+  return [{ date: ev.event_date, starts_at: ev.starts_at, ends_at: ev.ends_at }];
 }
 
 export type MarketRow = { id: string; name: string; location: string | null; schedule_text: string | null };

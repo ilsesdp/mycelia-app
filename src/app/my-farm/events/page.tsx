@@ -30,7 +30,7 @@ export default async function MyFarmEventsPage() {
     getMyFarmIdentity(supabase, farmId),
     supabase
       .from("events")
-      .select("id, name, event_date, starts_at, ends_at, notes, photo_url")
+      .select("id, name, event_date, starts_at, ends_at, notes, photo_url, date_mode, end_date, all_day, same_time_for_all_dates, datesList:event_dates(id, event_date, starts_at, ends_at)")
       .eq("farm_id", farmId)
       .gte("event_date", today)
       .order("event_date"),

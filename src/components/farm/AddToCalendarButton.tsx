@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { getEventOccurrences, type EventDateMode, type EventDateEntry } from "@/lib/myFarm";
 
 type EventForIcs = {
   name: string;
-  event_date: string; // "2026-10-20"
+  event_date: string; // "2026-10-20" — the primary/earliest date, any mode
   starts_at: string | null; // "09:00:00"
   ends_at: string | null;
   notes: string | null;
+  date_mode: EventDateMode;
+  end_date: string | null;
+  same_time_for_all_dates: boolean;
+  datesList?: EventDateEntry[];
 };
 
 function icsStamp(dateStr: string, timeStr: string | null, fallbackHour: number): string {
@@ -36,23 +41,29 @@ export function AddToCalendarButton({ event, farmName, farmAddress }: { event: E
   const [note, setNote] = useState(false);
 
   function download() {
-    const dtStart = icsStamp(event.event_date, event.starts_at, 9);
-    const dtEnd = icsStamp(event.event_date, event.ends_at, 11);
-    const ics = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//Mycelia//Event//EN",
-      "BEGIN:VEVENT",
-      `UID:${Date.now()}@mycelia.app`,
-      `DTSTAMP:${dtStart}Z`,
-      `DTSTART:${dtStart}`,
-      `DTEND:${dtEnd}`,
-      `SUMMARY:${icsEscape(event.name)}`,
-      `LOCATION:${icsEscape(farmName + (farmAddress ? ", " + farmAddress : ""))}`,
-      `DESCRIPTION:${icsEscape(event.notes ?? "")}`,
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\r\n");
+    // Resolves to one occurrence for "single", one per day for "range",
+    // one per chosen date for "selected" — each becomes its own VEVENT so
+    // every mode exports correctly instead of assuming one date/time pair.
+    const occurrences = getEventOccurrences(event);
+    const location = icsEscape(farmName + (farmAddress ? ", " + farmAddress : ""));
+    const description = icsEscape(event.notes ?? "");
+    const stampNow = icsStamp(event.event_date, null, 0);
+    const vevents = occurrences.map((occ, i) => {
+      const dtStart = icsStamp(occ.date, occ.starts_at, 9);
+      const dtEnd = icsStamp(occ.date, occ.ends_at, 11);
+      return [
+        "BEGIN:VEVENT",
+        `UID:${Date.now()}-${i}@mycelia.app`,
+        `DTSTAMP:${stampNow}Z`,
+        `DTSTART:${dtStart}`,
+        `DTEND:${dtEnd}`,
+        `SUMMARY:${icsEscape(event.name)}`,
+        `LOCATION:${location}`,
+        `DESCRIPTION:${description}`,
+        "END:VEVENT",
+      ].join("\r\n");
+    });
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Mycelia//Event//EN", ...vevents, "END:VCALENDAR"].join("\r\n");
 
     const blob = new Blob([ics], { type: "text/calendar" });
     const url = URL.createObjectURL(blob);

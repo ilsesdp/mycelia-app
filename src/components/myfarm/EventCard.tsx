@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { fmtEventDate, fmtEventTimeRange, type EventRow } from "@/lib/myFarm";
+import { fmtEventDateLabel, fmtEventTimeLabel, type EventRow } from "@/lib/myFarm";
 
 // Ports eventCard() — owner-facing, so tapping opens the edit form.
 export function EventCard({ ev, editable, backTo }: { ev: EventRow; editable: boolean; backTo: "events" | "manage" }) {
-  const dateLabel = ev.event_date ? fmtEventDate(ev.event_date) : "Date TBD";
-  const timeLabel = fmtEventTimeRange(ev.starts_at, ev.ends_at);
+  const dateLabel = fmtEventDateLabel(ev);
+  const timeLabel = fmtEventTimeLabel(ev);
   const thumb = ev.photo_url ? (
     <div style={{ width: 64, height: 64, borderRadius: "var(--radius-lg)", overflow: "hidden", flexShrink: 0 }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}

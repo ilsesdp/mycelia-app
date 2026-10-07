@@ -4,22 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getFarmHeader, resolveBackHref } from "@/lib/farmProfile";
 import { FarmProfileShell } from "@/components/farm/FarmProfileShell";
-
-function fmtEventDate(key: string): string {
-  const [y, m, d] = key.split("-").map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
-}
-
-function fmtTimeLabel(starts: string | null, ends: string | null): string {
-  const fmt = (t: string) => {
-    const [hStr, m] = t.split(":");
-    let h = parseInt(hStr, 10);
-    const mer = h >= 12 ? "pm" : "am";
-    h = h % 12 || 12;
-    return m === "00" ? `${h}${mer}` : `${h}:${m}${mer}`;
-  };
-  return [starts, ends].filter(Boolean).map((t) => fmt(t as string)).join(" – ");
-}
+import { fmtEventDateLabel, fmtEventTimeLabel, type EventRow } from "@/lib/myFarm";
 
 // Ports SCREENS['2.5'] — the farm profile's Events tab. Shows the next
 // upcoming event (event_date >= today) and the farm's real selected
@@ -40,7 +25,7 @@ export default async function FarmEventsPage({ params, searchParams }: PageProps
     getFarmHeader(supabase, id),
     supabase
       .from("events")
-      .select("id, name, event_date, starts_at, ends_at, photo_url")
+      .select("id, name, event_date, starts_at, ends_at, photo_url, date_mode, end_date, all_day, same_time_for_all_dates, datesList:event_dates(id, event_date, starts_at, ends_at)")
       .eq("farm_id", id)
       .gte("event_date", today)
       .order("event_date")
@@ -50,7 +35,7 @@ export default async function FarmEventsPage({ params, searchParams }: PageProps
 
   if (!farm) notFound();
 
-  const event = events?.[0] ?? null;
+  const event = (events?.[0] as EventRow | undefined) ?? null;
   const markets = (farmMarkets ?? []).map((row) => row.markets).filter((m): m is NonNullable<typeof m> => !!m);
 
   return (
@@ -81,8 +66,8 @@ export default async function FarmEventsPage({ params, searchParams }: PageProps
           )}
           <div style={{ flex: 1 }}>
             <div className="body-m-strong">{event.name}</div>
-            <div className="body-s-medium">{fmtEventDate(event.event_date)}</div>
-            {(event.starts_at || event.ends_at) && <div className="body-s-medium">{fmtTimeLabel(event.starts_at, event.ends_at)}</div>}
+            <div className="body-s-medium">{fmtEventDateLabel(event)}</div>
+            {fmtEventTimeLabel(event) && <div className="body-s-medium">{fmtEventTimeLabel(event)}</div>}
           </div>
           <span>&#8250;</span>
         </Link>

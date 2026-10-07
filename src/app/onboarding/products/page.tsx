@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { StepHeader } from "@/components/ui/StepHeader";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { catBg, catFg } from "@/lib/categoryStyle";
+import { productRailLabel } from "@/lib/myFarm";
 
 function availClass(a: ProductDraft["availability"]) {
   return a === "Ready now" ? "avail-ready" : a === "Producing" ? "avail-producing" : "avail-planning-solid";
@@ -91,9 +92,7 @@ export default function ProductsPage() {
                 )}
                 <div style={{ flex: 1 }}>
                   <div className="body-s-strong">{p.name}</div>
-                  <div className="caption">
-                    {p.qty} {p.unit}
-                  </div>
+                  <div className="caption">{productRailLabel({ qty: p.qty || null, unit: p.unit || null, roughly_when: p.roughlyWhen || null })}</div>
                 </div>
                 <span className={`avail ${availClass(p.availability)}`}>{p.availability}</span>
               </div>

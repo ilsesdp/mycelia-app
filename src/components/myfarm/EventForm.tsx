@@ -347,14 +347,14 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
         )}
         {draft.dateMode === "range" && (
           <div style={{ display: "flex", gap: 12 }}>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="event-start-date">
                 Start date
               </label>
               <div style={{ height: 8 }} />
               <DateInput id="event-start-date" value={draft.date} onChange={(v) => patch({ date: v })} />
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="event-end-date">
                 End date
               </label>
@@ -397,10 +397,10 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
                 </div>
                 {!draft.sameTimeForAllDates && (
                   <div style={{ display: "flex", gap: 12 }}>
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <TimeField value={d.startsAt} onChange={(v) => patchDate(d.id, { startsAt: v })} placeholder="8:00am" />
                     </div>
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <TimeField value={d.endsAt} onChange={(v) => patchDate(d.id, { endsAt: v })} placeholder="2:00pm" />
                     </div>
                   </div>
@@ -441,13 +441,13 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
         )}
         {(draft.dateMode !== "single" || !draft.allDay) && (draft.dateMode !== "selected" || draft.sameTimeForAllDates) && (
           <div style={{ display: "flex", gap: 12 }}>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="event-starts-at">
                 Start time
               </label>
               <TimeField id="event-starts-at" value={draft.startsAt} onChange={(v) => patch({ startsAt: v })} placeholder="9:00am" />
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <label className="caption" style={{ marginBottom: 4, display: "block" }} htmlFor="event-ends-at">
                 End time
               </label>

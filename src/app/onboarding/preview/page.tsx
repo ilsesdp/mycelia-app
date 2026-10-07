@@ -6,6 +6,7 @@ import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { DirectionsButton } from "@/components/farm/DirectionsButton";
+import { ConnectOnline } from "@/components/farm/ConnectOnline";
 import { ContactBox } from "@/components/farm/ContactBox";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { catBg, catFg } from "@/lib/categoryStyle";
@@ -290,6 +291,12 @@ export default function PreviewPage() {
             )}
             <div style={{ height: 16 }} />
             <DirectionsButton address={state.farmAddress || null} disabled />
+            {(state.farmWebsite || state.farmInstagram || state.farmFacebook) && (
+              <>
+                <div style={{ height: 24 }} />
+                <ConnectOnline website={state.farmWebsite || null} instagram={state.farmInstagram || null} facebook={state.farmFacebook || null} disabled />
+              </>
+            )}
             <div style={{ height: 24 }} />
             <div className="label-caps">Contact</div>
             <div style={{ height: 8 }} />

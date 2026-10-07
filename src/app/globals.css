@@ -825,8 +825,13 @@ body {
   border-bottom: 2.5px solid var(--border-brand);
 }
 .msgbtn-corner {
+  /* right matches the hero's own px-4 (16px) inset: its containing block
+     is the positioned ancestor's PADDING box, not its content box, so
+     right: 0 sat flush with the true screen edge while every sibling
+     (name, address, tabs) stayed inset 16px — Ilse's call (2026-10-07):
+     "the message button goes beyond the padding in mobile". */
   position: absolute;
-  right: 0;
+  right: 16px;
   top: 16px;
   display: flex;
   flex-direction: column;

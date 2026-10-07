@@ -1,9 +1,7 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getMyFarmId, type EventRow } from "@/lib/myFarm";
-import { AppBar } from "@/components/ui/AppBar";
-import { EventCard } from "@/components/myfarm/EventCard";
+import { ManageEventsList } from "@/components/myfarm/ManageEventsList";
 
 // Ports SCREENS['4.21'] (stand-in — no Figma spec).
 export default async function ManageEventsPage() {
@@ -21,29 +19,6 @@ export default async function ManageEventsPage() {
     .select("id, name, event_date, starts_at, ends_at, notes, photo_url, date_mode, end_date, all_day, same_time_for_all_dates, datesList:event_dates(id, event_date, starts_at, ends_at)")
     .eq("farm_id", farmId)
     .order("event_date");
-  const list = (events ?? []) as EventRow[];
 
-  return (
-    <main className="flex flex-col min-h-screen">
-      <AppBar backHref="/my-farm/events" backLabel="Events" title="Manage events" />
-      <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24 }}>
-        {list.length === 0 ? (
-          <p className="body-m" style={{ textAlign: "center", color: "var(--text-tertiary)", padding: "24px 0" }}>
-            No events yet.
-          </p>
-        ) : (
-          list.map((ev, i) => (
-            <div key={ev.id}>
-              {i > 0 && <div style={{ height: 8 }} />}
-              <EventCard ev={ev} editable backTo="manage" />
-            </div>
-          ))
-        )}
-        <div style={{ height: 16 }} />
-        <Link href="/my-farm/events/new?backTo=manage" className="btn btn-primary">
-          + Add an event
-        </Link>
-      </div>
-    </main>
-  );
+  return <ManageEventsList events={(events ?? []) as EventRow[]} />;
 }

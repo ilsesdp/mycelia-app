@@ -84,7 +84,7 @@ export default async function MyFarmEventsPage() {
             </Link>
           </div>
           <div style={{ height: 14 }} />
-          <EventCard ev={list[0]} editable backTo="events" />
+          <EventCard ev={list[0]} />
           <div style={{ height: 16 }} />
           <Link href="/my-farm/events/new?backTo=events" className="btn btn-primary">
             Add an event

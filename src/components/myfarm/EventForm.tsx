@@ -476,11 +476,9 @@ export function EventForm({ farmId, event, photos, backTo }: { farmId: string; e
           </>
         )}
 
-        <div style={{ height: 20 }} />
-        <label className="body-s-strong" style={{ color: "var(--text-tertiary)" }} htmlFor="event-photos">
-          Photos
-        </label>
-        <div style={{ height: 8 }} />
+        <div style={{ height: 24 }} />
+        <div className="label-caps">Photos</div>
+        <div style={{ height: 10 }} />
         <PhotoWellMulti
           id="event-photos"
           photos={[

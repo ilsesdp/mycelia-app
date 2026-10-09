@@ -1,0 +1,5 @@
+project_id = "qcsmasqxxrngylxrsbsy"
+
+# This file lets the Supabase CLI (`supabase link`, `supabase db push`,
+# `supabase functions deploy`) target this project from the command line.
+# It does not contain secrets -- project_id is not sensitive.

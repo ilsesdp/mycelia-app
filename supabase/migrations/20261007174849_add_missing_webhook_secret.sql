@@ -1,0 +1,1 @@
+select vault.create_secret('-BSSY5qIFaTqbwOk7Wh8qJ8WHOBVFaU5ScMh0q5AHv8', 'webhook_secret', 'Shared secret between the messages_notify_sms/notify_new_message trigger and the send-sms-notification / send-push-notification Edge Functions.');

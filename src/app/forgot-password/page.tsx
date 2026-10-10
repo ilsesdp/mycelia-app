@@ -17,7 +17,13 @@ export default function ForgotPasswordPage() {
   async function handleSend() {
     setSubmitting(true);
     setError(null);
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    // Without redirectTo, Supabase sends the link to the project's default
+    // Site URL, which just logs the browser in and drops it on the map —
+    // never giving them a place to actually set a new password. This tells
+    // auth/confirm where a *recovery* link should ultimately land.
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/confirm?next=/reset-password`,
+    });
     setSubmitting(false);
     if (error) {
       setError(error.message);

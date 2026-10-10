@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AppBar } from "@/components/ui/AppBar";
 import { Button } from "@/components/ui/Button";
 import { PasswordField } from "@/components/ui/PasswordField";
+import { SavedToast } from "@/components/myfarm/SavedToast";
 import { createClient } from "@/lib/supabase/client";
 
 // Ports SCREENS['1.14'] — real supabase.auth.signInWithPassword(). A user
@@ -106,6 +107,7 @@ function LoginInner() {
           Forgot password
         </Link>
       </div>
+      <SavedToast />
     </main>
   );
 }

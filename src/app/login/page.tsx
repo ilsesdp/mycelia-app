@@ -31,7 +31,15 @@ function LoginInner() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setSubmitting(false);
-      setError(error.message);
+      // Supabase's raw "Invalid login credentials" reads like a dev error
+      // and doesn't say what to do next. Kept deliberately vague about
+      // *which* field was wrong (not "no account with that email") so this
+      // can't be used to check which emails are registered farmers.
+      setError(
+        error.message === "Invalid login credentials"
+          ? "That email and password combination did not match our records."
+          : error.message
+      );
       return;
     }
     const { data: farm } = await supabase

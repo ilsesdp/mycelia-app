@@ -43,12 +43,16 @@ export function FarmProfileShell({
           }
         >
           {!farm.coverPhotoUrl && (
-            <div className="hero-dots">
-              <div className="d" style={{ width: 18 }} />
-              <div className="d" style={{ width: 6 }} />
-              <div className="d" style={{ width: 6 }} />
-              <div className="d" style={{ width: 6 }} />
-            </div>
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icons/icon-farm-mark-white.svg" alt="" className="hero-mark" />
+              <div className="hero-dots">
+                <div className="d" style={{ width: 18 }} />
+                <div className="d" style={{ width: 6 }} />
+                <div className="d" style={{ width: 6 }} />
+                <div className="d" style={{ width: 6 }} />
+              </div>
+            </>
           )}
         </div>
         <div className="px-4" style={{ position: "relative" }}>

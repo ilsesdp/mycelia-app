@@ -6,17 +6,32 @@ export type CarouselPhoto = { id: string; url: string };
 
 // Hero image for a market/farm/event page, now owner-uploadable (one or
 // more photos) instead of the old static gradient "hero" block. With zero
-// photos it falls back to that same gradient + decorative dots so an
-// unfinished listing still looks intentional; with one photo it's a plain
-// cover image; two or more get a swipeable, snap-scrolling strip with real
-// position dots.
-export function PhotoCarousel({ photos, height = 180 }: { photos: CarouselPhoto[]; height?: number }) {
+// photos it falls back to a flat-color fill + brand mark + decorative dots
+// so an unfinished listing still looks intentional; with one photo it's a
+// plain cover image; two or more get a swipeable, snap-scrolling strip with
+// real position dots. `kind` picks the no-photo fill/mark: "market" is
+// golden-500 + the white "m" mark (matching the market map pin), "event"
+// (the default — events have no brand mark of their own) stays
+// harvest-green/900 with no mark, same as the plain farm hero fallback.
+export function PhotoCarousel({
+  photos,
+  height = 180,
+  kind = "event",
+}: {
+  photos: CarouselPhoto[];
+  height?: number;
+  kind?: "market" | "event";
+}) {
   const [index, setIndex] = useState(0);
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   if (photos.length === 0) {
     return (
-      <div className="hero" style={{ height }}>
+      <div className={`hero${kind === "market" ? " hero-market" : ""}`} style={{ height }}>
+        {kind === "market" && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src="/icons/icon-market-mark-white.svg" alt="" className="hero-mark" />
+        )}
         <div className="hero-dots">
           <div className="d" style={{ width: 18 }} />
           <div className="d" style={{ width: 6 }} />

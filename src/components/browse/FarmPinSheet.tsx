@@ -3,6 +3,7 @@ import { Icon } from "@/components/ui/Icon";
 import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { catBg, catFg } from "@/lib/categoryStyle";
 import { CategoryPhoto } from "@/components/ui/CategoryPhoto";
+import { EntityPhoto } from "@/components/ui/EntityPhoto";
 import { abbreviateAddress } from "@/lib/geo";
 import { farmTodayStatus, statusTone, STATUS_TONE_COLOR, type HourRow, type TodayStatus } from "@/lib/farmStatus";
 import type { Database } from "@/lib/types/database";
@@ -115,7 +116,9 @@ export function FarmPinSheet({
               style={{ width: 64, height: 64, borderRadius: 16, objectFit: "cover", border: "1px solid var(--border-subtle)", flexShrink: 0, display: "block" }}
             />
           ) : (
-            <div style={{ width: 64, height: 64, borderRadius: 16, border: "1px dashed var(--border-subtle)", flexShrink: 0 }} />
+            <div style={{ width: 64, height: 64, borderRadius: 16, overflow: "hidden", flexShrink: 0 }}>
+              <EntityPhoto kind="farm" />
+            </div>
           )}
           <div style={{ flex: 1 }}>
             <div className="title-m" style={{ color: "var(--text-primary)" }}>

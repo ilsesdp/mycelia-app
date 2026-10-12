@@ -764,6 +764,22 @@ body {
   background: var(--harvest-green-900);
   flex-shrink: 0;
 }
+/* Market hero fallback — golden-500 (#f2a93b), same fill as the market map
+   pin/legend badge, confirmed per Ilse's call to match pin colors. */
+.hero-market {
+  background: var(--golden-500);
+}
+/* Centered brand mark (leaf for farm, "m" for market) shown over the
+   no-cover-photo hero fill — 60px on the 390px-wide hero per the Figma
+   "Farm hero" component (Active=1/2 states). */
+.hero-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+}
 .hero-dots {
   position: absolute;
   left: 168px;

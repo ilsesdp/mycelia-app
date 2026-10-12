@@ -2,11 +2,14 @@ import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { DistanceLabel } from "@/components/ui/DistanceLabel";
 import { catBg, catFg } from "@/lib/categoryStyle";
+import { CategoryPhoto } from "@/components/ui/CategoryPhoto";
 import { abbreviateAddress } from "@/lib/geo";
 import { farmTodayStatus, statusTone, STATUS_TONE_COLOR, type HourRow, type TodayStatus } from "@/lib/farmStatus";
+import type { Database } from "@/lib/types/database";
 
+type Category = Database["public"]["Enums"]["category_t"];
 type Availability = "ready_now" | "producing" | "planning";
-export type SheetProduct = { id: string; name: string; qty: string | null; photo_url: string | null; availability: Availability };
+export type SheetProduct = { id: string; name: string; qty: string | null; photo_url: string | null; availability: Availability; category: Category | null };
 
 export type FarmSheetData = {
   id: string;
@@ -42,7 +45,9 @@ function productCard(p: SheetProduct) {
           style={{ width: "100%", aspectRatio: "1 / 1", borderRadius: 16, objectFit: "cover", border: "1px solid var(--border-subtle)", display: "block" }}
         />
       ) : (
-        <div style={{ width: "100%", aspectRatio: "1 / 1", borderRadius: 16, background: "var(--bg-subtle)", border: "1px solid var(--border-subtle)" }} />
+        <div style={{ width: "100%", aspectRatio: "1 / 1", borderRadius: 16, border: "1px solid var(--border-subtle)", overflow: "hidden" }}>
+          <CategoryPhoto category={p.category} />
+        </div>
       )}
       <div style={{ height: 8 }} />
       <div className="body-s-strong">{p.name}</div>

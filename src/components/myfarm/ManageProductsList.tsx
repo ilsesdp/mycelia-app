@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar";
 import { Icon } from "@/components/ui/Icon";
+import { CategoryPhoto } from "@/components/ui/CategoryPhoto";
 import { createClient } from "@/lib/supabase/client";
 import { productRailLabel, type ProductRow } from "@/lib/myFarm";
 import { SavedToast } from "@/components/myfarm/SavedToast";
@@ -118,8 +119,8 @@ export function ManageProductsList({ products }: { products: ProductRow[] }) {
                         <img src={p.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                       </div>
                     ) : (
-                      <div className="thumb" style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-tertiary)" }}>
-                        <Icon name="basket" size={20} />
+                      <div className="thumb" style={{ overflow: "hidden" }}>
+                        <CategoryPhoto category={p.category} />
                       </div>
                     )}
                     <div style={{ flex: 1, minWidth: 0 }}>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { productRailLabel, type ProductRow } from "@/lib/myFarm";
+import { CategoryPhoto } from "@/components/ui/CategoryPhoto";
 
 type Kind = "ready" | "producing" | "planning";
 type FilterKey = "all" | Kind;
@@ -38,9 +39,11 @@ function ProductCard({ p }: { p: ProductRow }) {
   return (
     <div className="avail-card grid">
       <div className="photo">
-        {p.photo_url && (
+        {p.photo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={p.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        ) : (
+          <CategoryPhoto category={p.category} />
         )}
       </div>
       <div style={{ height: 8 }} />

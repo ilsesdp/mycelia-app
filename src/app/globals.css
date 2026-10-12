@@ -38,6 +38,7 @@
   --interactive-primary-disabled: #dddad7;
 
   --harvest-green-100: #edf7e0;
+  --harvest-green-900: #385912;
   --golden-500: #f2a93b;
   --rich-earth-700: #804b32;
   --sky-600: #2f80c4;
@@ -756,7 +757,11 @@ body {
   height: 180px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, #7e9b52 0%, #4e6b35 45%, #3a5228 100%);
+  /* No-cover-photo fallback for farm/event/market hero — flat
+     harvest-green/900 (#385912, confirmed off the Figma primary button's
+     own Pressed-state fill), per Ilse's call, replacing the old 3-stop
+     green gradient. */
+  background: var(--harvest-green-900);
   flex-shrink: 0;
 }
 .hero-dots {

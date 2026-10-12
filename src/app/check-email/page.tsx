@@ -17,12 +17,31 @@ function CheckEmailInner() {
   const isReset = params.get("reset") === "1";
   const supabase = createClient();
   const [resent, setResent] = useState(false);
+  const [resendError, setResendError] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
 
   async function resend() {
-    if (isReset) {
-      await supabase.auth.resetPasswordForEmail(email);
-    } else {
-      await supabase.auth.resend({ type: "signup", email });
+    if (resending) return;
+    setResending(true);
+    setResendError(null);
+    // Same fix as forgot-password/page.tsx: without redirectTo, a resent
+    // recovery link falls back to the Site URL and never reaches
+    // /reset-password. Previously this call's error was also never
+    // checked, so a throttled/failed resend (Supabase rate-limits repeat
+    // sends to the same address) looked identical to a successful one.
+    const { error } = isReset
+      ? await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/confirm?next=/reset-password`,
+        })
+      : await supabase.auth.resend({ type: "signup", email });
+    setResending(false);
+    if (error) {
+      setResendError(
+        error.message.toLowerCase().includes("rate limit")
+          ? "You just requested a link — give it a minute before asking for another."
+          : error.message
+      );
+      return;
     }
     setResent(true);
   }
@@ -58,6 +77,7 @@ function CheckEmailInner() {
           </Link>
           <button
             onClick={resend}
+            disabled={resending}
             style={{
               textAlign: "center",
               color: "var(--text-secondary)",
@@ -66,11 +86,17 @@ function CheckEmailInner() {
               fontSize: 14,
               background: "none",
               border: "none",
-              cursor: "pointer",
+              cursor: resending ? "default" : "pointer",
+              opacity: resending ? 0.6 : 1,
             }}
           >
-            {resent ? "Sent again" : "Send it again"}
+            {resending ? "Sending…" : resent ? "Sent again" : "Send it again"}
           </button>
+          {resendError && (
+            <p className="caption" style={{ color: "var(--text-danger)" }}>
+              {resendError}
+            </p>
+          )}
         </div>
       </div>
     </main>

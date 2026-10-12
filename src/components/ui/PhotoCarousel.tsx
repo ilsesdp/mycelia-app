@@ -6,10 +6,11 @@ export type CarouselPhoto = { id: string; url: string };
 
 // Hero image for a market/farm/event page, now owner-uploadable (one or
 // more photos) instead of the old static gradient "hero" block. With zero
-// photos it falls back to a flat-color fill + brand mark + decorative dots
-// so an unfinished listing still looks intentional; with one photo it's a
-// plain cover image; two or more get a swipeable, snap-scrolling strip with
-// real position dots. `kind` picks the no-photo fill/mark: "market" is
+// photos it falls back to a flat-color fill + brand mark, no dots — dots
+// are a multi-photo position indicator and are misleading with nothing (or
+// just one photo) to page through; with one photo it's a plain cover
+// image; two or more get a swipeable, snap-scrolling strip with real
+// position dots. `kind` picks the no-photo fill/mark: "market" is
 // golden-500 + the white "m" mark (matching the market map pin), "event"
 // (the default — events have no brand mark of their own) stays
 // harvest-green/900 with no mark, same as the plain farm hero fallback.
@@ -32,11 +33,6 @@ export function PhotoCarousel({
           // eslint-disable-next-line @next/next/no-img-element
           <img src="/icons/icon-market-mark-white.svg" alt="" className="hero-mark" />
         )}
-        <div className="hero-dots">
-          <div className="d" style={{ width: 18 }} />
-          <div className="d" style={{ width: 6 }} />
-          <div className="d" style={{ width: 6 }} />
-        </div>
       </div>
     );
   }

@@ -37,7 +37,7 @@ export default async function MapPage({ searchParams }: PageProps<"/map">) {
       timezone,
       farm_categories ( category ),
       farm_hours ( day_of_week, open_time, close_time, closed ),
-      products ( id, name, qty, availability, photo_url )
+      products ( id, name, qty, availability, photo_url, category )
     `
       )
       .eq("published", true)

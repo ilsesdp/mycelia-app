@@ -31,10 +31,13 @@ function Requirement({ met, children }: { met: boolean; children: string }) {
 // The screen the prototype never built: landing here means Supabase already
 // verified a password-recovery email link and handed this browser a real
 // session (see src/app/auth/confirm/route.ts) — there's no "current
-// password" to check, so this reuses SCREENS['5.10']'s title, field labels,
-// and requirement checklist verbatim, just without the Current-password
-// field and the Delete-account section (those belong to the logged-in
-// Settings screen, SecurityForm, not here).
+// password" to check, so this reuses SCREENS['5.10']'s field labels and
+// requirement checklist verbatim, just without the Current-password field
+// and the Delete-account section (those belong to the logged-in Settings
+// screen, SecurityForm, not here). The app-bar title is "Set a new
+// password" rather than 5.10's plain "Password" — Ilse's call, since this
+// screen is reached from a reset link rather than Settings and should say
+// so plainly.
 //
 // After saving, Ilse wants a fresh login rather than carrying the recovery
 // session forward — so this signs out and sends the person to /login to
@@ -73,7 +76,7 @@ export function ResetPasswordForm() {
 
   return (
     <main className="flex flex-col min-h-screen">
-      <AppBar title="Password" />
+      <AppBar title="Set a new password" />
       <div className="px-4" style={{ paddingTop: 16, paddingBottom: 24, flex: 1, display: "flex", flexDirection: "column" }}>
         <label className="label-caps" htmlFor="pw-new">
           New password

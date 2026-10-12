@@ -10,6 +10,7 @@ import { ConnectOnline } from "@/components/farm/ConnectOnline";
 import { ContactBox } from "@/components/farm/ContactBox";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { catBg, catFg } from "@/lib/categoryStyle";
+import { CategoryPhoto } from "@/components/ui/CategoryPhoto";
 import { STATUS_TONE_COLOR } from "@/lib/farmStatus";
 import { createClient } from "@/lib/supabase/client";
 import { publishFarm } from "@/lib/onboarding/publish";
@@ -225,7 +226,9 @@ export default function PreviewPage() {
                           style={{ width: 150, height: 108, borderRadius: 16, objectFit: "cover", border: "1px solid var(--border-subtle)", display: "block" }}
                         />
                       ) : (
-                        <div style={{ width: 150, height: 108, borderRadius: 16, background: "var(--bg-subtle)", border: "1px solid var(--border-subtle)" }} />
+                        <div style={{ width: 150, height: 108, borderRadius: 16, overflow: "hidden", border: "1px solid var(--border-subtle)" }}>
+                          <CategoryPhoto category={p.category || null} />
+                        </div>
                       )}
                       <div style={{ height: 8 }} />
                       <div className="body-s-strong">{p.name}</div>

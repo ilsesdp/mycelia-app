@@ -8,6 +8,7 @@ import { StepHeader } from "@/components/ui/StepHeader";
 import { useOnboarding, type ProductDraft } from "@/lib/onboarding/context";
 import { catBg, catFg } from "@/lib/categoryStyle";
 import { productRailLabel } from "@/lib/myFarm";
+import { CategoryPhoto } from "@/components/ui/CategoryPhoto";
 
 function availClass(a: ProductDraft["availability"]) {
   return a === "Ready now" ? "avail-ready" : a === "Producing" ? "avail-producing" : "avail-planning-solid";
@@ -88,7 +89,9 @@ export default function ProductsPage() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={p.photoPreview} alt="" style={{ width: 46, height: 46, borderRadius: 12, objectFit: "cover" }} />
                 ) : (
-                  <div style={{ width: 46, height: 46, borderRadius: 12, background: "var(--bg-subtle)", border: "1px dashed var(--border-subtle)" }} />
+                  <div style={{ width: 46, height: 46, borderRadius: 12, overflow: "hidden", flexShrink: 0 }}>
+                    <CategoryPhoto category={p.category || null} />
+                  </div>
                 )}
                 <div style={{ flex: 1 }}>
                   <div className="body-s-strong">{p.name}</div>

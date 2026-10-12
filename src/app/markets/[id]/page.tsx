@@ -46,7 +46,7 @@ export default async function MarketPage({ params, searchParams }: PageProps<"/m
     <main className="flex flex-col min-h-screen">
       <AppBar backHref={resolveBackHref(sp.from)} />
       <div style={{ flexShrink: 0 }}>
-        <PhotoCarousel photos={marketPhotos ?? []} />
+        <PhotoCarousel photos={marketPhotos ?? []} kind="market" />
         <div className="px-4">
           <div style={{ height: 16 }} />
           <div className="title-l" style={{ color: "var(--text-primary)" }}>
